@@ -99,7 +99,11 @@ class WorklogCLI < Thor
 
     # Count all tags used in the work log
     tags = all_logs.map(&:entries).flatten.map(&:tags).flatten.compact.tally
-    tags.each { |k, v| puts "#{k}: #{v} occurrence(s)" }
+
+    # Determine length of longest tag for formatting
+    max_len = tags.keys.map(&:length).max
+
+    tags.each { |k, v| puts "#{Rainbow(k.ljust(max_len)).gold}: #{v} occurrence(s)" }
   end
 
   desc 'server', 'Start the work log server'
