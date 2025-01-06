@@ -86,8 +86,12 @@ class WorklogCLI < Thor
     end
 
     entries = Storage::days_between(start_date, end_date)
-    entries.each do |entry|
-      Printer::print_day(entry, entries.size > 1, options[:epics_only])
+    if entries.empty?
+      Printer::no_entries(start_date, end_date)
+    else
+      entries.each do |entry|
+        Printer::print_day(entry, entries.size > 1, options[:epics_only])
+      end
     end
   end
 

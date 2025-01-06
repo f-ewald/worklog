@@ -24,6 +24,17 @@ module Printer
     end
   end
 
+  def self.no_entries(start_date, end_date)
+    if start_date == end_date
+      date_string = start_date.strftime('%a, %B %-d, %Y')
+      puts "No entries found for #{Rainbow(date_string).gold}."
+    else
+      start_date_string = start_date.strftime('%a, %B %-d, %Y')
+      end_date_string = end_date.strftime('%a, %B %-d, %Y')
+      puts "No entries found between #{Rainbow(start_date_string).gold} and #{Rainbow(end_date_string).gold}."
+    end
+  end
+
   private
 
   # Prints a single entry, formats the date and time.
