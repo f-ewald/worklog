@@ -9,3 +9,7 @@ gem "thor", "~> 1.3"
 gem "rack", "~> 3.1"
 
 gem "rackup", "~> 2.2"
+
+gem "rake", "~> 13.2"
+
+gem "minitest", "~> 5.25"

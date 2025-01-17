@@ -3,7 +3,7 @@
 require "minitest/autorun"
 require_relative '../worklog/daily_log'
 
-class TestDailyLog < Minitest::Test
+class DailyLogTest < Minitest::Test
   def setup
     @log = DailyLog.new(Date.new(2021, 1, 1), [])
   end

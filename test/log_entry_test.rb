@@ -3,7 +3,7 @@
 require 'minitest/autorun'
 require_relative '../worklog/log_entry'
 
-class TestLogEntry < Minitest::Test
+class LogEntryTest < Minitest::Test
   def setup
     @log_entry = LogEntry.new('10:00', ['tag1', 'tag2'], 'ticket-123', true, 'This is a message')
   end
