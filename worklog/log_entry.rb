@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require 'daily_log'
-require 'hash'
+require_relative 'daily_log'
+require_relative 'hash'
 require 'yaml'
 
 
