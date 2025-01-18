@@ -16,3 +16,5 @@ end
 
 # Load version of Ruby from .tool-versions file (ASDF)
 ruby file: ".tool-versions"
+
+gem "logger", "~> 1.6"
