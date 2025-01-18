@@ -28,4 +28,8 @@ class LogEntryTest < Minitest::Test
   def test_message
     assert_equal 'This is a message', @log_entry.message
   end
+
+  def test_equality
+    assert_equal LogEntry.new('10:00', ['tag1', 'tag2'], 'ticket-123', true, 'This is a message'), @log_entry
+  end
 end

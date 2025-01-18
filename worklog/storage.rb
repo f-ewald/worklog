@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'daily_log'
+require_relative 'daily_log'
 
 
 module Storage

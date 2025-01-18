@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require "minitest/autorun"
+require 'date'
+require 'minitest/autorun'
 require_relative '../worklog/daily_log'
 
 class DailyLogTest < Minitest::Test
@@ -16,5 +17,14 @@ class DailyLogTest < Minitest::Test
 
   def test_entries
     assert_equal [], @log.entries
+  end
+
+  def test_equality
+    log1 = DailyLog.new(Date.new(2021, 1, 1), [])
+    log2 = DailyLog.new(Date.new(2021, 1, 1), [])
+    log3 = DailyLog.new(Date.new(2021, 1, 2), [])
+
+    assert_equal log1, log2
+    refute_equal log1, log3
   end
 end
