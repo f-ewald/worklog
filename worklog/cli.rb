@@ -49,15 +49,23 @@ class WorklogCLI < Thor
   end
 
   desc 'remove', 'Remove last entry from the log'
+  option :date, type: :string, default: DateTime.now.strftime("%Y-%m-%d")
   def remove
-    logger.debug "Showing the work log for #{options[:date]}"
-    unless File.exist?(filepath(options[:date]))
+    date = Date.strptime(options[:date], '%Y-%m-%d')
+    unless File.exist?(Storage::filepath(date))
       logger.error Rainbow("No work log found for #{options[:date]}. Aborting.").red
       exit 1
     end
 
-    # daily_log = load_log(filepath(options[:date]))
-    # write_log
+    daily_log = Storage::load_log(Storage::filepath(options[:date]))
+    if daily_log.entries.empty?
+      logger.error Rainbow("No entries found for #{options[:date]}. Aborting.").red
+      exit 1
+    end
+
+    removed_entry = daily_log.entries.pop
+    Storage::write_log(Storage::filepath(date), daily_log)
+    logger.info Rainbow("Removed entry: #{removed_entry.message}").green
   end
 
   desc 'show', 'Show the work log for a specific date or a range of dates. Defaults to todays date.'
