@@ -13,7 +13,9 @@ class LogEntry
 
   def initialize(time, tags, ticket, epic, message)
     @time = time
-    @tags = tags
+    # If tags are nil, set to empty array.
+    # This is similar to the CLI default value.
+    @tags = tags || []
     @ticket = ticket
     @epic = epic
     @message = message
