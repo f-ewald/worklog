@@ -13,4 +13,8 @@ class DailyLog
     @date = date
     @entries = entries
   end
+
+  def ==(other)
+    date == other.date && entries == other.entries
+  end
 end

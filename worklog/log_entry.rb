@@ -48,4 +48,8 @@ class LogEntry
   def to_yaml
     to_hash.to_yaml
   end
+
+  def ==(other)
+    time == other.time && tags == other.tags && ticket == other.ticket && epic == other.epic && message == other.message
+  end
 end

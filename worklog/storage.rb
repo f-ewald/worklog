@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'daily_log'
+require_relative 'daily_log'
 
 
 module Storage
@@ -74,6 +74,8 @@ module Storage
   end
 
   def self.write_log(file, content)
+    create_folder
+
     $logger.debug "Writing to file #{file}"
 
     # Sort by time in case an entry was added later out of order.
