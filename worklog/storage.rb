@@ -4,7 +4,7 @@ require_relative 'daily_log'
 
 module Storage
   FILE_SUFFIX = '.yaml'
-  DATA_DIR = File.join(ENV['CI'] ? Dir.tmpdir : Dir.home, '.worklog')
+  DATA_DIR = File.join(Dir.home, '.worklog')
 
   def self.folder_exists?
     Dir.exist?(DATA_DIR)
