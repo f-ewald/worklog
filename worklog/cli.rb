@@ -35,10 +35,15 @@ class WorklogCLI < Thor
   option :epic, type: :boolean, default: false
   def add(message)
     date = Date.strptime(options[:date], '%Y-%m-%d')
+    time = Time.strptime(options[:time], '%H:%M:%S')
     Storage::create_file_skeleton(date)
 
     daily_log = Storage::load_log(Storage::filepath(date))
-    daily_log.entries << LogEntry.new(options[:time], options[:tags], options[:ticket], options[:epic], message)
+    daily_log.entries << LogEntry.new(time, options[:tags], options[:ticket], options[:epic], message)
+
+    # Sort by time in case an entry was added later out of order.
+    daily_log.entries.sort_by!(&:time)
+
     Storage::write_log(Storage::filepath(options[:date]), daily_log)
     logger.info Rainbow("Added to the work log for #{options[:date]}").green
   end

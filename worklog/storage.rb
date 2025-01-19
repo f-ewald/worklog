@@ -73,16 +73,13 @@ module Storage
     log
   end
 
-  def self.write_log(file, content)
+  def self.write_log(file, daily_log)
     create_folder
 
     $logger.debug "Writing to file #{file}"
 
-    # Sort by time in case an entry was added later out of order.
-    # TODO: Make sure all entries are sorted by time.
-    # content.entries.sort_by!(&:time)
     File.open(file, 'w') do |f|
-      f.puts content.to_yaml
+      f.puts daily_log.to_yaml
     end
   end
 
