@@ -15,6 +15,7 @@ require 'statistics'
 require 'storage'
 require 'webserver'
 require 'worklog'
+require_relative 'summary'
 
 class WorklogCLI < Thor
   package_name 'Worklog'
@@ -131,12 +132,18 @@ class WorklogCLI < Thor
   desc 'stats', 'Show statistics for the work log'
   def stats
     stats = Statistics::calculate
-    puts "Total days: #{stats.total_days}"
-    puts "Total entries: #{stats.total_entries}"
-    puts "Total epics: #{stats.total_epics}"
-    puts "Entries per day: #{'%.2f' % stats.avg_entries}"
-    puts "First entry: #{stats.first_entry}"
-    puts "Last entry: #{stats.last_entry}"
+    puts "#{format_left('Total days')}: #{stats.total_days}"
+    puts "#{format_left('Total entries')}: #{stats.total_entries}"
+    puts "#{format_left('Total epics')}: #{stats.total_epics}"
+    puts "#{format_left('Entries per day')}: #{'%.2f' % stats.avg_entries}"
+    puts "#{format_left('First entry')}: #{stats.first_entry}"
+    puts "#{format_left('Last entry')}: #{stats.last_entry}"
+  end
+
+  desc 'summary', 'Generate a summary of the work log entries'
+  def summary
+    entries = Storage::days_between(Date.today - 1, Date.today).map(&:entries).flatten
+    puts Summary::generate_summary(entries)
   end
 
   # Define shortcuts and aliases
@@ -148,6 +155,11 @@ class WorklogCLI < Thor
     def logger
       @logger ||= Logger.new(STDOUT, level: Logger::Severity::INFO)
     end
+  end
+
+  private
+  def format_left(string)
+    format('%18s', string)
   end
 end
 WorklogCLI.start

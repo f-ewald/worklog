@@ -12,9 +12,12 @@ gem "rackup", "~> 2.2"
 group :development do
   gem "rake", "~> 13.2"
   gem "minitest", "~> 5.25"
+  gem "webmock", "~> 3.24"
 end
 
 # Load version of Ruby from .tool-versions file (ASDF)
 ruby file: ".tool-versions"
 
 gem "logger", "~> 1.6"
+
+gem "httparty", "~> 0.22.0"
