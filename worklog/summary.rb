@@ -4,6 +4,7 @@ require 'erb'
 require 'httparty'
 require 'json'
 
+# AI Summary generation.
 module Summary
   MODEL = 'llama3.2'
   SUMMARY_INSTRUCTION = ERB.new <<~INSTRUCTION
@@ -27,22 +28,20 @@ module Summary
     Notable Accomplishments:
   INSTRUCTION
 
-
   def self.generate_summary(log_entries)
     entries = log_entries.map { |entry| entry.message }
     prompt = SUMMARY_INSTRUCTION.result_with_hash(accomplishments: entries.join(', '))
 
     begin
-      response = HTTParty.post('http://localhost:11434/api/generate', 
-        body: {
-          model: Summary::MODEL,
-          prompt: ,
-          system: Summary::SYSTEM_INSTRUCTION,
-          stream: false,
-    }.to_json, 
-        headers: { 'Content-Type' => 'application/json' }
-      )
-      response.parsed_response["response"]
+      response = HTTParty.post('http://localhost:11434/api/generate',
+                               body: {
+                                 model: Summary::MODEL,
+                                 prompt:,
+                                 system: Summary::SYSTEM_INSTRUCTION,
+                                 stream: false
+                               }.to_json,
+                               headers: { 'Content-Type' => 'application/json' })
+      response.parsed_response['response']
     rescue Errno::ECONNREFUSED
       puts 'Ollama doesn\'t seem to be running. Please start the server and try again.'
     end
