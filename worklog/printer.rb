@@ -1,9 +1,9 @@
 # frozen_string_literal: true
+
 require 'rainbow'
 
 # Printer for work log entries
 module Printer
-
   # Prints a whole day of work log entries.
   # If date_inline is true, the date is printed inline with the time.
   # If epics_only is true, only epic entries are printed.

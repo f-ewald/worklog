@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require_relative 'hash'
 
+require_relative 'hash'
 
 class DailyLog
   # Container for a day's work log.

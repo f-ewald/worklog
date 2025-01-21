@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'date'
 
 module DateParser
@@ -45,7 +46,7 @@ module DateParser
     match = date_str.match(/(\d{4})-[qQ]([1234])/)
     if match
       year, quarter = match.captures.map(&:to_i)
-      d = Date.new(year, (quarter - 1) * 3 + 1, 1)
+      d = Date.new(year, ((quarter - 1) * 3) + 1, 1)
       if from_beginning
         return d
       else
@@ -57,7 +58,7 @@ module DateParser
     match = date_str.match(/[qQ]([1234])/)
     if match
       quarter = match.captures.first.to_i
-      d = Date.new(Date.today.year, (quarter - 1) * 3 + 1, 1)
+      d = Date.new(Date.today.year, ((quarter - 1) * 3) + 1, 1)
       if from_beginning
         return d
       else

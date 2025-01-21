@@ -158,6 +158,7 @@ class WorklogCLI < Thor
   end
 
   private
+
   def format_left(string)
     format('%18s', string)
   end

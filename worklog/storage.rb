@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-require_relative 'daily_log'
 
+require_relative 'daily_log'
 
 module Storage
   FILE_SUFFIX = '.yaml'
@@ -42,7 +42,6 @@ module Storage
           tmp_logs.entries.keep_if { |entry| entry.tags && (entry.tags & tags_filter).size > 0 }
         end
 
-
         if tmp_logs.entries.length > 0
           logs << tmp_logs
         end
@@ -82,7 +81,6 @@ module Storage
       f.puts daily_log.to_yaml
     end
   end
-
 
   def self.load_single_log_file(file, headline = true)
     daily_log = load_log(file)
