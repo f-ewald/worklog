@@ -10,10 +10,12 @@ module Summary
   SUMMARY_INSTRUCTION = ERB.new <<~INSTRUCTION
     You are given a list of accomplishments during a time period.
     Each accomplishment is divided by comma.
-    Bigger accomplishments are marked with the word "EPIC".
     Write a summary of the accomplishments in English and highlight the bigger accomplishments.
     This summary will be used as a basis for the performance review.
-      <%= accomplishments %>
+    Accomplishments:
+      <% entries.each do |entry| %>
+        <%= entry.message %>
+      <% end %>
     Summary:
   INSTRUCTION
 
@@ -28,9 +30,12 @@ module Summary
     Notable Accomplishments:
   INSTRUCTION
 
+  def self.build_prompt(log_entries)
+    SUMMARY_INSTRUCTION.result_with_hash(entries: log_entries)
+  end
+
   def self.generate_summary(log_entries)
-    entries = log_entries.map { |entry| entry.message }
-    prompt = SUMMARY_INSTRUCTION.result_with_hash(accomplishments: entries.join(', '))
+    prompt = build_prompt(log_entries)
 
     begin
       response = HTTParty.post('http://localhost:11434/api/generate',
@@ -44,6 +49,7 @@ module Summary
       response.parsed_response['response']
     rescue Errno::ECONNREFUSED
       puts 'Ollama doesn\'t seem to be running. Please start the server and try again.'
+      puts 'You can download Ollama at https://ollama.com'
     end
   end
 end
