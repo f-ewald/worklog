@@ -21,6 +21,7 @@ class SummaryTest < Minitest::Test
                    'Introduced heartbeat monitoring to microservices to detect failures early')
     ]
     generated_summary = Summary.generate_summary(entries)
+
     refute_empty generated_summary
   end
 end
