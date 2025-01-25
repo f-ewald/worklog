@@ -8,8 +8,6 @@ require 'uri'
 require 'storage'
 require 'worklog'
 
-
-
 class WorkLogResponse
   def response(request)
     template = ERB.new(File.read(File.join(File.dirname(__FILE__),'index.html.erb')), trim_mode: '-')
@@ -24,10 +22,10 @@ class WorkLogResponse
     _ = total_entries
     _ = presentation
 
-    [ 200, {
+    [200, {
       "Content-Type" => "text/html",
       "Cache-Control" => "no-cache",
-    }, [ template.result(binding) ] ]
+    }, [template.result(binding)]]
   end
 
   private
@@ -50,7 +48,6 @@ class WorkLogResponse
     uri.to_s
   end
 end
-
 
 # Rack application.
 class WorkLogApp

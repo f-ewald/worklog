@@ -18,7 +18,7 @@ class LogEntryTest < Minitest::Test
 
   def test_empty_tags
     # Empty tags should be converted to an empty array.
-    assert_equal [], LogEntry.new('10:00', nil, 'ticket-123', true, 'This is a message').tags
+    assert_empty LogEntry.new('10:00', nil, 'ticket-123', true, 'This is a message').tags
   end
 
   def test_ticket
@@ -27,7 +27,7 @@ class LogEntryTest < Minitest::Test
 
   def test_epic
     assert @log_entry.epic
-    assert @log_entry.epic?
+    assert_predicate @log_entry, :epic?
   end
 
   def test_message

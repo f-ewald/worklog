@@ -40,6 +40,5 @@ class DateParserTest < Minitest::Test
     assert_nil DateParser::parse_date_string('24-10-10', true)
     assert_nil DateParser::parse_date_string('24-10-10', false)
     assert_nil DateParser::parse_date_string('2021-10-10-10')
-
   end
 end

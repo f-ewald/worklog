@@ -11,7 +11,6 @@ module Hashify
   end
 end
 
-
 class Hash
   # Convert all keys to strings so that the YAML file can be read from different languages
 

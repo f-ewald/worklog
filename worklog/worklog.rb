@@ -15,5 +15,4 @@ require 'yaml'
 $logger = Logger.new(STDOUT, level: Logger::Severity::INFO)
 
 module Worklog
-
 end

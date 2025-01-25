@@ -1,6 +1,8 @@
 inherit_from: .rubocop_todo.yml
 AllCops:
     NewCops: enable
+    Exclude:
+      - 'test/*'
 require:
   - rubocop-minitest
   - rubocop-rake
