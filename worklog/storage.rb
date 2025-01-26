@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'daily_log'
+require_relative 'logger'
 
 module Storage
   FILE_SUFFIX = '.yaml'
@@ -62,7 +63,7 @@ module Storage
   end
 
   def self.load_log(file)
-    $logger.debug "Loading file #{file}"
+    WorkLogger.debug "Loading file #{file}"
     log = YAML.load_file(file, permitted_classes: [Date, Time, DailyLog, LogEntry])
     log.entries.each do |entry|
       unless entry.time.respond_to?(:strftime)
@@ -75,7 +76,7 @@ module Storage
   def self.write_log(file, daily_log)
     create_folder
 
-    $logger.debug "Writing to file #{file}"
+    WorkLogger.debug "Writing to file #{file}"
 
     File.open(file, 'w') do |f|
       f.puts daily_log.to_yaml
