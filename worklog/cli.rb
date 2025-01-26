@@ -17,7 +17,10 @@ require 'webserver'
 require 'worklog'
 require_relative 'summary'
 
+# CLI for the work log application
 class WorklogCLI < Thor
+  class_option :verbose, type: :boolean, aliases: '-v', desc: 'Enable verbose output'
+
   package_name 'Worklog'
 
   def self.exit_on_failure?
@@ -88,16 +91,7 @@ class WorklogCLI < Thor
   option :epics_only, type: :boolean, default: false
   option :tags, type: :array, default: []
   def show
-    if options[:days]
-      start_date = Date.today - options[:days]
-      end_date = Date.today
-    elsif options[:from]
-      start_date = DateParser::parse_date_string!(options[:from], true)
-      end_date = DateParser::parse_date_string!(options[:to], false) if options[:to]
-    else
-      start_date = Date.strptime(options[:date], '%Y-%m-%d')
-      end_date = start_date
-    end
+    start_date, end_date = start_end_date(options)
 
     entries = Storage::days_between(start_date, end_date)
     if entries.empty?
@@ -141,8 +135,25 @@ class WorklogCLI < Thor
   end
 
   desc 'summary', 'Generate a summary of the work log entries'
+  option :date, type: :string, default: DateTime.now.strftime("%Y-%m-%d")
+  option :from, type: :string, desc: <<-EOF
+    'Inclusive start date of the range. Takes precedence over --date if defined.'
+  EOF
+  option :to, type: :string, desc: <<-EOF
+    'Inclusive end date of the range. Takes precedence over --date if defined.'
+  EOF
+  option :days, type: :numeric, desc: <<-EOF
+    'Number of days to show starting from --date. Takes precedence over --from and --to if defined.'
+  EOF
   def summary
-    entries = Storage::days_between(Date.today - 1, Date.today).map(&:entries).flatten
+    start_date, end_date = start_end_date(options)
+    entries = Storage::days_between(start_date, end_date).map(&:entries).flatten
+
+    # Do nothing if no entries are found.
+    if entries.empty?
+      Printer::no_entries(start_date, end_date)
+      return
+    end
     puts Summary::generate_summary(entries)
   end
 
@@ -161,6 +172,24 @@ class WorklogCLI < Thor
 
   def format_left(string)
     format('%18s', string)
+  end
+
+  # Parse the start and end date based on the options provided
+  #
+  # @param options [Hash] the options hash
+  # @return [Array] the start and end date as an array
+  def start_end_date(options)
+    if options[:days]
+      start_date = Date.today - options[:days]
+      end_date = Date.today
+    elsif options[:from]
+      start_date = DateParser::parse_date_string!(options[:from], true)
+      end_date = DateParser::parse_date_string!(options[:to], false) if options[:to]
+    else
+      start_date = Date.strptime(options[:date], '%Y-%m-%d')
+      end_date = start_date
+    end
+    [start_date, end_date]
   end
 end
 WorklogCLI.start
