@@ -40,15 +40,15 @@ class WorklogCLI < Thor
   def add(message)
     date = Date.strptime(options[:date], '%Y-%m-%d')
     time = Time.strptime(options[:time], '%H:%M:%S')
-    Storage::create_file_skeleton(date)
+    Storage.create_file_skeleton(date)
 
-    daily_log = Storage::load_log(Storage::filepath(date))
+    daily_log = Storage.load_log(Storage.filepath(date))
     daily_log.entries << LogEntry.new(time, options[:tags], options[:ticket], options[:epic], message)
 
     # Sort by time in case an entry was added later out of order.
     daily_log.entries.sort_by!(&:time)
 
-    Storage::write_log(Storage::filepath(options[:date]), daily_log)
+    Storage.write_log(Storage.filepath(options[:date]), daily_log)
     logger.info Rainbow("Added to the work log for #{options[:date]}").green
   end
 
@@ -56,19 +56,19 @@ class WorklogCLI < Thor
   option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
   def remove
     date = Date.strptime(options[:date], '%Y-%m-%d')
-    unless File.exist?(Storage::filepath(date))
+    unless File.exist?(Storage.filepath(date))
       logger.error Rainbow("No work log found for #{options[:date]}. Aborting.").red
       exit 1
     end
 
-    daily_log = Storage::load_log(Storage::filepath(options[:date]))
+    daily_log = Storage.load_log(Storage.filepath(options[:date]))
     if daily_log.entries.empty?
       logger.error Rainbow("No entries found for #{options[:date]}. Aborting.").red
       exit 1
     end
 
     removed_entry = daily_log.entries.pop
-    Storage::write_log(Storage::filepath(date), daily_log)
+    Storage.write_log(Storage.filepath(date), daily_log)
     logger.info Rainbow("Removed entry: #{removed_entry.message}").green
   end
 
@@ -93,19 +93,19 @@ class WorklogCLI < Thor
   def show
     start_date, end_date = start_end_date(options)
 
-    entries = Storage::days_between(start_date, end_date)
+    entries = Storage.days_between(start_date, end_date)
     if entries.empty?
-      Printer::no_entries(start_date, end_date)
+      Printer.no_entries(start_date, end_date)
     else
       entries.each do |entry|
-        Printer::print_day(entry, entries.size > 1, options[:epics_only])
+        Printer.print_day(entry, entries.size > 1, options[:epics_only])
       end
     end
   end
 
   desc 'tags', 'Show all tags used in the work log'
   def tags
-    all_logs = Storage::all_days
+    all_logs = Storage.all_days
 
     puts Rainbow('Tags used in the work log:').gold
 
@@ -125,7 +125,7 @@ class WorklogCLI < Thor
 
   desc 'stats', 'Show statistics for the work log'
   def stats
-    stats = Statistics::calculate
+    stats = Statistics.calculate
     puts "#{format_left('Total days')}: #{stats.total_days}"
     puts "#{format_left('Total entries')}: #{stats.total_entries}"
     puts "#{format_left('Total epics')}: #{stats.total_epics}"
@@ -147,14 +147,14 @@ class WorklogCLI < Thor
   EOF
   def summary
     start_date, end_date = start_end_date(options)
-    entries = Storage::days_between(start_date, end_date).map(&:entries).flatten
+    entries = Storage.days_between(start_date, end_date).map(&:entries).flatten
 
     # Do nothing if no entries are found.
     if entries.empty?
-      Printer::no_entries(start_date, end_date)
+      Printer.no_entries(start_date, end_date)
       return
     end
-    puts Summary::generate_summary(entries)
+    puts Summary.generate_summary(entries)
   end
 
   # Define shortcuts and aliases
@@ -183,8 +183,8 @@ class WorklogCLI < Thor
       start_date = Date.today - options[:days]
       end_date = Date.today
     elsif options[:from]
-      start_date = DateParser::parse_date_string!(options[:from], true)
-      end_date = DateParser::parse_date_string!(options[:to], false) if options[:to]
+      start_date = DateParser.parse_date_string!(options[:from], true)
+      end_date = DateParser.parse_date_string!(options[:to], false) if options[:to]
     else
       start_date = Date.strptime(options[:date], '%Y-%m-%d')
       end_date = start_date

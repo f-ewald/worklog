@@ -15,6 +15,6 @@ class Hash
   # Convert all keys to strings so that the YAML file can be read from different languages
 
   def stringify_keys
-    self.map { |k, v| [k.to_s, v] }.to_h
+    map { |k, v| [k.to_s, v] }.to_h
   end
 end

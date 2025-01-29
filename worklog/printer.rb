@@ -37,11 +37,11 @@ module Printer
   def print_entry(daily_log, entry, date_inline = false)
     entry.time = DateTime.strptime(entry.time, '%H:%M:%S') unless entry.time.respond_to?(:strftime)
 
-    if date_inline
-      time_string = "#{daily_log.date.strftime('%a, %Y-%m-%d')} #{entry.time.strftime('%H:%M')}"
-    else
-      time_string = entry.time.strftime('%H:%M')
-    end
+    time_string = if date_inline
+                    "#{daily_log.date.strftime('%a, %Y-%m-%d')} #{entry.time.strftime('%H:%M')}"
+                  else
+                    entry.time.strftime('%H:%M')
+                  end
 
     puts "#{Rainbow(time_string).gold} #{entry.message_string}"
   end

@@ -13,7 +13,7 @@ module Storage
 
   # Return all days with logs
   def self.all_days
-    return [] if !folder_exists?
+    return [] unless folder_exists?
 
     logs = []
     Dir.glob(File.join(DATA_DIR, "*#{FILE_SUFFIX}")).map do |file|
@@ -26,7 +26,7 @@ module Storage
   # Return days between start_date and end_date
   # If end_date is nil, return logs from start_date to today
   def self.days_between(start_date, end_date = nil, epics_only = nil, tags_filter = nil)
-    return [] if !folder_exists?
+    return [] unless folder_exists?
 
     logs = []
     end_date = Date.today if end_date.nil?

@@ -7,7 +7,7 @@ STATS = Data.define(:total_days, :total_entries, :total_epics, :avg_entries, :fi
 
 module Statistics
   def self.calculate
-    all_entries = Storage::all_days
+    all_entries = Storage.all_days
     return STATS.new(0, 0, 0, 0, Date.today, Date.today) if all_entries.empty?
 
     total_days = all_entries.length

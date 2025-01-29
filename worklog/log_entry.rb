@@ -30,11 +30,11 @@ class LogEntry
   def message_string
     s = ''
 
-    if epic
-      s += Rainbow("[EPIC] #{@message}").bg(:white).fg(:black)
-    else
-      s += message
-    end
+    s += if epic
+           Rainbow("[EPIC] #{@message}").bg(:white).fg(:black)
+         else
+           message
+         end
 
     s += "  [#{Rainbow(@ticket).fg(:blue)}]" if @ticket
 
