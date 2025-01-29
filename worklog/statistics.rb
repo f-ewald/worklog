@@ -8,9 +8,7 @@ STATS = Data.define(:total_days, :total_entries, :total_epics, :avg_entries, :fi
 module Statistics
   def self.calculate
     all_entries = Storage::all_days
-    if all_entries.empty?
-      return STATS.new(0, 0, 0, 0, Date.today, Date.today)
-    end
+    return STATS.new(0, 0, 0, 0, Date.today, Date.today) if all_entries.empty?
 
     total_days = all_entries.length
     total_entries = all_entries.sum { |entry| entry.entries.length }
@@ -25,7 +23,7 @@ module Statistics
       total_epics,
       avg_entries,
       min_day,
-      max_day,
+      max_day
     )
   end
 end

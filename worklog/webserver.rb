@@ -23,8 +23,8 @@ class WorkLogResponse
     _ = presentation
 
     [200, {
-      "Content-Type" => "text/html",
-      "Cache-Control" => "no-cache",
+      'Content-Type' => 'text/html',
+      'Cache-Control' => 'no-cache'
     }, [template.result(binding)]]
   end
 
@@ -32,7 +32,7 @@ class WorkLogResponse
 
   # Update query by overwriting existing query params.
   def update_query(new_params)
-    uri = URI.parse("/")
+    uri = URI.parse('/')
     # cloned = existing_params.clone
     cloned = @params.clone
     new_params.each do |key, value|
@@ -43,7 +43,7 @@ class WorkLogResponse
   end
 
   def build_uri(params)
-    uri = URI.parse("/")
+    uri = URI.parse('/')
     uri.query = URI.encode_www_form(params)
     uri.to_s
   end

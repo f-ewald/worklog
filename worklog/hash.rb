@@ -5,7 +5,7 @@ module Hashify
     hash = {}
     instance_variables.each do |var|
       value = instance_variable_get(var)
-      hash[var.to_s.delete("@")] = value
+      hash[var.to_s.delete('@')] = value
     end
     hash
   end

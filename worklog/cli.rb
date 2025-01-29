@@ -32,8 +32,8 @@ class WorklogCLI < Thor
   Add a new entry with the current date and time to the work log.
   The message is required and must be enclosed in quotes if it contains more than one word.
   LONGDESC
-  option :date, type: :string, default: DateTime.now.strftime("%Y-%m-%d")
-  option :time, type: :string, default: DateTime.now.strftime("%H:%M:%S")
+  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
+  option :time, type: :string, default: DateTime.now.strftime('%H:%M:%S')
   option :tags, type: :array, default: []
   option :ticket, type: :string
   option :epic, type: :boolean, default: false
@@ -53,7 +53,7 @@ class WorklogCLI < Thor
   end
 
   desc 'remove', 'Remove last entry from the log'
-  option :date, type: :string, default: DateTime.now.strftime("%Y-%m-%d")
+  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
   def remove
     date = Date.strptime(options[:date], '%Y-%m-%d')
     unless File.exist?(Storage::filepath(date))
@@ -78,7 +78,7 @@ class WorklogCLI < Thor
   Use the --date option to specify a different date.
   Use the --from and --to options to specify a date range. Both dates are inclusive.
   LONGDESC
-  option :date, type: :string, default: DateTime.now.strftime("%Y-%m-%d")
+  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
   option :from, type: :string, desc: <<-EOF
     'Inclusive start date of the range. Takes precedence over --date if defined.'
   EOF
@@ -107,7 +107,7 @@ class WorklogCLI < Thor
   def tags
     all_logs = Storage::all_days
 
-    puts Rainbow("Tags used in the work log:").gold
+    puts Rainbow('Tags used in the work log:').gold
 
     # Count all tags used in the work log
     tags = all_logs.map(&:entries).flatten.map(&:tags).flatten.compact.tally
@@ -135,7 +135,7 @@ class WorklogCLI < Thor
   end
 
   desc 'summary', 'Generate a summary of the work log entries'
-  option :date, type: :string, default: DateTime.now.strftime("%Y-%m-%d")
+  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
   option :from, type: :string, desc: <<-EOF
     'Inclusive start date of the range. Takes precedence over --date if defined.'
   EOF

@@ -11,9 +11,7 @@ module DateParser
 
     # Try to parse basic format YYYY-MM-DD
     begin
-      if date_str.match(/^\d{4}-\d{1,2}-\d{1,2}$/)
-        return Date.strptime(date_str, '%Y-%m-%d')
-      end
+      return Date.strptime(date_str, '%Y-%m-%d') if date_str.match(/^\d{4}-\d{1,2}-\d{1,2}$/)
     rescue Date::Error
       # puts "Date not in format YYYY-MM-DD."
     end

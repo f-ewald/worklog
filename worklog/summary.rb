@@ -41,10 +41,12 @@ module Summary
     Example Output: "[Name] demonstrated outstanding performance during the review period. Key accomplishments include exceeding sales targets by 15% in Q3, implementing a new CRM system that improved customer response times by 30%, and mentoring two junior team members who achieved career advancements. These achievements highlight [Name]'s exceptional contributions to team success and organizational growth."
   INSTRUCTION
 
+  # Build the prompt from provided log entries.
   def self.build_prompt(log_entries)
     ERB.new(SUMMARY_INSTRUCTION, trim_mode: '-').result_with_hash(entries: log_entries)
   end
 
+  # Generate a summary from provided log entries.
   def self.generate_summary(log_entries)
     prompt = build_prompt(log_entries)
 
@@ -61,8 +63,10 @@ module Summary
                                headers: { 'Content-Type' => 'application/json' })
       response.parsed_response['response']
     rescue Errno::ECONNREFUSED
-      puts 'Ollama doesn\'t seem to be running. Please start the server and try again.'
-      puts 'You can download Ollama at https://ollama.com'
+      WorkLogger.error <<~MSG
+        Ollama doesn't seem to be running. Please start the server and try again.
+        puts 'You can download Ollama at https://ollama.com'
+      MSG
     end
   end
 end
