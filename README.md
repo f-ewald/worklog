@@ -13,7 +13,7 @@ Clone the application from Github in a convenient location:
 git clone git@github.com:f-ewald/worklog.git
 ```
 
-Install the application by running the following command from the root directory
+Install the application by running the following command from the root directory. This requires the Ruby version defined in the `.tool-versions` file (for ASDF) and in the `[](Gemfile)`
 
 ```shell
 bundle install
@@ -33,4 +33,8 @@ Then verify that it is saved by printing all logs from the current day:
 ./worklog.rb show
 ```
 
+To show information about all available commands run
 
+```shell
+./worklog.rb help
+```
