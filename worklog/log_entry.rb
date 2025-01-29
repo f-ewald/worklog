@@ -30,19 +30,15 @@ class LogEntry
   def message_string
     s = ''
 
-    if epic
-      s += Rainbow("[EPIC] #{@message}").bg(:white).fg(:black)
-    else
-      s += message
-    end
+    s += if epic
+           Rainbow("[EPIC] #{@message}").bg(:white).fg(:black)
+         else
+           message
+         end
 
-    if @ticket
-      s += "  [#{Rainbow(@ticket).fg(:blue)}]"
-    end
+    s += "  [#{Rainbow(@ticket).fg(:blue)}]" if @ticket
 
-    if @tags && @tags.size > 0
-      s += "  [" + @tags.map { |tag| "#{tag}" }.join(', ') + "]"
-    end
+    s += '  [' + @tags.map { |tag| "#{tag}" }.join(', ') + ']' if @tags && @tags.size > 0
 
     s
   end

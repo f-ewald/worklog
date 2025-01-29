@@ -11,9 +11,7 @@ module DateParser
 
     # Try to parse basic format YYYY-MM-DD
     begin
-      if date_str.match(/^\d{4}-\d{1,2}-\d{1,2}$/)
-        return Date.strptime(date_str, '%Y-%m-%d')
-      end
+      return Date.strptime(date_str, '%Y-%m-%d') if date_str.match(/^\d{4}-\d{1,2}-\d{1,2}$/)
     rescue Date::Error
       # puts "Date not in format YYYY-MM-DD."
     end
@@ -22,11 +20,10 @@ module DateParser
     begin
       if date_str.match(/^\d{4}-\d{1,2}$/)
         d = Date.strptime(date_str, '%Y-%m')
-        if from_beginning
-          return d
-        else
-          return Date.new(d.year, d.month, -1)
-        end
+        return d if from_beginning
+
+        return Date.new(d.year, d.month, -1)
+
       end
     rescue Date::Error
       # puts "Date not in format YYYY-MM."
@@ -35,11 +32,10 @@ module DateParser
     # Try to parse format YYYY (without Q1234)
     if date_str.match(/^\d{4}$/)
       d = Date.strptime(date_str, '%Y')
-      if from_beginning
-        return d
-      else
-        return Date.new(d.year, -1, -1)
-      end
+      return d if from_beginning
+
+      return Date.new(d.year, -1, -1)
+
     end
 
     # Long form quarter (2024-Q1, etc.)
@@ -47,24 +43,21 @@ module DateParser
     if match
       year, quarter = match.captures.map(&:to_i)
       d = Date.new(year, ((quarter - 1) * 3) + 1, 1)
-      if from_beginning
-        return d
-      else
-        return Date.new(d.year, d.month + 2, -1)
-      end
+      return d if from_beginning
+
+      return Date.new(d.year, d.month + 2, -1)
+
     end
 
     # Short form quarter
     match = date_str.match(/[qQ]([1234])/)
-    if match
-      quarter = match.captures.first.to_i
-      d = Date.new(Date.today.year, ((quarter - 1) * 3) + 1, 1)
-      if from_beginning
-        return d
-      else
-        return Date.new(d.year, d.month + 2, -1)
-      end
-    end
+    return unless match
+
+    quarter = match.captures.first.to_i
+    d = Date.new(Date.today.year, ((quarter - 1) * 3) + 1, 1)
+    return d if from_beginning
+
+    Date.new(d.year, d.month + 2, -1)
   end
 
   def self.parse_date_string!(date_str, from_beginning = true)
