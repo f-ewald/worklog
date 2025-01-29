@@ -13,11 +13,7 @@ Clone the application from Github in a convenient location:
 git clone git@github.com:f-ewald/worklog.git
 ```
 
-<<<<<<< Updated upstream
-Install the application by running the following command from the root directory
-=======
 Install the application by running the following command from the root directory. This requires the Ruby version defined in the [.tool-versions](.tool-versions) file (for ASDF) and in the [Gemfile](Gemfile.lock)
->>>>>>> Stashed changes
 
 ```shell
 bundle install
@@ -38,9 +34,6 @@ ruby cli.rb show
 ```
 
 
-<<<<<<< Updated upstream
-=======
 ```shell
 ruby cli.rb help [subcommand]
 ```
->>>>>>> Stashed changes
