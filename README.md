@@ -13,7 +13,7 @@ Clone the application from Github in a convenient location:
 git clone git@github.com:f-ewald/worklog.git
 ```
 
-Install the application by running the following command from the root directory. This requires the Ruby version defined in the `.tool-versions` file (for ASDF) and in the `[](Gemfile)`
+Install the application by running the following command from the root directory. This requires the Ruby version defined in the [](.tool-versions) file (for ASDF) and in the [](Gemfile)
 
 ```shell
 bundle install
