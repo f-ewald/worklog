@@ -38,6 +38,8 @@ class WorklogCLI < Thor
   option :ticket, type: :string
   option :epic, type: :boolean, default: false
   def add(message)
+    set_log_level
+
     date = Date.strptime(options[:date], '%Y-%m-%d')
     time = Time.strptime(options[:time], '%H:%M:%S')
     Storage.create_file_skeleton(date)
@@ -49,27 +51,29 @@ class WorklogCLI < Thor
     daily_log.entries.sort_by!(&:time)
 
     Storage.write_log(Storage.filepath(options[:date]), daily_log)
-    logger.info Rainbow("Added to the work log for #{options[:date]}").green
+    WorkLogger.info Rainbow("Added to the work log for #{options[:date]}").green
   end
 
   desc 'remove', 'Remove last entry from the log'
   option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
   def remove
+    set_log_level
+
     date = Date.strptime(options[:date], '%Y-%m-%d')
     unless File.exist?(Storage.filepath(date))
-      logger.error Rainbow("No work log found for #{options[:date]}. Aborting.").red
+      WorkLogger.error Rainbow("No work log found for #{options[:date]}. Aborting.").red
       exit 1
     end
 
     daily_log = Storage.load_log(Storage.filepath(options[:date]))
     if daily_log.entries.empty?
-      logger.error Rainbow("No entries found for #{options[:date]}. Aborting.").red
+      WorkLogger.error Rainbow("No entries found for #{options[:date]}. Aborting.").red
       exit 1
     end
 
     removed_entry = daily_log.entries.pop
     Storage.write_log(Storage.filepath(date), daily_log)
-    logger.info Rainbow("Removed entry: #{removed_entry.message}").green
+    WorkLogger.info Rainbow("Removed entry: #{removed_entry.message}").green
   end
 
   desc 'show', 'Show the work log for a specific date or a range of dates. Defaults to todays date.'
@@ -91,6 +95,8 @@ class WorklogCLI < Thor
   option :epics_only, type: :boolean, default: false
   option :tags, type: :array, default: []
   def show
+    set_log_level
+
     start_date, end_date = start_end_date(options)
 
     entries = Storage.days_between(start_date, end_date)
@@ -146,6 +152,8 @@ class WorklogCLI < Thor
     'Number of days to show starting from --date. Takes precedence over --from and --to if defined.'
   EOF
   def summary
+    set_log_level
+
     start_date, end_date = start_end_date(options)
     entries = Storage.days_between(start_date, end_date).map(&:entries).flatten
 
@@ -163,8 +171,8 @@ class WorklogCLI < Thor
   map 'serve' => :server
 
   no_commands do
-    def logger
-      @logger ||= Logger.new(STDOUT, level: Logger::Severity::INFO)
+    def set_log_level
+      WorkLogger.level = options[:verbose] ? Logger::Severity::DEBUG : Logger::Severity::INFO
     end
   end
 
