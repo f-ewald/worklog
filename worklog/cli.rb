@@ -62,7 +62,6 @@ class WorklogCLI < Thor
 
     # Load existing log
     log = Storage.load_log(Storage.filepath(date))
-    puts log
     unless log
       WorkLogger.error "No work log found for #{options[:date]}. Aborting."
       exit 1
@@ -73,7 +72,7 @@ class WorklogCLI < Thor
 
     Storage.write_log(Storage.filepath(date),
                       YAML.load(return_val, permitted_classes: [Date, Time, DailyLog, LogEntry]))
-    WorkLogger.debug("Editor returned: #{return_val}")
+    WorkLogger.info Rainbow("Updated work log for #{options[:date]}").green
   end
 
   desc 'remove', 'Remove last entry from the log'
