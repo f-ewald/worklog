@@ -59,9 +59,16 @@ class WorklogCLI < Thor
   option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
   def edit
     date = Date.strptime(options[:date], '%Y-%m-%d')
+
+    # Load existing log
     log = Storage.load_log(Storage.filepath(date))
-    entries_text = YAML.dump(log)
-    txt = EDITOR_PREAMBLE.result_with_hash(content: entries_text)
+    puts log
+    unless log
+      WorkLogger.error "No work log found for #{options[:date]}. Aborting."
+      exit 1
+    end
+
+    txt = EDITOR_PREAMBLE.result_with_hash(content: YAML.dump(log))
     return_val = Editor.open_editor(txt)
 
     Storage.write_log(Storage.filepath(date),

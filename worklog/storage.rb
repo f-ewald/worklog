@@ -64,6 +64,13 @@ module Storage
   end
 
   def self.load_log(file)
+    load_log!(file)
+  rescue Errno::ENOENT
+    WorkLogger.error "No work log found for #{file}. Aborting."
+    nil
+  end
+
+  def self.load_log!(file)
     WorkLogger.debug "Loading file #{file}"
     log = YAML.load_file(file, permitted_classes: [Date, Time, DailyLog, LogEntry])
     log.entries.each do |entry|
