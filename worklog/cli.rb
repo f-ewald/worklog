@@ -58,6 +58,8 @@ class WorklogCLI < Thor
   desc 'edit', 'Edit a specified day in the work log'
   option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
   def edit
+    set_log_level
+
     date = Date.strptime(options[:date], '%Y-%m-%d')
 
     # Load existing log
@@ -192,6 +194,7 @@ class WorklogCLI < Thor
   map 'serve' => :server
 
   no_commands do
+    # Set the log level based on the verbose option
     def set_log_level
       WorkLogger.level = options[:verbose] ? Logger::Severity::DEBUG : Logger::Severity::INFO
     end
