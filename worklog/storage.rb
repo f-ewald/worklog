@@ -25,6 +25,11 @@ module Storage
 
   # Return days between start_date and end_date
   # If end_date is nil, return logs from start_date to today
+  #
+  # @param [Date] start_date The start date, inclusive
+  # @param [Date] end_date The end date, inclusive
+  # @param [Boolean] epics_only If true, only return logs with epic entries
+  # @param [Array] tags_filter If provided, only return logs with entries that have at least one of the tags
   def self.days_between(start_date, end_date = nil, epics_only = nil, tags_filter = nil)
     return [] unless folder_exists?
 

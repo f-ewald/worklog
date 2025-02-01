@@ -16,6 +16,7 @@ require 'storage'
 require 'webserver'
 require 'worklog'
 require_relative 'summary'
+require_relative 'editor'
 
 # CLI for the work log application
 class WorklogCLI < Thor
@@ -28,9 +29,9 @@ class WorklogCLI < Thor
   end
 
   desc 'add MESSAGE', 'Add a new entry to the work log, defaults to the current date.'
-  long_desc <<-LONGDESC
-  Add a new entry with the current date and time to the work log.
-  The message is required and must be enclosed in quotes if it contains more than one word.
+  long_desc <<~LONGDESC
+    Add a new entry with the current date and time to the work log.
+    The message is required and must be enclosed in quotes if it contains more than one word.
   LONGDESC
   option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
   option :time, type: :string, default: DateTime.now.strftime('%H:%M:%S')
@@ -52,6 +53,20 @@ class WorklogCLI < Thor
 
     Storage.write_log(Storage.filepath(options[:date]), daily_log)
     WorkLogger.info Rainbow("Added to the work log for #{options[:date]}").green
+  end
+
+  desc 'edit', 'Edit a specified day in the work log'
+  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
+  def edit
+    date = Date.strptime(options[:date], '%Y-%m-%d')
+    log = Storage.load_log(Storage.filepath(date))
+    entries_text = YAML.dump(log)
+    txt = EDITOR_PREAMBLE.result_with_hash(content: entries_text)
+    return_val = Editor.open_editor(txt)
+
+    Storage.write_log(Storage.filepath(date),
+                      YAML.load(return_val, permitted_classes: [Date, Time, DailyLog, LogEntry]))
+    WorkLogger.debug("Editor returned: #{return_val}")
   end
 
   desc 'remove', 'Remove last entry from the log'
