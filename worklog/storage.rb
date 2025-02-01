@@ -4,6 +4,9 @@ require_relative 'daily_log'
 require_relative 'logger'
 
 module Storage
+  # LogNotFoundError is raised when a log file is not found
+  class LogNotFoundError < StandardError; end
+
   FILE_SUFFIX = '.yaml'
   DATA_DIR = File.join(Dir.home, '.worklog')
 
@@ -65,18 +68,22 @@ module Storage
 
   def self.load_log(file)
     load_log!(file)
-  rescue Errno::ENOENT
+  rescue LogNotFoundError
     WorkLogger.error "No work log found for #{file}. Aborting."
     nil
   end
 
   def self.load_log!(file)
     WorkLogger.debug "Loading file #{file}"
-    log = YAML.load_file(file, permitted_classes: [Date, Time, DailyLog, LogEntry])
-    log.entries.each do |entry|
-      entry.time = Time.parse(entry.time) unless entry.time.respond_to?(:strftime)
+    begin
+      log = YAML.load_file(file, permitted_classes: [Date, Time, DailyLog, LogEntry])
+      log.entries.each do |entry|
+        entry.time = Time.parse(entry.time) unless entry.time.respond_to?(:strftime)
+      end
+      log
+    rescue Errno::ENOENT
+      raise LogNotFoundError
     end
-    log
   end
 
   def self.write_log(file, daily_log)

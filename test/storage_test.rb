@@ -37,6 +37,25 @@ class StorageTest < Minitest::Test
     assert_equal loaded_log, @daily_log
   end
 
+  def test_load_log!
+    Storage::write_log(Storage::filepath(@date), @daily_log)
+    loaded_log = Storage::load_log!(Storage::filepath(@date))
+
+    assert_equal loaded_log, @daily_log
+  end
+
+  def test_load_log_not_found
+    not_found_date = Date.new(2020, 1, 2)
+    assert_nil Storage::load_log(Storage::filepath(not_found_date))
+  end
+
+  def test_load_log_not_found_with_exception
+    not_found_date = Date.new(2020, 1, 2)
+    assert_raises(Storage::LogNotFoundError) do
+      Storage.load_log!(Storage.filepath(not_found_date))
+    end
+  end
+
   def test_write_log
     Storage::write_log(Storage::filepath(@date), @daily_log)
 
