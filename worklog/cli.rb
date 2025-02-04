@@ -134,6 +134,8 @@ class WorklogCLI < Thor
 
   desc 'tags', 'Show all tags used in the work log'
   def tags
+    set_log_level
+
     all_logs = Storage.all_days
 
     puts Rainbow('Tags used in the work log:').gold
