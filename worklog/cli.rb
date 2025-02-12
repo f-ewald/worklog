@@ -37,6 +37,7 @@ class WorklogCLI < Thor
   option :time, type: :string, default: DateTime.now.strftime('%H:%M:%S')
   option :tags, type: :array, default: []
   option :ticket, type: :string
+  option :url, type: :string, desc: 'URL to associate with the entry'
   option :epic, type: :boolean, default: false
   def add(message)
     set_log_level
@@ -46,7 +47,7 @@ class WorklogCLI < Thor
     Storage.create_file_skeleton(date)
 
     daily_log = Storage.load_log(Storage.filepath(date))
-    daily_log.entries << LogEntry.new(time, options[:tags], options[:ticket], options[:epic], message)
+    daily_log.entries << LogEntry.new(time, options[:tags], options[:ticket], options[:url], options[:epic], message)
 
     # Sort by time in case an entry was added later out of order.
     daily_log.entries.sort_by!(&:time)
