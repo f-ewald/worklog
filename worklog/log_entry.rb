@@ -9,16 +9,17 @@ class LogEntry
   include Hashify
 
   # Represents a single entry in the work log.
-  attr_accessor :time, :tags, :ticket, :epic, :message
+  attr_accessor :time, :tags, :ticket, :url, :epic, :message
 
-  def initialize(time, tags, ticket, epic, message)
-    @time = time
+  def initialize(params = {})
+    @time = params[:time]
     # If tags are nil, set to empty array.
     # This is similar to the CLI default value.
-    @tags = tags || []
-    @ticket = ticket
-    @epic = epic
-    @message = message
+    @tags = params[:tags] || []
+    @ticket = params[:ticket]
+    @url = params[:url] || ''
+    @epic = params[:epic]
+    @message = params[:message]
   end
 
   # Returns true if the entry is an epic, false otherwise.
@@ -38,7 +39,11 @@ class LogEntry
 
     s += "  [#{Rainbow(@ticket).fg(:blue)}]" if @ticket
 
+    # Add tags in brackets if defined.
     s += '  [' + @tags.map { |tag| "#{tag}" }.join(', ') + ']' if @tags && @tags.size > 0
+
+    # Add URL in brackets if defined.
+    s += "  [#{@url}]" if @url && @url != ''
 
     s
   end
@@ -48,6 +53,7 @@ class LogEntry
   end
 
   def ==(other)
-    time == other.time && tags == other.tags && ticket == other.ticket && epic == other.epic && message == other.message
+    time == other.time && tags == other.tags && ticket == other.ticket && url == other.url &&
+      epic == other.epic && message == other.message
   end
 end

@@ -63,7 +63,7 @@ module Storage
   def self.create_file_skeleton(date)
     create_folder
 
-    File.write(filepath(date), YAML.dump(DailyLog.new(date, []))) unless File.exist?(filepath(date))
+    File.write(filepath(date), YAML.dump(DailyLog.new(date:, entries: []))) unless File.exist?(filepath(date))
   end
 
   def self.load_log(file)
