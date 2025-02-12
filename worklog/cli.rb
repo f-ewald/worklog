@@ -47,7 +47,7 @@ class WorklogCLI < Thor
     Storage.create_file_skeleton(date)
 
     daily_log = Storage.load_log(Storage.filepath(date))
-    daily_log.entries << LogEntry.new(time, options[:tags], options[:ticket], options[:url], options[:epic], message)
+    daily_log.entries << LogEntry.new(time: , tags: options[:tags], ticket: options[:ticket], url: options[:url], epic: options[:epic], message: )
 
     # Sort by time in case an entry was added later out of order.
     daily_log.entries.sort_by!(&:time)

@@ -6,7 +6,7 @@ require_relative '../worklog/daily_log'
 
 class DailyLogTest < Minitest::Test
   def setup
-    @log = DailyLog.new(Date.new(2021, 1, 1), [])
+    @log = DailyLog.new(date: Date.new(2021, 1, 1), entries: [])
   end
 
   def test_date
@@ -21,9 +21,9 @@ class DailyLogTest < Minitest::Test
   end
 
   def test_equality
-    log1 = DailyLog.new(Date.new(2021, 1, 1), [])
-    log2 = DailyLog.new(Date.new(2021, 1, 1), [])
-    log3 = DailyLog.new(Date.new(2021, 1, 2), [])
+    log1 = DailyLog.new(date: Date.new(2021, 1, 1), entries: [])
+    log2 = DailyLog.new(date: Date.new(2021, 1, 1), entries: [])
+    log3 = DailyLog.new(date: Date.new(2021, 1, 2), entries: [])
 
     assert_equal log1, log2
     refute_equal log1, log3

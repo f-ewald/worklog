@@ -9,9 +9,9 @@ class DailyLog
   # Represents a single day's work log.
   attr_accessor :date, :entries
 
-  def initialize(date, entries)
-    @date = date
-    @entries = entries
+  def initialize(params = {})
+    @date = params[:date]
+    @entries = params[:entries]
   end
 
   def ==(other)

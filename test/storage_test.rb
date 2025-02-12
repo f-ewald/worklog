@@ -10,7 +10,7 @@ class StorageTest < Minitest::Test
   def setup
     @date = Date.new(2020, 1, 1)
     @time = Time.new(2020, 1, 1, 10, 0, 0)
-    @daily_log = DailyLog.new(@date, [LogEntry.new(time: @time, tags: ['tag1', 'tag2'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message')])
+    @daily_log = DailyLog.new(date: @date, entries: [LogEntry.new(time: @time, tags: ['tag1', 'tag2'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message')])
 
     assert_instance_of Date, @date
     assert_instance_of Time, @time
