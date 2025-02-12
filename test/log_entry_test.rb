@@ -5,7 +5,7 @@ require_relative '../worklog/log_entry'
 
 class LogEntryTest < Minitest::Test
   def setup
-    @log_entry = LogEntry.new('10:00', ['tag1', 'tag2'], 'https://example.com/' 'ticket-123', true, 'This is a message')
+    @log_entry = LogEntry.new('10:00', ['tag1', 'tag2'], 'ticket-123', 'https://example.com/', true, 'This is a message')
   end
 
   def test_time
@@ -18,7 +18,7 @@ class LogEntryTest < Minitest::Test
 
   def test_empty_tags
     # Empty tags should be converted to an empty array.
-    assert_empty LogEntry.new('10:00', nil, 'ticket-123', true, 'This is a message').tags
+    assert_empty LogEntry.new('10:00', nil, 'ticket-123', 'https://example.com/', true, 'This is a message').tags
   end
 
   def test_ticket
@@ -39,6 +39,6 @@ class LogEntryTest < Minitest::Test
   end
 
   def test_equality
-    assert_equal LogEntry.new('10:00', ['tag1', 'tag2'], 'ticket-123', true, 'This is a message'), @log_entry
+    assert_equal LogEntry.new('10:00', ['tag1', 'tag2'], 'ticket-123', 'https://example.com/', true, 'This is a message'), @log_entry
   end
 end
