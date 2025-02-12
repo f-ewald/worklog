@@ -5,7 +5,7 @@ require_relative '../worklog/log_entry'
 
 class LogEntryTest < Minitest::Test
   def setup
-    @log_entry = LogEntry.new('10:00', ['tag1', 'tag2'], 'ticket-123', true, 'This is a message')
+    @log_entry = LogEntry.new('10:00', ['tag1', 'tag2'], 'https://example.com/' 'ticket-123', true, 'This is a message')
   end
 
   def test_time
@@ -23,6 +23,10 @@ class LogEntryTest < Minitest::Test
 
   def test_ticket
     assert_equal 'ticket-123', @log_entry.ticket
+  end
+
+  def test_url
+    assert_equal 'https://example.com/', @log_entry.url
   end
 
   def test_epic

@@ -9,7 +9,7 @@ class LogEntry
   include Hashify
 
   # Represents a single entry in the work log.
-  attr_accessor :time, :tags, :ticket, :epic, :message
+  attr_accessor :time, :tags, :ticket, :url, :epic, :message
 
   def initialize(time, tags, ticket, url, epic, message)
     @time = time
