@@ -109,6 +109,24 @@ class WorklogCLI < Thor
     WorkLogger.info Rainbow("Removed entry: #{removed_entry.message}").green
   end
 
+  desc 'search', 'Search the work log'
+  def search(query)
+    set_log_level
+    puts "Searching for: \"#{query}\""
+
+    # Split by whitespace
+    query = query.split
+
+    Storage.all_days.each do |daily_log|
+      daily_log.entries.each do |entry|
+        # Check if all words in the query are present in the message
+        Printer.print_entry(daily_log, entry, true) if query.all? do |word|
+          entry.message.downcase.include?(word.downcase)
+        end
+      end
+    end
+  end
+
   desc 'show', 'Show the work log for a specific date or a range of dates. Defaults to todays date.'
   long_desc <<~LONGDESC
     Show the work log for a specific date or a range of dates. As a default, all items from the current day will be shown.
