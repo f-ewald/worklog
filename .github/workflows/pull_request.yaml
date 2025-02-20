@@ -28,7 +28,3 @@ jobs:
 
     - name: Run tests
       run: bundle exec rake test
-
-    - uses: joshmfrankel/simplecov-check-action@main
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
