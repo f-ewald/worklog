@@ -2,6 +2,7 @@
 
 require 'date'
 require 'minitest/autorun'
+require_relative 'test_helper'
 require_relative '../worklog/daily_log'
 
 class DailyLogTest < Minitest::Test

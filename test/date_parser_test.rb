@@ -2,6 +2,7 @@
 
 require 'date'
 require 'minitest/autorun'
+require_relative 'test_helper'
 require_relative '../worklog/date_parser'
 
 class DateParserTest < Minitest::Test
@@ -40,5 +41,7 @@ class DateParserTest < Minitest::Test
     assert_nil DateParser::parse_date_string('24-10-10', true)
     assert_nil DateParser::parse_date_string('24-10-10', false)
     assert_nil DateParser::parse_date_string('2021-10-10-10')
+    assert_nil DateParser::parse_date_string(nil)
+    assert_nil DateParser::parse_date_string('')
   end
 end

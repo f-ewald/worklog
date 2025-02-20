@@ -2,6 +2,7 @@
 
 require 'json'
 require 'minitest/autorun'
+require_relative 'test_helper'
 require 'webmock/minitest'
 
 require_relative '../worklog/log_entry'
