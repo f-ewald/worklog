@@ -19,10 +19,21 @@ class StorageTest < Minitest::Test
     assert_instance_of LogEntry, @daily_log.entries.first
   end
 
+  def teardown
+    # Remove the test log file
+    Storage.delete(Storage.filepath(@date))
+  end
+
   def test_filepath
     filepath = Storage::filepath(@date)
 
     assert filepath.end_with?(".worklog/2020-01-01#{Storage::FILE_SUFFIX}")
+  end
+
+  def test_all_days
+    Storage.write_log(Storage::filepath(@date), @daily_log)
+    logs = Storage::all_days
+    assert_includes logs, @daily_log
   end
 
   def test_create_file_skeleton

@@ -1,21 +1,28 @@
 # frozen_string_literal: true
 
 require 'rainbow'
+require 'time'
 require_relative 'daily_log'
 require_relative 'logger'
 
 module Storage
   # LogNotFoundError is raised when a log file is not found
   class LogNotFoundError < StandardError; end
+  class LogLoadError < StandardError; end
 
   FILE_SUFFIX = '.yaml'
   DATA_DIR = File.join(Dir.home, '.worklog')
 
+  # Check if the data folder exists and return true if it does, false otherwise
+  #
+  # @return [Boolean] True if the data folder exists, false otherwise
   def self.folder_exists?
     Dir.exist?(DATA_DIR)
   end
 
-  # Return all days with logs
+  # Return all days with logs. If no logs exist, an empty array is returned.
+  #
+  # @return [Array] Array of DailyLog objects
   def self.all_days
     return [] unless folder_exists?
 
@@ -25,6 +32,15 @@ module Storage
     end
 
     logs
+  end
+
+  # Search for logs with a given query
+  #
+  # @param [String] query The search query
+  # @return [Array] Array of logs that match the query
+  def self.search(query)
+    # terms = query.split
+    # all_days.
   end
 
   # Return days between start_date and end_date
@@ -67,6 +83,13 @@ module Storage
     File.write(filepath(date), YAML.dump(DailyLog.new(date:, entries: []))) unless File.exist?(filepath(date))
   end
 
+  # Delete a log file at the given path
+  #
+  # @param [String] file The file to delete
+  def self.delete(file)
+    File.delete(file) if File.exist?(file)
+  end
+
   def self.load_log(file)
     load_log!(file)
   rescue LogNotFoundError
@@ -74,16 +97,25 @@ module Storage
     nil
   end
 
+  # Load log file or raise LogNotFoundError if file does not exist
+  #
+  # @param [String] file The file to load
+  # @return [DailyLog] The loaded log
+  # @raise [LogNotFoundError] If the file does not exist
   def self.load_log!(file)
     WorkLogger.debug "Loading file #{file}"
     begin
       log = YAML.load_file(file, permitted_classes: [Date, Time, DailyLog, LogEntry])
+
+      # Older logs are saved as HH:MM:SS strings, convert to Time objects
       log.entries.each do |entry|
-        entry.time = Time.parse(entry.time) unless entry.time.respond_to?(:strftime)
+        Time.strptime(entry.time, '%H:%M:%S') if entry.time.is_a?(String)
       end
       log
     rescue Errno::ENOENT
       raise LogNotFoundError
+    rescue NoMethodError
+      raise LogLoadError, "Error loading log file #{file}."
     end
   end
 
