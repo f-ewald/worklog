@@ -44,4 +44,8 @@ class DateParserTest < Minitest::Test
     assert_nil DateParser::parse_date_string(nil)
     assert_nil DateParser::parse_date_string('')
   end
+
+  def test_parse_date_string!
+    assert_equal Date.new(2021, 2, 1), DateParser::parse_date_string!('2021-02', true)
+  end
 end

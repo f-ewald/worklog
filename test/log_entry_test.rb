@@ -42,4 +42,24 @@ class LogEntryTest < Minitest::Test
   def test_equality
     assert_equal LogEntry.new(time: '10:00', tags: ['tag1', 'tag2'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message'), @log_entry
   end
+
+  def test_message_string
+    msg_string = @log_entry.message_string
+
+    assert_includes msg_string, 'This is a message'
+    assert_includes msg_string, '[EPIC]'
+    assert_includes msg_string, 'tag1'
+    assert_includes msg_string, 'tag2'
+    assert_includes msg_string, 'ticket-123'
+
+    @log_entry.epic = false
+    msg_string = @log_entry.message_string
+    assert_includes msg_string, 'This is a message'
+  end
+
+  def test_to_yaml
+    yaml = @log_entry.to_yaml
+
+    refute_nil yaml
+  end
 end
