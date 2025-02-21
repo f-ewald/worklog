@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require 'yaml'
+require 'rainbow'
 require_relative 'daily_log'
 require_relative 'hash'
-require 'yaml'
 
 # A single log entry.
 class LogEntry

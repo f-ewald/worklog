@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'rainbow'
 require_relative 'daily_log'
 require_relative 'logger'
 
