@@ -42,6 +42,9 @@ class WorklogCLI < Thor
   def add(message)
     set_log_level
 
+    # Remove leading and trailing whitespace in the variable itself
+    message.strip!
+
     date = Date.strptime(options[:date], '%Y-%m-%d')
     time = Time.strptime(options[:time], '%H:%M:%S')
     Storage.create_file_skeleton(date)
