@@ -43,7 +43,9 @@ class WorklogCLI < Thor
     set_log_level
 
     # Remove leading and trailing whitespace in the variable itself
+    # Raise an error if the message is empty
     message.strip!
+    raise ArgumentError, 'Message cannot be empty' if message.empty?
 
     date = Date.strptime(options[:date], '%Y-%m-%d')
     time = Time.strptime(options[:time], '%H:%M:%S')
