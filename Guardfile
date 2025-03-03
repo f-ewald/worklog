@@ -6,15 +6,14 @@ notification :terminal_notifier if `uname` =~ /Darwin/
 # Disable interaction from command line with Guard
 interactor :off
 
-# TODO: Fixme
-# guard :minitest do
-#   require 'guard/minitest'
+guard :minitest do
+  require 'guard/minitest'
 
-#   watch(%r{^test/(.*)\.rb$})
+  watch(%r{^test/(.*)\.rb$})
 
-#   # Execute all tests upon change of the test_helper.rb file
-#   watch(%r{^test/test_helper\.rb$}) { 'test' }
-# end
+  # Execute all tests upon change of the test_helper.rb file
+  watch(%r{^test/test_helper\.rb$}) { 'test' }
+end
 
 guard :bundler do
   require 'guard/bundler'
