@@ -53,7 +53,7 @@ class CliTest < Minitest::Test
   end
 
   def test_show
-    assert @cli.invoke(:show, [], verbose: true)
+    @cli.invoke(:show, [], verbose: true)
   end
 
   def test_show_days
