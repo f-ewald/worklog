@@ -15,6 +15,10 @@ class WorkLogger
     instance.level = level
   end
 
+  def self.level
+    instance.level
+  end
+
   def self.info(message) = instance.info(message)
   def self.warn(message) = instance.warn(message)
   def self.error(message) = instance.error(message)
