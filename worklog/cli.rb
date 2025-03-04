@@ -207,30 +207,35 @@ class WorklogCLI < Thor
     def set_log_level
       WorkLogger.level = options[:verbose] ? Logger::Severity::DEBUG : Logger::Severity::INFO
     end
-  end
 
-  private
-
-  def format_left(string)
-    format('%18s', string)
-  end
-
-  # Parse the start and end date based on the options provided
-  #
-  # @param options [Hash] the options hash
-  # @return [Array] the start and end date as an array
-  def start_end_date(options)
-    if options[:days]
-      start_date = Date.today - options[:days]
-      end_date = Date.today
-    elsif options[:from]
-      start_date = DateParser.parse_date_string!(options[:from], true)
-      end_date = DateParser.parse_date_string!(options[:to], false) if options[:to]
-    else
-      start_date = Date.strptime(options[:date], '%Y-%m-%d')
-      end_date = start_date
+    def format_left(string)
+      format('%18s', string)
     end
-    [start_date, end_date]
+
+    # Parse the start and end date based on the options provided
+    #
+    # @param options [Hash] the options hash
+    # @return [Array] the start and end date as an array
+    def start_end_date(options)
+      if options[:days]
+        # Safeguard against negative days
+        raise ArgumentError, 'Number of days cannot be negative' if options[:days].negative?
+
+        start_date = Date.today - options[:days]
+        end_date = Date.today
+      elsif options[:from]
+        start_date = DateParser.parse_date_string!(options[:from], true)
+        end_date = DateParser.parse_date_string!(options[:to], false) if options[:to]
+      else
+        start_date = Date.strptime(options[:date], '%Y-%m-%d')
+        end_date = start_date
+      end
+      [start_date, end_date]
+    end
   end
 end
-WorklogCLI.start
+
+# Start the CLI if the file is executed
+# This prevents the CLI from starting when the file is required in another file,
+# which is useful for testing.
+WorklogCLI.start if __FILE__ == $PROGRAM_NAME
