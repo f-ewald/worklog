@@ -10,10 +10,13 @@ require 'worklog'
 
 class WorkLogResponse
   def response(request)
-    template = ERB.new(File.read(File.join(File.dirname(__FILE__), 'index.html.erb')), trim_mode: '-')
+    # puts request.params
+    # puts request.path
+    # puts request
+
+    template = ERB.new(File.read(File.join(File.dirname(__FILE__), 'templates', 'index.html.erb')), trim_mode: '-')
     @params = request.params
     days = @params['days'].nil? ? 7 : @params['days'].to_i
-    # since = params['since'].nil? ? Date.today - 7 : Date.parse(params['since'])
     tags = @params['tags'].nil? ? nil : @params['tags'].split(',')
     epics_only = @params['epics_only'] == 'true'
     presentation = @params['presentation'] == 'true'
@@ -30,10 +33,8 @@ class WorkLogResponse
 
   private
 
-  # Update query by overwriting existing query params.
   def update_query(new_params)
     uri = URI.parse('/')
-    # cloned = existing_params.clone
     cloned = @params.clone
     new_params.each do |key, value|
       cloned[key] = value
@@ -49,18 +50,39 @@ class WorkLogResponse
   end
 end
 
-# Rack application.
 class WorkLogApp
   def self.call(env)
-    # Extract the request and pass to method.
     req = Rack::Request.new(env)
     WorkLogResponse.new.response(req)
   end
 end
 
+# class FaviconApp
+#   # Rack application that creates a favicon.
+
+#   def self.call(_env)
+#     content = ERB.new(File.read(File.join(File.dirname(__FILE__), 'templates', 'favicon.svg.erb')))
+#     [200, { 'Content-Type' => 'image/svg+xml', 'Cache-Control' => 'no-cache' }, [content.result]]
+#   end
+# end
+
 class WorkLogServer
-  # Start the server.
   def start
-    Rackup::Server.start app: WorkLogApp
+    app = Rack::Builder.new do
+      use Rack::CommonLogger
+      use Rack::ShowExceptions
+      use Rack::ShowStatus
+      use Rack::Deflater
+
+      map '/' do
+        run WorkLogApp
+      end
+      # TODO: Future development
+      # map '/favicon.svg' do
+      #   run FaviconApp
+      # end
+    end
+
+    Rackup::Server.start app: app
   end
 end

@@ -172,6 +172,8 @@ class WorklogCLI < Thor
 
   desc 'server', 'Start the work log server'
   def server
+    set_log_level
+
     WorkLogServer.new.start
   end
 
