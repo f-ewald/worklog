@@ -5,10 +5,12 @@ require 'erb'
 require 'rack'
 require 'rackup'
 require 'uri'
-require 'storage'
-require 'worklog'
+require_relative 'storage'
+require_relative 'worklog'
 
 class WorkLogResponse
+  # Class to render the main page of the WorkLog web application.
+
   def response(request)
     # puts request.params
     # puts request.path
@@ -67,6 +69,8 @@ end
 # end
 
 class WorkLogServer
+  # Main Rack server containing all endpoints.
+
   def start
     app = Rack::Builder.new do
       use Rack::CommonLogger
