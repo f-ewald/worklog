@@ -49,6 +49,24 @@ class LogEntry
     s
   end
 
+  def people
+    # Return people that are mentioned in the entry.
+    # People are defined as words starting with @ or ~.
+    # Whitespaces are used to separate people.
+    # Punctuation is not considered.
+    # Empty array if no people are mentioned.
+    #
+    # @return [Array<String>]
+    @message.scan(/\s[~@](\w+)/).flatten.uniq.sort
+  end
+
+  def people?
+    # Return true if there are people in the entry.
+    #
+    # @return [Boolean]
+    people.size.positive?
+  end
+
   def to_yaml
     to_hash.to_yaml
   end
