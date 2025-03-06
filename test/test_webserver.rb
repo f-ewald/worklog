@@ -15,8 +15,8 @@ class DefaultHeaderMiddlewareTest < Minitest::Test
   def test_default_headers
     status, headers, content = @middleware.call({})
     assert_equal 200, status
-    assert_equal 'text/html', headers['Content-Type']
-    assert_equal 'no-cache', headers['Cache-Control']
+    assert_equal 'text/html', headers[Rack::CONTENT_TYPE]
+    assert_equal 'no-cache', headers[Rack::CACHE_CONTROL]
     assert_equal 'Hello, World!', content[0]
   end
 end
