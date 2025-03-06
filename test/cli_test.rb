@@ -10,6 +10,10 @@ class CliTest < Minitest::Test
     @cli = WorklogCLI.new
   end
 
+  def test_exit_on_failure
+    assert WorklogCLI.exit_on_failure?
+  end
+
   def test_set_log_level
     @cli.set_log_level
     assert_equal Logger::INFO, WorkLogger.level

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Use terminal notifier on Mac OS
+# Use terminal notifier only on Mac OS
 notification :terminal_notifier if `uname` =~ /Darwin/
 
 # Disable interaction from command line with Guard
