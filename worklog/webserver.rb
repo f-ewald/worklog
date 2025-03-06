@@ -3,17 +3,34 @@
 require 'date'
 require 'erb'
 require 'rack'
+require 'rack/constants'
 require 'rackup'
 require 'uri'
-require 'storage'
-require 'worklog'
+require_relative 'storage'
+require_relative 'worklog'
+
+class DefaultHeaderMiddleware
+  # Rack middleware to add default headers to the response.
+
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    status, headers, body = @app.call(env)
+    headers[Rack::CONTENT_TYPE] ||= 'text/html'
+    headers[Rack::CACHE_CONTROL] ||= 'no-cache'
+    [status, headers, body]
+  end
+end
 
 class WorkLogResponse
+  # Class to render the main page of the WorkLog web application.
+
   def response(request)
-    template = ERB.new(File.read(File.join(File.dirname(__FILE__), 'index.html.erb')), trim_mode: '-')
+    template = ERB.new(File.read(File.join(File.dirname(__FILE__), 'templates', 'index.html.erb')), trim_mode: '-')
     @params = request.params
     days = @params['days'].nil? ? 7 : @params['days'].to_i
-    # since = params['since'].nil? ? Date.today - 7 : Date.parse(params['since'])
     tags = @params['tags'].nil? ? nil : @params['tags'].split(',')
     epics_only = @params['epics_only'] == 'true'
     presentation = @params['presentation'] == 'true'
@@ -22,18 +39,13 @@ class WorkLogResponse
     _ = total_entries
     _ = presentation
 
-    [200, {
-      'Content-Type' => 'text/html',
-      'Cache-Control' => 'no-cache'
-    }, [template.result(binding)]]
+    [200, {}, [template.result(binding)]]
   end
 
   private
 
-  # Update query by overwriting existing query params.
   def update_query(new_params)
     uri = URI.parse('/')
-    # cloned = existing_params.clone
     cloned = @params.clone
     new_params.each do |key, value|
       cloned[key] = value
@@ -49,18 +61,42 @@ class WorkLogResponse
   end
 end
 
-# Rack application.
 class WorkLogApp
   def self.call(env)
-    # Extract the request and pass to method.
     req = Rack::Request.new(env)
     WorkLogResponse.new.response(req)
   end
 end
 
+# class FaviconApp
+#   # Rack application that creates a favicon.
+
+#   def self.call(_env)
+#     content = ERB.new(File.read(File.join(File.dirname(__FILE__), 'templates', 'favicon.svg.erb')))
+#     [200, { Rack::CONTENT_TYPE => 'image/svg+xml' }, [content.result]]
+#   end
+# end
+
 class WorkLogServer
-  # Start the server.
+  # Main Rack server containing all endpoints.
+
   def start
-    Rackup::Server.start app: WorkLogApp
+    app = Rack::Builder.new do
+      use Rack::Deflater
+      use Rack::CommonLogger
+      use Rack::ShowExceptions
+      use Rack::ShowStatus
+      use DefaultHeaderMiddleware
+
+      map '/' do
+        run WorkLogApp
+      end
+      # TODO: Future development
+      # map '/favicon.svg' do
+      #   run FaviconApp
+      # end
+    end
+
+    Rackup::Server.start app: app
   end
 end
