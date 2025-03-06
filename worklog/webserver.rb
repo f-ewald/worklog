@@ -3,19 +3,31 @@
 require 'date'
 require 'erb'
 require 'rack'
+require 'rack/constants'
 require 'rackup'
 require 'uri'
 require_relative 'storage'
 require_relative 'worklog'
 
+class DefaultHeaderMiddleware
+  # Rack middleware to add default headers to the response.
+
+  def initialize(app)
+    @app = app
+  end
+
+  def call(env)
+    status, headers, body = @app.call(env)
+    headers[Rack::CONTENT_TYPE] ||= 'text/html'
+    headers[Rack::CACHE_CONTROL] ||= 'no-cache'
+    [status, headers, body]
+  end
+end
+
 class WorkLogResponse
   # Class to render the main page of the WorkLog web application.
 
   def response(request)
-    # puts request.params
-    # puts request.path
-    # puts request
-
     template = ERB.new(File.read(File.join(File.dirname(__FILE__), 'templates', 'index.html.erb')), trim_mode: '-')
     @params = request.params
     days = @params['days'].nil? ? 7 : @params['days'].to_i
@@ -27,10 +39,7 @@ class WorkLogResponse
     _ = total_entries
     _ = presentation
 
-    [200, {
-      'Content-Type' => 'text/html',
-      'Cache-Control' => 'no-cache'
-    }, [template.result(binding)]]
+    [200, {}, [template.result(binding)]]
   end
 
   private
@@ -64,7 +73,7 @@ end
 
 #   def self.call(_env)
 #     content = ERB.new(File.read(File.join(File.dirname(__FILE__), 'templates', 'favicon.svg.erb')))
-#     [200, { 'Content-Type' => 'image/svg+xml', 'Cache-Control' => 'no-cache' }, [content.result]]
+#     [200, { Rack::CONTENT_TYPE => 'image/svg+xml' }, [content.result]]
 #   end
 # end
 
@@ -73,10 +82,11 @@ class WorkLogServer
 
   def start
     app = Rack::Builder.new do
+      use Rack::Deflater
       use Rack::CommonLogger
       use Rack::ShowExceptions
       use Rack::ShowStatus
-      use Rack::Deflater
+      use DefaultHeaderMiddleware
 
       map '/' do
         run WorkLogApp
