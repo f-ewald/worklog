@@ -4,6 +4,7 @@ require 'date'
 require 'minitest/autorun'
 require_relative 'test_helper'
 require_relative '../worklog/daily_log'
+require_relative '../worklog/log_entry'
 
 class DailyLogTest < Minitest::Test
   def setup
@@ -28,5 +29,22 @@ class DailyLogTest < Minitest::Test
 
     assert_equal log1, log2
     refute_equal log1, log3
+  end
+
+  def test_people?
+    # Test that the people? method returns true when there are people in the log.
+    refute @log.people?
+  end
+
+  def test_people
+    assert_empty @log.people
+
+    @log.entries << LogEntry.new(message: "Hello, ~world!")
+    _expected = { 'world' => 1 }
+    assert_equal _expected, @log.people
+
+    @log.entries << LogEntry.new(message: "Hello, ~world! ~person2 Hello, ~world!")
+    _expected = { 'person2' => 1, 'world' => 2 }
+    assert_equal _expected, @log.people
   end
 end

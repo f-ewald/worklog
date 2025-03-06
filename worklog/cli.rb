@@ -139,6 +139,20 @@ class WorklogCLI < Thor
     end
   end
 
+  desc 'people', 'Show all people mentioned in the work log'
+  def people
+    set_log_level
+
+    puts 'People mentioned in the work log:'
+
+    mentions = {}
+    all_logs = Storage.all_days
+    all_logs.map(&:people).each do |people|
+      mentions.merge!(people) { |_key, oldval, newval| oldval + newval }
+    end
+    mentions.each { |k, v| puts "#{Rainbow(k).gold}: #{v} occurrence(s)" }
+  end
+
   desc 'tags', 'Show all tags used in the work log'
   def tags
     set_log_level

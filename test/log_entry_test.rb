@@ -57,6 +57,50 @@ class LogEntryTest < Minitest::Test
     assert_includes msg_string, 'This is a message'
   end
 
+  def test_people?
+    # Default case has no people.
+    refute @log_entry.people?
+
+    @log_entry.message = 'This is a message with a mention of ~person1'
+    assert @log_entry.people?
+  end
+
+  def test_people
+    # Default case has no people.
+    assert_empty @log_entry.people
+
+    @log_entry.message = 'This is a message with a mention of ~person1 and ~person2'
+    assert_equal %w[person1 person2], @log_entry.people
+
+    # This is not a person because the tilde is not at the start.
+    @log_entry.message = 'This is a message with a mention of~person1'
+    assert_empty @log_entry.people
+
+    # Test uniqueness.
+    @log_entry.message = 'This is a message with a mention of ~person1 and ~person1'
+    assert_equal %w[person1], @log_entry.people
+
+    # Test tilde only
+    @log_entry.message = 'This is a message with a mention of ~ and ~'
+    assert_empty @log_entry.people
+
+    # Test numbers only
+    @log_entry.message = 'This is a message with a mention of ~123 and ~456'
+    assert_equal %w[123 456], @log_entry.people
+
+    # Test punctuation
+    @log_entry.message = 'This is a message with a mention of ~person1, ~person2, and ~person3'
+    assert_equal %w[person1 person2 person3], @log_entry.people
+
+    # Test sorting
+    @log_entry.message = 'This is a message with a mention of ~person2, ~person1, and ~person3'
+    assert_equal %w[person1 person2 person3], @log_entry.people
+
+    # Test @ sign
+    @log_entry.message = 'This is a message with a mention of @person1 and @person2'
+    assert_equal %w[person1 person2], @log_entry.people
+  end
+
   def test_to_yaml
     yaml = @log_entry.to_yaml
 
