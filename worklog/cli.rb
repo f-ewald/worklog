@@ -32,13 +32,16 @@ class WorklogCLI < Thor
   long_desc <<~LONGDESC
     Add a new entry with the current date and time to the work log.
     The message is required and must be enclosed in quotes if it contains more than one word.
+
+    People can be referenced either by using the tilde "~" or the at symbol "@", followed by
+    an alphanumeric string.
   LONGDESC
-  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
-  option :time, type: :string, default: DateTime.now.strftime('%H:%M:%S')
-  option :tags, type: :array, default: []
-  option :ticket, type: :string
+  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d'), desc: 'Set the date of the entry'
+  option :time, type: :string, default: DateTime.now.strftime('%H:%M:%S'), desc: 'Set the time of the entry'
+  option :tags, type: :array, default: [], desc: 'Add tags to the entry'
+  option :ticket, type: :string, desc: 'Ticket number associated with the entry. Can be any alphanumeric string.'
   option :url, type: :string, desc: 'URL to associate with the entry'
-  option :epic, type: :boolean, default: false
+  option :epic, type: :boolean, default: false, desc: 'Mark the entry as an epic'
   def add(message)
     set_log_level
 
@@ -107,23 +110,24 @@ class WorklogCLI < Thor
   end
 
   desc 'show', 'Show the work log for a specific date or a range of dates. Defaults to todays date.'
-  long_desc <<-LONGDESC
-  Show the work log for a specific date. Defaults to todays date.
-  Use the --date option to specify a different date.
-  Use the --from and --to options to specify a date range. Both dates are inclusive.
+  long_desc <<~LONGDESC
+    Show the work log for a specific date or a range of dates. As a default, all items from the current day will be shown.
   LONGDESC
-  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
-  option :from, type: :string, desc: <<-EOF
-    'Inclusive start date of the range. Takes precedence over --date if defined.'
+  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d'),
+                desc: <<~DESC
+                  Show the work log for a specific date. If this option is provided, --from and --to and --days should not be used.
+                DESC
+  option :from, type: :string, desc: <<~EOF
+    Inclusive start date of the range. Takes precedence over --date, if defined.
   EOF
-  option :to, type: :string, desc: <<-EOF
-    'Inclusive end date of the range. Takes precedence over --date if defined.'
+  option :to, type: :string, desc: <<~EOF
+    Inclusive end date of the range. Takes precedence over --date, if defined.
   EOF
-  option :days, type: :numeric, desc: <<-EOF
-    'Number of days to show starting from --date. Takes precedence over --from and --to if defined.'
+  option :days, type: :numeric, desc: <<~EOF
+    Number of days to show starting from --date. Takes precedence over --from and --to if defined.
   EOF
-  option :epics_only, type: :boolean, default: false
-  option :tags, type: :array, default: []
+  option :epics_only, type: :boolean, default: false, desc: 'Show only entries that are marked as epic'
+  option :tags, type: :array, default: [], desc: 'Filter entries by tags. Tags are treated as an OR condition.'
   def show
     set_log_level
 
@@ -219,12 +223,16 @@ class WorklogCLI < Thor
   map 'serve' => :server
 
   no_commands do
-    # Set the log level based on the verbose option
     def set_log_level
+      # Set the log level based on the verbose option
       WorkLogger.level = options[:verbose] ? Logger::Severity::DEBUG : Logger::Severity::INFO
     end
 
     def format_left(string)
+      # Format a string to be left-aligned in a fixed-width field
+      #
+      # @param string [String] the string to format
+      # @return [String] the formatted string
       format('%18s', string)
     end
 

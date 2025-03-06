@@ -21,6 +21,10 @@ module Printer
   end
 
   def self.no_entries(start_date, end_date)
+    # Print a message when no entries are found.
+    # @param start_date [Date]
+    # @param end_date [Date]
+    # @return [void]
     if start_date == end_date
       date_string = start_date.strftime('%a, %B %-d, %Y')
       puts "No entries found for #{Rainbow(date_string).gold}."
