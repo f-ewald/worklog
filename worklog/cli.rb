@@ -223,12 +223,16 @@ class WorklogCLI < Thor
   map 'serve' => :server
 
   no_commands do
-    # Set the log level based on the verbose option
     def set_log_level
+      # Set the log level based on the verbose option
       WorkLogger.level = options[:verbose] ? Logger::Severity::DEBUG : Logger::Severity::INFO
     end
 
     def format_left(string)
+      # Format a string to be left-aligned in a fixed-width field
+      #
+      # @param string [String] the string to format
+      # @return [String] the formatted string
       format('%18s', string)
     end
 
