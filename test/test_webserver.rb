@@ -3,6 +3,27 @@
 require 'minitest/autorun'
 require_relative '../worklog/webserver'
 
+# class TemplateHelpersTest < Minitest::Test
+#   def setup
+#     @helpers = Object.new
+#     def @helpers.params
+#       {}
+#     end
+#     @helpers.extend(TemplateHelpers)
+#   end
+
+#   def test_update_query
+#     assert @helpers.params.is_a? Hash
+#     uri = @helpers.update_query({ days: 7 })
+#     assert_equal '/?days=7', uri.to_s
+#   end
+
+#   def test_build_uri
+#     uri = @helpers.build_uri({ 'days' => 7 })
+#     assert_equal '/?days=7', uri
+#   end
+# end
+
 class WorkLogResponseTest < Minitest::Test
   def setup
     @response = WorkLogResponse.new
