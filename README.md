@@ -1,5 +1,7 @@
 # Worklog
 
+The documentation is hosted on [Github Pages](https://f-ewald.github.io/worklog).
+
 Track your work right in your terminal and prepare for performance reviews.
 
 This application stores all data in human-readable [YAML](https://yaml.org) files.
@@ -34,7 +36,7 @@ bundle install
 To add an entry with todays date and the current time, run the following command:
 
 ```shell
-./cli.rb add "This is an example"
+./cli.rb add "This is an example" --tags tag1,tag2,tag3 --epic --url "http://example.com" --ticket WL-123
 ```
 
 Then verify that it is saved by printing all logs from the current day:
@@ -59,6 +61,12 @@ Show all used tags:
 
 ```shell
 ./cli.rb tags
+```
+
+Create an AI summary (experimental). Requires [Ollama](https://www.ollama.com) with `llama3.2`:
+
+```shell
+./cli.rb summary
 ```
 
 
