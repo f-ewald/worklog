@@ -79,7 +79,7 @@ class WorklogCLI < Thor
       exit 1
     end
 
-    txt = EDITOR_PREAMBLE.result_with_hash(content: YAML.dump(log))
+    txt = Editor::EDITOR_PREAMBLE.result_with_hash(content: YAML.dump(log))
     return_val = Editor.open_editor(txt)
 
     Storage.write_log(Storage.filepath(date),
