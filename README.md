@@ -34,28 +34,34 @@ bundle install
 To add an entry with todays date and the current time, run the following command:
 
 ```shell
-ruby cli.rb add "This is an example"
+./cli.rb add "This is an example"
 ```
 
 Then verify that it is saved by printing all logs from the current day:
 
 ```shell
-ruby cli.rb show
+./cli.rb show
 ```
 
 To show all the people you interacted with, type:
 
 ```shell
-ruby cli.rb people
+./cli.rb people
 ```
 
 Run a basic webserver on port 9292 via:
 
 ```shell
-ruby cli.rb serve
+./cli.rb serve
+```
+
+Show all used tags:
+
+```shell
+./cli.rb tags
 ```
 
 
 ```shell
-ruby cli.rb help [subcommand]
+./cli.rb help [subcommand]
 ```

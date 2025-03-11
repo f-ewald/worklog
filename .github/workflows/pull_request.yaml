@@ -20,16 +20,14 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.4.1'
-
     - name: Install dependencies
       run: bundle install
-
     - name: Run Rubocop linter
       run: bundle exec rake rubocop
-
     - name: Run tests
       run: bundle exec rake test
-
+    - name: Generate Documentation
+      run: bundle exec yard
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:
