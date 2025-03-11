@@ -5,7 +5,10 @@ require 'storage'
 
 STATS = Data.define(:total_days, :total_entries, :total_epics, :avg_entries, :first_entry, :last_entry)
 
+# Module for calculating statistics for the work log.
 module Statistics
+  # Calculate statistics for the work log for all days.
+  # @return [STATS]
   def self.calculate
     all_entries = Storage.all_days
     return STATS.new(0, 0, 0, 0, Date.today, Date.today) if all_entries.empty?
