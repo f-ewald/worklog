@@ -17,9 +17,11 @@ require 'webserver'
 require 'worklog'
 require_relative 'summary'
 require_relative 'editor'
+require_relative 'string_helper'
 
 # CLI for the work log application
 class WorklogCLI < Thor
+  include StringHelper
   class_option :verbose, type: :boolean, aliases: '-v', desc: 'Enable verbose output'
 
   package_name 'Worklog'
@@ -154,7 +156,7 @@ class WorklogCLI < Thor
     all_logs.map(&:people).each do |people|
       mentions.merge!(people) { |_key, oldval, newval| oldval + newval }
     end
-    mentions.each { |k, v| puts "#{Rainbow(k).gold}: #{v} occurrence(s)" }
+    mentions.each { |k, v| puts "#{Rainbow(k).gold}: #{v} #{pluralize(v, 'occurrence')}" }
   end
 
   desc 'tags', 'Show all tags used in the work log'
@@ -171,7 +173,7 @@ class WorklogCLI < Thor
     # Determine length of longest tag for formatting
     max_len = tags.keys.map(&:length).max
 
-    tags.each { |k, v| puts "#{Rainbow(k.ljust(max_len)).gold}: #{v} occurrence(s)" }
+    tags.each { |k, v| puts "#{Rainbow(k.ljust(max_len)).gold}: #{v} #{pluralize(v, 'occurrence')}" }
   end
 
   desc 'server', 'Start the work log server'

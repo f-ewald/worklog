@@ -3,12 +3,14 @@
 
 # Helpers for String manipulation
 module StringHelper
-  # Pluralize a word based on a count
+  # Pluralize a word based on a count. If the plural form is irregular, it can be provided.
+  # Otherwise, it will be generated automatically.
+  #
   # @param count [Integer] the count to base the pluralization on
   # @param singular [String] the singular form of the word
   # @param plural [String] the plural form of the word, if it is irregular. Otherwise it will be generated.
   # @return [String] the pluralized word
-  def self.pluralize(count, singular, plural = nil)
+  def pluralize(count, singular, plural = nil)
     if count == 1
       singular
     else
