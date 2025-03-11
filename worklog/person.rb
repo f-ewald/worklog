@@ -1,10 +1,12 @@
 # frozen_string_literal: true
+# typed: true
 
 # Represents a person at work.
 class Person
-  attr_reader :name, :email, :team, :notes
+  attr_reader :handle, :name, :email, :team, :notes
 
-  def initialize(name, email, team, notes = [])
+  def initialize(handle, name, email, team, notes = [])
+    @handle = handle
     @name = name
     @email = email
     @team = team
@@ -12,6 +14,6 @@ class Person
   end
 
   def to_s
-    "#{name} <#{email}>"
+    "#{name} (~#{handle}) <#{email}>"
   end
 end
