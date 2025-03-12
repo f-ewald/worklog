@@ -54,6 +54,7 @@ jobs:
       - run: git config user.name "$GITHUB_ACTOR"
       - run: export OLD_VERSION=$(ruby -e "require_relative('worklog/version'); puts current_version")
       - run: export NEW_VERSION=$(ruby -e "require_relative('worklog/version'); puts increment_version(current_version)")
+      - run: env
       - run: echo "${OLD_VERSION} -> ${NEW_VERSION}"
       - run: git tag ${NEW_VERSION}
       - run: git push "https://$GITHUB_ACTOR:${{ secrets.ACCESS_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --follow-tags
