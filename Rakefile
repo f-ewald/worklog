@@ -2,6 +2,7 @@
 
 require 'minitest/test_task'
 require 'rubocop/rake_task'
+require 'yard'
 
 RuboCop::RakeTask.new
 
@@ -11,4 +12,9 @@ task default: :test
 
 task :package do
   puts 'Packaging the application for distribution'
+end
+
+YARD::Rake::YardocTask.new do |t|
+  t.files = ['worklog/**/*.rb']
+  t.options = ['--title Worklog']
 end
