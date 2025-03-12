@@ -59,9 +59,9 @@ jobs:
       - name: Update version
         uses: test-room-7/action-update-file@v1
         with:
-            file-path: .version
-            commit-msg: [skip ci] Update resources
-            github-token: ${{ secrets.GITHUB_TOKEN }}
+          file-path: .version
+          commit-msg: [skip ci] Update resources
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       # - run: git tag ${NEW_VERSION}
       # - run: git push "https://$GITHUB_ACTOR:${{ secrets.ACCESS_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --follow-tags
       # - run: git push "https://$GITHUB_ACTOR:${{ secrets.ACCESS_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --tags
