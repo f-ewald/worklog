@@ -42,6 +42,7 @@ jobs:
         path: code-coverage-results.md
   "Increment-Version":
     runs-on: ubuntu-latest
+    permissions: write-all
     env:
       CI: true
     steps:
