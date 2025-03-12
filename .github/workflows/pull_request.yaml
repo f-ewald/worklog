@@ -40,7 +40,7 @@ jobs:
       with:
         recreate: true
         path: code-coverage-results.md
-  "Increment Version":
+  "Increment-Version":
     runs-on: ubuntu-latest
     env:
       CI: true
