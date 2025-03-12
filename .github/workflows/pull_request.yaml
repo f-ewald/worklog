@@ -56,17 +56,12 @@ jobs:
       - run: echo NEW_VERSION=$(ruby -e "require_relative('worklog/version'); puts increment_version(current_version)") >> $GITHUB_ENV
       - run: echo "${OLD_VERSION} -> ${NEW_VERSION}"
       - run: echo ${NEW_VERSION} > .version
-      - run: cat .version
-      - run: git branch
-      - run: git add .version
-      - run: git commit -m "[skip ci] Bump version to ${NEW_VERSION}"
-      # - run: git push
-      # - name: Update resources
-      #         uses: test-room-7/action-update-file@v1
-      #         with:
-      #             file-path: path/to/file
-      #             commit-msg: Update resources
-      #             github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update version
+              uses: test-room-7/action-update-file@v1
+              with:
+                  file-path: .version
+                  commit-msg: [skip ci] Update resources
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
       # - run: git tag ${NEW_VERSION}
       # - run: git push "https://$GITHUB_ACTOR:${{ secrets.ACCESS_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --follow-tags
       # - run: git push "https://$GITHUB_ACTOR:${{ secrets.ACCESS_TOKEN }}@github.com/$GITHUB_REPOSITORY.git" --tags
