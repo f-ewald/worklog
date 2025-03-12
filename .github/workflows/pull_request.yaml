@@ -46,4 +46,4 @@ jobs:
       - name: Setup GPR
         uses: fac/ruby-gem-setup-credentials-action@v2
         with:
-          token: ${{ secrets.github_token }}
+          token: ${{ secrets.RUBYGEMS_API_KEY }}
