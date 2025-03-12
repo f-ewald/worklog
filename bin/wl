@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# This is the main entry point for the worklog CLI.
+
+if ENV['WL_PATH']
+  # Import the worklog CLI from the path specified in the WL_PATH environment variable
+  # This is used during development to avoid having to rely on the order of the $PATH.
+  require_relative File.join(ENV['WL_PATH'], 'worklog', 'cli')
+else
+  require_relative '../worklog/cli'
+end
+
+WorklogCLI.start
