@@ -52,9 +52,5 @@ jobs:
       - name: "Build Gem"
         run: gem build
       - name: Setup Rubygems credentials
-        uses: fac/ruby-gem-setup-credentials-action@v2
-        with:
-          token: ${{ secrets.RUBYGEMS_API_KEY }}
-      - uses: fac/ruby-gem-push-action@v2
-        with:
-          key: github
+        run: echo "${{ secrets.RUBYGEMS_API_KEY }}" > ~/.gem/credentials
+      - run: gem push
