@@ -1,5 +1,7 @@
 # Worklog
 
+[![Gem Version](https://badge.fury.io/rb/fewald-worklog.svg)](https://badge.fury.io/rb/fewald-worklog)
+
 The documentation, including this readme, is hosted on [Github Pages](https://f-ewald.github.io/worklog).
 
 **Worklog** is a command line interface (CLI) to track your achievements right from your terminal.
