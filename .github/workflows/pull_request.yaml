@@ -40,10 +40,3 @@ jobs:
       with:
         recreate: true
         path: code-coverage-results.md
-  gem:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup GPR
-        uses: fac/ruby-gem-setup-credentials-action@v2
-        with:
-          token: ${{ secrets.RUBYGEMS_API_KEY }}
