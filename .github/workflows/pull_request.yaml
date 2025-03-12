@@ -57,9 +57,10 @@ jobs:
       - run: echo "${OLD_VERSION} -> ${NEW_VERSION}"
       - run: echo ${NEW_VERSION} > .version
       - run: cat .version
+      - run: git branch
       - run: git add .version
       - run: git commit -m "[skip ci] Bump version to ${NEW_VERSION}"
-      - run: git push
+      # - run: git push
       # - name: Update resources
       #         uses: test-room-7/action-update-file@v1
       #         with:
