@@ -26,3 +26,29 @@ jobs:
       with:
         path: doc/
     - uses: actions/deploy-pages@v4
+  "Increment-Version":
+    runs-on: ubuntu-latest
+    permissions: write-all
+    env:
+      CI: true
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4.1'
+      - run: git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+      - run: git config user.name "$GITHUB_ACTOR"
+      - run: echo OLD_VERSION=$(ruby -e "require_relative('worklog/version'); puts current_version") >> $GITHUB_ENV
+      - run: echo NEW_VERSION=$(ruby -e "require_relative('worklog/version'); puts increment_version(current_version)") >> $GITHUB_ENV
+      - run: echo "${OLD_VERSION} -> ${NEW_VERSION}"
+      - run: echo ${NEW_VERSION} > .version
+      - name: Update version
+        uses: test-room-7/action-update-file@v1
+        with:
+          file-path: .version
+          commit-msg: "[skip ci] Update resources"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Build Gem"
+        run: gem build
+
