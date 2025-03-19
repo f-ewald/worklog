@@ -3,6 +3,7 @@
 require 'rainbow'
 require_relative 'daily_log'
 require_relative 'logger'
+require_relative 'person'
 
 module Storage
   # LogNotFoundError is raised when a log file is not found
@@ -16,11 +17,14 @@ module Storage
   end
 
   # Return all days with logs
+  # @return [Array<DailyLog>] List of logs
   def self.all_days
     return [] unless folder_exists?
 
     logs = []
     Dir.glob(File.join(DATA_DIR, "*#{FILE_SUFFIX}")).map do |file|
+      next if file.end_with?('people.yaml')
+
       logs << load_log(file)
     end
 
@@ -44,7 +48,7 @@ module Storage
 
     while start_date <= end_date
       if File.exist?(filepath(start_date))
-        tmp_logs = load_log(filepath(start_date))
+        tmp_logs = load_log!(filepath(start_date))
         tmp_logs.entries.keep_if { |entry| entry.epic? } if epics_only
 
         if tags_filter
@@ -61,6 +65,7 @@ module Storage
   end
 
   # Create file for a new day if it does not exist
+  # @param [Date] date The date, used as the file name.
   def self.create_file_skeleton(date)
     create_folder
 
@@ -98,9 +103,29 @@ module Storage
   end
 
   def self.load_single_log_file(file, headline = true)
-    daily_log = load_log(file)
+    daily_log = load_log!(file)
     puts "Work log for #{Rainbow(daily_log.date).gold}:" if headline
     daily_log.entries
+  end
+
+  # Load all people from the people file
+  # @return [Array<Person>] List of people
+  def self.load_people!
+    people_file = File.join(DATA_DIR, 'people.yaml')
+    return [] unless File.exist?(people_file)
+
+    YAML.load_file(people_file, permitted_classes: [Person])
+  end
+
+  # Write people to the people file
+  # @param [Array<Person>] people List of people
+  def self.write_people!(people)
+    create_folder
+
+    people_file = File.join(DATA_DIR, 'people.yaml')
+    File.open(people_file, 'w') do |f|
+      f.puts people.to_yaml
+    end
   end
 
   private
@@ -110,8 +135,10 @@ module Storage
     Dir.mkdir(DATA_DIR) unless Dir.exist?(DATA_DIR)
   end
 
+  # Construct filepath for a given date.
+  # @param [Date] date The date
+  # @return [String] The filepath
   def filepath(date)
-    # Construct filepath for a given date.
     File.join(DATA_DIR, "#{date}#{FILE_SUFFIX}")
   end
 

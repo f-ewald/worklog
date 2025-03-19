@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# typed: true
 
 # Represents a person at work.
 class Person

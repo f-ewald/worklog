@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # frozen_string_literal: true
 
 # Add the current directory to the load path
@@ -9,12 +8,12 @@ require 'thor'
 require 'date'
 require 'logger'
 
+require_relative 'worklog'
 require 'date_parser'
 require 'printer'
 require 'statistics'
 require 'storage'
 require 'webserver'
-require 'worklog'
 require_relative 'summary'
 require_relative 'editor'
 require_relative 'string_helper'
@@ -56,7 +55,7 @@ class WorklogCLI < Thor
     time = Time.strptime(options[:time], '%H:%M:%S')
     Storage.create_file_skeleton(date)
 
-    daily_log = Storage.load_log(Storage.filepath(date))
+    daily_log = Storage.load_log!(Storage.filepath(date))
     daily_log.entries << LogEntry.new(time:, tags: options[:tags], ticket: options[:ticket], url: options[:url],
                                       epic: options[:epic], message:)
 
@@ -64,7 +63,8 @@ class WorklogCLI < Thor
     daily_log.entries.sort_by!(&:time)
 
     Storage.write_log(Storage.filepath(options[:date]), daily_log)
-    WorkLogger.info Rainbow("Added to the work log for #{options[:date]}").green
+
+    WorkLogger.info Rainbow("Added entry on #{options[:date]}: #{message}").green
   end
 
   desc 'edit', 'Edit a specified day in the work log'
@@ -100,7 +100,7 @@ class WorklogCLI < Thor
       exit 1
     end
 
-    daily_log = Storage.load_log(Storage.filepath(options[:date]))
+    daily_log = Storage.load_log!(Storage.filepath(options[:date]))
     if daily_log.entries.empty?
       WorkLogger.error Rainbow("No entries found for #{options[:date]}. Aborting.").red
       exit 1
@@ -260,8 +260,3 @@ class WorklogCLI < Thor
     end
   end
 end
-
-# Start the CLI if the file is executed
-# This prevents the CLI from starting when the file is required in another file,
-# which is useful for testing.
-WorklogCLI.start if __FILE__ == $PROGRAM_NAME

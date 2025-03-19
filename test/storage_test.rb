@@ -19,9 +19,18 @@ class StorageTest < Minitest::Test
     assert_instance_of LogEntry, @daily_log.entries.first
   end
 
+  def test_all_days
+    all_days = Storage.all_days
+    refute_empty all_days
+
+    all_days.each do |daily_log|
+      assert_instance_of DailyLog, daily_log
+    end
+  end
+
   def test_filepath
     filepath = Storage::filepath(@date)
-
+    assert_instance_of String, filepath
     assert filepath.end_with?(".worklog/2020-01-01#{Storage::FILE_SUFFIX}")
   end
 
@@ -61,5 +70,14 @@ class StorageTest < Minitest::Test
     Storage::write_log(Storage::filepath(@date), @daily_log)
 
     assert_equal @daily_log, Storage::load_log(Storage::filepath(@date))
+  end
+
+  def test_load_people
+    people = Storage.load_people!
+    assert_empty people
+  end
+
+  def test_write_people
+    Storage.write_people!([])
   end
 end

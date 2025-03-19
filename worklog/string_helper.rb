@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# typed: true
 
 # Helpers for String manipulation
 module StringHelper
