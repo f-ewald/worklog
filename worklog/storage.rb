@@ -16,6 +16,7 @@ module Storage
   end
 
   # Return all days with logs
+  # @return [Array<DailyLog>] List of logs
   def self.all_days
     return [] unless folder_exists?
 
@@ -103,6 +104,26 @@ module Storage
     daily_log.entries
   end
 
+  # Load all people from the people file
+  # @return [Array<Person>] List of people
+  def self.load_people!
+    people_file = File.join(DATA_DIR, 'people.yaml')
+    return [] unless File.exist?(people_file)
+
+    YAML.load_file(people_file, permitted_classes: [Person])
+  end
+
+  # Write people to the people file
+  # @param [Array<Person>] people List of people
+  def self.write_people!(people)
+    create_folder
+
+    people_file = File.join(DATA_DIR, 'people.yaml')
+    File.open(people_file, 'w') do |f|
+      f.puts people.to_yaml
+    end
+  end
+
   private
 
   # Create folder if not exists already.
@@ -110,8 +131,10 @@ module Storage
     Dir.mkdir(DATA_DIR) unless Dir.exist?(DATA_DIR)
   end
 
+  # Construct filepath for a given date.
+  # @param [Date] date The date
+  # @return [String] The filepath
   def filepath(date)
-    # Construct filepath for a given date.
     File.join(DATA_DIR, "#{date}#{FILE_SUFFIX}")
   end
 

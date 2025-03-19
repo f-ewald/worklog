@@ -64,7 +64,8 @@ class WorklogCLI < Thor
     daily_log.entries.sort_by!(&:time)
 
     Storage.write_log(Storage.filepath(options[:date]), daily_log)
-    WorkLogger.info Rainbow("Added to the work log for #{options[:date]}").green
+
+    WorkLogger.info Rainbow("Added entry on #{options[:date]}: #{message}").green
   end
 
   desc 'edit', 'Edit a specified day in the work log'
@@ -260,8 +261,3 @@ class WorklogCLI < Thor
     end
   end
 end
-
-# Start the CLI if the file is executed
-# This prevents the CLI from starting when the file is required in another file,
-# which is useful for testing.
-WorklogCLI.start if __FILE__ == $PROGRAM_NAME
