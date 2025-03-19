@@ -3,6 +3,7 @@
 require 'rainbow'
 require_relative 'daily_log'
 require_relative 'logger'
+require_relative 'person'
 
 module Storage
   # LogNotFoundError is raised when a log file is not found
@@ -22,6 +23,8 @@ module Storage
 
     logs = []
     Dir.glob(File.join(DATA_DIR, "*#{FILE_SUFFIX}")).map do |file|
+      next if file.end_with?('people.yaml')
+
       logs << load_log(file)
     end
 
@@ -45,7 +48,7 @@ module Storage
 
     while start_date <= end_date
       if File.exist?(filepath(start_date))
-        tmp_logs = load_log(filepath(start_date))
+        tmp_logs = load_log!(filepath(start_date))
         tmp_logs.entries.keep_if { |entry| entry.epic? } if epics_only
 
         if tags_filter
@@ -62,6 +65,7 @@ module Storage
   end
 
   # Create file for a new day if it does not exist
+  # @param [Date] date The date, used as the file name.
   def self.create_file_skeleton(date)
     create_folder
 
@@ -99,7 +103,7 @@ module Storage
   end
 
   def self.load_single_log_file(file, headline = true)
-    daily_log = load_log(file)
+    daily_log = load_log!(file)
     puts "Work log for #{Rainbow(daily_log.date).gold}:" if headline
     daily_log.entries
   end
