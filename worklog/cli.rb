@@ -17,6 +17,7 @@ require 'webserver'
 require_relative 'summary'
 require_relative 'editor'
 require_relative 'string_helper'
+require_relative 'version'
 
 # CLI for the work log application
 class WorklogCLI < Thor
@@ -217,6 +218,11 @@ class WorklogCLI < Thor
       return
     end
     puts Summary.generate_summary(entries)
+  end
+
+  desc 'version', 'Show the version of the Worklog'
+  def version
+    puts "Worklog #{current_version} running on Ruby #{RUBY_VERSION}"
   end
 
   # Define shortcuts and aliases
