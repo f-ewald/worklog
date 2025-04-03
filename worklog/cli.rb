@@ -186,6 +186,8 @@ class WorklogCLI < Thor
 
   desc 'stats', 'Show statistics for the work log'
   def stats
+    set_log_level
+
     stats = Statistics.calculate
     puts "#{format_left('Total days')}: #{stats.total_days}"
     puts "#{format_left('Total entries')}: #{stats.total_entries}"
@@ -222,6 +224,8 @@ class WorklogCLI < Thor
 
   desc 'version', 'Show the version of the Worklog'
   def version
+    set_log_level
+
     puts "Worklog #{current_version} running on Ruby #{RUBY_VERSION}"
   end
 
