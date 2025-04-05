@@ -172,7 +172,8 @@ class WorklogCLI < Thor
     tags = all_logs.map(&:entries).flatten.map(&:tags).flatten.compact.tally
 
     # Determine length of longest tag for formatting
-    max_len = tags.keys.map(&:length).max
+    # Add one additonal space for formatting
+    max_len = tags.keys.map(&:length).max + 1
 
     tags.sort.each { |k, v| puts "#{Rainbow(k.ljust(max_len)).gold}: #{v} #{pluralize(v, 'occurrence')}" }
   end
