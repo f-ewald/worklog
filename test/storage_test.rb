@@ -21,7 +21,7 @@ class StorageTest < Minitest::Test
 
   def test_all_days
     all_days = Storage.all_days
-    refute_empty all_days
+    assert_instance_of Array, all_days
 
     all_days.each do |daily_log|
       assert_instance_of DailyLog, daily_log

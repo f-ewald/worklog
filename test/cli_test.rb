@@ -71,4 +71,8 @@ class CliTest < Minitest::Test
   def test_stats
     @cli.invoke(:stats, [], verbose: true)
   end
+
+  def test_tags
+    @cli.invoke(:tags, [], verbose: true)
+  end
 end
