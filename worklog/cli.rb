@@ -174,7 +174,7 @@ class WorklogCLI < Thor
     # Determine length of longest tag for formatting
     max_len = tags.keys.map(&:length).max
 
-    tags.each { |k, v| puts "#{Rainbow(k.ljust(max_len)).gold}: #{v} #{pluralize(v, 'occurrence')}" }
+    tags.sort.each { |k, v| puts "#{Rainbow(k.ljust(max_len)).gold}: #{v} #{pluralize(v, 'occurrence')}" }
   end
 
   desc 'server', 'Start the work log server'
