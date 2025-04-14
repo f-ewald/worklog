@@ -47,6 +47,8 @@ module Summary
   end
 
   # Generate a summary from provided log entries.
+  # @param log_entries [Array<LogEntry>] The log entries to summarize.
+  # @return [String] The generated summary.
   def self.generate_summary(log_entries)
     prompt = build_prompt(log_entries)
 

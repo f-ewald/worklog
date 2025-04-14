@@ -24,8 +24,11 @@ class DefaultHeaderMiddleware
   end
 end
 
+# Class to render the main page of the WorkLog web application.
 class WorkLogResponse
-  # Class to render the main page of the WorkLog web application.
+  def initialize(storage)
+    @storage = storage
+  end
 
   def response(request)
     template = ERB.new(File.read(File.join(File.dirname(__FILE__), 'templates', 'index.html.erb')), trim_mode: '-')
@@ -34,7 +37,7 @@ class WorkLogResponse
     tags = @params['tags'].nil? ? nil : @params['tags'].split(',')
     epics_only = @params['epics_only'] == 'true'
     presentation = @params['presentation'] == 'true'
-    logs = Storage.days_between(Date.today - days, Date.today, epics_only, tags).reverse
+    logs = @storage.days_between(Date.today - days, Date.today, epics_only, tags).reverse
     total_entries = logs.sum { |entry| entry.entries.length }
     _ = total_entries
     _ = presentation
@@ -62,9 +65,13 @@ class WorkLogResponse
 end
 
 class WorkLogApp
-  def self.call(env)
+  def initialize(storage)
+    @storage = storage
+  end
+
+  def call(env)
     req = Rack::Request.new(env)
-    WorkLogResponse.new.response(req)
+    WorkLogResponse.new(@storage).response(req)
   end
 end
 
@@ -79,8 +86,12 @@ end
 
 class WorkLogServer
   # Main Rack server containing all endpoints.
+  def initialize(worklog_app)
+    @worklog_app = worklog_app
+  end
 
   def start
+    worklog_app = @worklog_app
     app = Rack::Builder.new do
       use Rack::Deflater
       use Rack::CommonLogger
@@ -89,7 +100,7 @@ class WorkLogServer
       use DefaultHeaderMiddleware
 
       map '/' do
-        run WorkLogApp
+        run worklog_app
       end
       # TODO: Future development
       # map '/favicon.svg' do

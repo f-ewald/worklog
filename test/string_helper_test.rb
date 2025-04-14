@@ -27,4 +27,11 @@ class StringHelperTest < Minitest::Test
     assert_equal 'peach', @helper.pluralize(1, 'peach')
     assert_equal 'peaches', @helper.pluralize(2, 'peach')
   end
+
+  def test_format_left
+    assert_equal '              test', @helper.format_left('test')
+    assert_equal '                  ', @helper.format_left('')
+    assert_equal '123456789012345678', @helper.format_left('123456789012345678')
+    assert_equal '1234567890123456789', @helper.format_left('1234567890123456789')
+  end
 end

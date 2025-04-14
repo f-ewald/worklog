@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'minitest/autorun'
+require_relative '../worklog/configuration'
+require_relative '../worklog/storage'
 require_relative '../worklog/webserver'
 
 class DefaultHeaderMiddlewareTest < Minitest::Test
@@ -10,6 +12,11 @@ class DefaultHeaderMiddlewareTest < Minitest::Test
       [200, {}, ['Hello, World!']]
     end
     @middleware = DefaultHeaderMiddleware.new(@app)
+
+    config = Configuration.new do |cfg|
+      cfg.storage_path = File.join(Dir.tmpdir, 'worklog_test')
+    end
+    @storage = Storage.new(config)
   end
 
   def test_default_headers
@@ -44,7 +51,11 @@ end
 
 class WorkLogResponseTest < Minitest::Test
   def setup
-    @response = WorkLogResponse.new
+    config = Configuration.new do |cfg|
+      cfg.storage_path = File.join(Dir.tmpdir, 'worklog_test')
+    end
+    @storage = Storage.new(config)
+    @response = WorkLogResponse.new @storage
   end
 
   def test_nil_response
@@ -55,6 +66,8 @@ class WorkLogResponseTest < Minitest::Test
   end
 
   def test_basic_response
+    refute_nil @response
+
     params = Minitest::Mock.new.expect(:params, {})
     code, headers, content = @response.response(params)
     assert_equal 200, code

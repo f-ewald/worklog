@@ -7,6 +7,8 @@ require_relative 'hash'
 
 # A single log entry.
 class LogEntry
+  PERSON_REGEX = /\s[~@](\w+)/
+
   include Hashify
 
   # Represents a single entry in the work log.
@@ -29,13 +31,27 @@ class LogEntry
   end
 
   # Returns the message string with formatting without the time.
-  def message_string
+  # @param people Hash[String, Person] A hash of people with their handles as keys.
+  def message_string(known_people = nil)
+    # replace all mentions of people with their names.
+    msg = @message.dup
+    people.each do |person|
+      next unless known_people && known_people[person]
+
+      msg.gsub!(PERSON_REGEX) do |match|
+        s = ''
+        s += ' ' if match[0] == ' '
+        s += "#{Rainbow(known_people[person].name).underline} (~#{person})" if known_people && known_people[person]
+        s
+      end
+    end
+
     s = ''
 
     s += if epic
-           Rainbow("[EPIC] #{@message}").bg(:white).fg(:black)
+           Rainbow("[EPIC] #{msg}").bg(:white).fg(:black)
          else
-           message
+           msg
          end
 
     s += "  [#{Rainbow(@ticket).fg(:blue)}]" if @ticket
@@ -57,7 +73,7 @@ class LogEntry
     # Empty array if no people are mentioned.
     #
     # @return [Array<String>]
-    @message.scan(/\s[~@](\w+)/).flatten.uniq.sort
+    @message.scan(PERSON_REGEX).flatten.uniq.sort
   end
 
   def people?
