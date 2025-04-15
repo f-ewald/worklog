@@ -24,4 +24,12 @@ module StringHelper
       "#{singular}s"
     end
   end
+
+  # Format a string to be left-aligned in a fixed-width field
+  #
+  # @param string [String] the string to format
+  # @return [String] the formatted string
+  def format_left(string)
+    format('%18s', string)
+  end
 end

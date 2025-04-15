@@ -10,21 +10,31 @@ require 'logger'
 
 require_relative 'worklog'
 require 'date_parser'
-require 'printer'
-require 'statistics'
-require 'storage'
-require 'webserver'
-require_relative 'summary'
+require_relative 'configuration'
 require_relative 'editor'
+require_relative 'printer'
+require_relative 'statistics'
+require_relative 'storage'
 require_relative 'string_helper'
+require_relative 'summary'
 require_relative 'version'
+require_relative 'webserver'
 
 # CLI for the work log application
 class WorklogCLI < Thor
+  attr_accessor :config, :storage
+
   include StringHelper
   class_option :verbose, type: :boolean, aliases: '-v', desc: 'Enable verbose output'
 
   package_name 'Worklog'
+
+  # Initialize the CLI with the given arguments, options, and configuration
+  def initialize(args = [], options = {}, config = {})
+    @config = load_configuration
+    @storage = Storage.new(@config)
+    super
+  end
 
   def self.exit_on_failure?
     true
@@ -45,71 +55,22 @@ class WorklogCLI < Thor
   option :url, type: :string, desc: 'URL to associate with the entry'
   option :epic, type: :boolean, default: false, desc: 'Mark the entry as an epic'
   def add(message)
-    set_log_level
-
-    # Remove leading and trailing whitespaces
-    # Raise an error if the message is empty
-    message = message.strip
-    raise ArgumentError, 'Message cannot be empty' if message.empty?
-
-    date = Date.strptime(options[:date], '%Y-%m-%d')
-    time = Time.strptime(options[:time], '%H:%M:%S')
-    Storage.create_file_skeleton(date)
-
-    daily_log = Storage.load_log!(Storage.filepath(date))
-    daily_log.entries << LogEntry.new(time:, tags: options[:tags], ticket: options[:ticket], url: options[:url],
-                                      epic: options[:epic], message:)
-
-    # Sort by time in case an entry was added later out of order.
-    daily_log.entries.sort_by!(&:time)
-
-    Storage.write_log(Storage.filepath(options[:date]), daily_log)
-
-    WorkLogger.info Rainbow("Added entry on #{options[:date]}: #{message}").green
+    worklog = Worklog.new
+    worklog.add(message, options)
   end
 
-  desc 'edit', 'Edit a specified day in the work log'
+  desc 'edit', 'Edit a day in the work log. By default, the current date is used.'
   option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
   def edit
-    set_log_level
-
-    date = Date.strptime(options[:date], '%Y-%m-%d')
-
-    # Load existing log
-    log = Storage.load_log(Storage.filepath(date))
-    unless log
-      WorkLogger.error "No work log found for #{options[:date]}. Aborting."
-      exit 1
-    end
-
-    txt = Editor::EDITOR_PREAMBLE.result_with_hash(content: YAML.dump(log))
-    return_val = Editor.open_editor(txt)
-
-    Storage.write_log(Storage.filepath(date),
-                      YAML.load(return_val, permitted_classes: [Date, Time, DailyLog, LogEntry]))
-    WorkLogger.info Rainbow("Updated work log for #{options[:date]}").green
+    worklog = Worklog.new
+    worklog.edit(options)
   end
 
   desc 'remove', 'Remove last entry from the log'
   option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
   def remove
-    set_log_level
-
-    date = Date.strptime(options[:date], '%Y-%m-%d')
-    unless File.exist?(Storage.filepath(date))
-      WorkLogger.error Rainbow("No work log found for #{options[:date]}. Aborting.").red
-      exit 1
-    end
-
-    daily_log = Storage.load_log!(Storage.filepath(options[:date]))
-    if daily_log.entries.empty?
-      WorkLogger.error Rainbow("No entries found for #{options[:date]}. Aborting.").red
-      exit 1
-    end
-
-    removed_entry = daily_log.entries.pop
-    Storage.write_log(Storage.filepath(date), daily_log)
-    WorkLogger.info Rainbow("Removed entry: #{removed_entry.message}").green
+    worklog = Worklog.new
+    worklog.remove(options)
   end
 
   desc 'show', 'Show the work log for a specific date or a range of dates. Defaults to todays date.'
@@ -132,70 +93,32 @@ class WorklogCLI < Thor
   option :epics_only, type: :boolean, default: false, desc: 'Show only entries that are marked as epic'
   option :tags, type: :array, default: [], desc: 'Filter entries by tags. Tags are treated as an OR condition.'
   def show
-    set_log_level
-
-    start_date, end_date = start_end_date(options)
-
-    entries = Storage.days_between(start_date, end_date)
-    if entries.empty?
-      Printer.no_entries(start_date, end_date)
-    else
-      entries.each do |entry|
-        Printer.print_day(entry, entries.size > 1, options[:epics_only])
-      end
-    end
+    worklog = Worklog.new
+    worklog.show(options)
   end
 
   desc 'people', 'Show all people mentioned in the work log'
   def people
-    set_log_level
-
-    puts 'People mentioned in the work log:'
-
-    mentions = {}
-    all_logs = Storage.all_days
-    all_logs.map(&:people).each do |people|
-      mentions.merge!(people) { |_key, oldval, newval| oldval + newval }
-    end
-    mentions.each { |k, v| puts "#{Rainbow(k).gold}: #{v} #{pluralize(v, 'occurrence')}" }
+    worklog = Worklog.new
+    worklog.people(options)
   end
 
   desc 'tags', 'Show all tags used in the work log'
   def tags
-    set_log_level
-
-    all_logs = Storage.all_days
-
-    puts Rainbow('Tags used in the work log:').gold
-
-    # Count all tags used in the work log
-    tags = all_logs.map(&:entries).flatten.map(&:tags).flatten.compact.tally
-
-    # Determine length of longest tag for formatting
-    # Add one additonal space for formatting
-    max_len = tags.empty? ? 0 : tags.keys.map(&:length).max + 1
-
-    tags.sort.each { |k, v| puts "#{Rainbow(k.ljust(max_len)).gold}: #{v} #{pluralize(v, 'occurrence')}" }
+    worklog = Worklog.new
+    worklog.tags(options)
   end
 
   desc 'server', 'Start the work log server'
   def server
-    set_log_level
-
-    WorkLogServer.new.start
+    app = WorkLogApp.new(@storage)
+    WorkLogServer.new(app).start
   end
 
   desc 'stats', 'Show statistics for the work log'
   def stats
-    set_log_level
-
-    stats = Statistics.calculate
-    puts "#{format_left('Total days')}: #{stats.total_days}"
-    puts "#{format_left('Total entries')}: #{stats.total_entries}"
-    puts "#{format_left('Total epics')}: #{stats.total_epics}"
-    puts "#{format_left('Entries per day')}: #{'%.2f' % stats.avg_entries}"
-    puts "#{format_left('First entry')}: #{stats.first_entry}"
-    puts "#{format_left('Last entry')}: #{stats.last_entry}"
+    worklog = Worklog.new
+    worklog.stats(options)
   end
 
   desc 'summary', 'Generate a summary of the work log entries'
@@ -210,23 +133,12 @@ class WorklogCLI < Thor
     'Number of days to show starting from --date. Takes precedence over --from and --to if defined.'
   EOF
   def summary
-    set_log_level
-
-    start_date, end_date = start_end_date(options)
-    entries = Storage.days_between(start_date, end_date).map(&:entries).flatten
-
-    # Do nothing if no entries are found.
-    if entries.empty?
-      Printer.no_entries(start_date, end_date)
-      return
-    end
-    puts Summary.generate_summary(entries)
+    worklog = Worklog.new
+    worklog.summary(options)
   end
 
   desc 'version', 'Show the version of the Worklog'
   def version
-    set_log_level
-
     puts "Worklog #{current_version} running on Ruby #{RUBY_VERSION}"
   end
 
@@ -234,40 +146,4 @@ class WorklogCLI < Thor
   map 'a' => :add
   map 'statistics' => :stats
   map 'serve' => :server
-
-  no_commands do
-    def set_log_level
-      # Set the log level based on the verbose option
-      WorkLogger.level = options[:verbose] ? Logger::Severity::DEBUG : Logger::Severity::INFO
-    end
-
-    def format_left(string)
-      # Format a string to be left-aligned in a fixed-width field
-      #
-      # @param string [String] the string to format
-      # @return [String] the formatted string
-      format('%18s', string)
-    end
-
-    # Parse the start and end date based on the options provided
-    #
-    # @param options [Hash] the options hash
-    # @return [Array] the start and end date as an array
-    def start_end_date(options)
-      if options[:days]
-        # Safeguard against negative days
-        raise ArgumentError, 'Number of days cannot be negative' if options[:days].negative?
-
-        start_date = Date.today - options[:days]
-        end_date = Date.today
-      elsif options[:from]
-        start_date = DateParser.parse_date_string!(options[:from], true)
-        end_date = DateParser.parse_date_string!(options[:to], false) if options[:to]
-      else
-        start_date = Date.strptime(options[:date], '%Y-%m-%d')
-        end_date = start_date
-      end
-      [start_date, end_date]
-    end
-  end
 end

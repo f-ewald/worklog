@@ -3,6 +3,7 @@
 require 'date'
 require 'minitest/autorun'
 require_relative 'test_helper'
+require_relative '../worklog/configuration'
 require_relative '../worklog/worklog'
 require_relative '../worklog/storage'
 require_relative '../worklog/log_entry'
@@ -17,10 +18,15 @@ class StorageTest < Minitest::Test
     assert_instance_of Time, @time
     assert_instance_of DailyLog, @daily_log
     assert_instance_of LogEntry, @daily_log.entries.first
+
+    configuration = Configuration.new do |cfg|
+      cfg.storage_path = File.join(Dir.tmpdir, 'worklog_test')
+    end
+    @storage = Storage.new(configuration)
   end
 
   def test_all_days
-    all_days = Storage.all_days
+    all_days = @storage.all_days
     assert_instance_of Array, all_days
 
     all_days.each do |daily_log|
@@ -29,55 +35,55 @@ class StorageTest < Minitest::Test
   end
 
   def test_filepath
-    filepath = Storage::filepath(@date)
+    filepath = @storage.filepath(@date)
     assert_instance_of String, filepath
-    assert filepath.end_with?(".worklog/2020-01-01#{Storage::FILE_SUFFIX}")
+    assert filepath.end_with?("/2020-01-01#{Storage::FILE_SUFFIX}")
   end
 
   def test_create_file_skeleton
-    Storage::create_file_skeleton(@date)
+    @storage.create_file_skeleton(@date)
 
-    assert_path_exists Storage::filepath(@date)
+    assert_path_exists @storage.filepath(@date)
   end
 
   def test_load_log
-    Storage::write_log(Storage::filepath(@date), @daily_log)
-    loaded_log = Storage::load_log(Storage::filepath(@date))
+    @storage.write_log(@storage.filepath(@date), @daily_log)
+    loaded_log = @storage.load_log(@storage.filepath(@date))
 
     assert_equal loaded_log, @daily_log
   end
 
   def test_load_log!
-    Storage::write_log(Storage::filepath(@date), @daily_log)
-    loaded_log = Storage::load_log!(Storage::filepath(@date))
+    @storage.write_log(@storage.filepath(@date), @daily_log)
+    loaded_log = @storage.load_log!(@storage.filepath(@date))
 
     assert_equal loaded_log, @daily_log
   end
 
   def test_load_log_not_found
     not_found_date = Date.new(2020, 1, 2)
-    assert_nil Storage::load_log(Storage::filepath(not_found_date))
+    assert_nil @storage.load_log(@storage.filepath(not_found_date))
   end
 
   def test_load_log_not_found_with_exception
     not_found_date = Date.new(2020, 1, 2)
     assert_raises(Storage::LogNotFoundError) do
-      Storage.load_log!(Storage.filepath(not_found_date))
+      @storage.load_log!(@storage.filepath(not_found_date))
     end
   end
 
   def test_write_log
-    Storage::write_log(Storage::filepath(@date), @daily_log)
+    @storage.write_log(@storage.filepath(@date), @daily_log)
 
-    assert_equal @daily_log, Storage::load_log(Storage::filepath(@date))
+    assert_equal @daily_log, @storage.load_log(@storage.filepath(@date))
   end
 
   def test_load_people
-    people = Storage.load_people!
+    people = @storage.load_people!
     assert_empty people
   end
 
   def test_write_people
-    Storage.write_people!([])
+    @storage.write_people!([])
   end
 end

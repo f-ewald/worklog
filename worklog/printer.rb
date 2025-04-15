@@ -3,11 +3,17 @@
 require 'rainbow'
 
 # Printer for work log entries
-module Printer
+class Printer
+  attr_reader :people
+
+  def initialize(people = nil)
+    @people = (people || []).to_h { |person| [person.handle, person] }
+  end
+
   # Prints a whole day of work log entries.
   # If date_inline is true, the date is printed inline with the time.
   # If epics_only is true, only epic entries are printed.
-  def self.print_day(daily_log, date_inline = false, epics_only = false)
+  def print_day(daily_log, date_inline = false, epics_only = false)
     daily_log.date = Date.strptime(daily_log.date, '%Y-%m-%d') unless daily_log.date.respond_to?(:strftime)
 
     date_string = daily_log.date.strftime('%a, %B %-d, %Y')
@@ -24,7 +30,7 @@ module Printer
   # @param start_date [Date]
   # @param end_date [Date]
   # @return [void]
-  def self.no_entries(start_date, end_date)
+  def no_entries(start_date, end_date)
     if start_date == end_date
       date_string = start_date.strftime('%a, %B %-d, %Y')
       puts "No entries found for #{Rainbow(date_string).gold}."
@@ -35,9 +41,10 @@ module Printer
     end
   end
 
-  private
-
   # Prints a single entry, formats the date and time.
+  # @param daily_log [DailyLog]
+  # @param entry [LogEntry]
+  # @param date_inline [Boolean] If true, the date is printed inline with the time.
   def print_entry(daily_log, entry, date_inline = false)
     entry.time = DateTime.strptime(entry.time, '%H:%M:%S') unless entry.time.respond_to?(:strftime)
 
@@ -47,8 +54,6 @@ module Printer
                     entry.time.strftime('%H:%M')
                   end
 
-    puts "#{Rainbow(time_string).gold} #{entry.message_string}"
+    puts "#{Rainbow(time_string).gold} #{entry.message_string(@people)}"
   end
-
-  module_function :print_entry
 end

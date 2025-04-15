@@ -2,27 +2,32 @@
 
 require 'rainbow'
 require_relative 'daily_log'
+require_relative 'log_entry'
 require_relative 'logger'
 require_relative 'person'
 
-module Storage
+class Storage
   # LogNotFoundError is raised when a log file is not found
   class LogNotFoundError < StandardError; end
 
   FILE_SUFFIX = '.yaml'
   DATA_DIR = File.join(Dir.home, '.worklog')
 
-  def self.folder_exists?
-    Dir.exist?(DATA_DIR)
+  def initialize(config)
+    @config = config
+  end
+
+  def folder_exists?
+    Dir.exist?(@config.storage_path)
   end
 
   # Return all days with logs
   # @return [Array<DailyLog>] List of logs
-  def self.all_days
+  def all_days
     return [] unless folder_exists?
 
     logs = []
-    Dir.glob(File.join(DATA_DIR, "*#{FILE_SUFFIX}")).map do |file|
+    Dir.glob(File.join(@config.storage_path, "*#{FILE_SUFFIX}")).map do |file|
       next if file.end_with?('people.yaml')
 
       logs << load_log(file)
@@ -37,8 +42,8 @@ module Storage
   # @param [Date] start_date The start date, inclusive
   # @param [Date] end_date The end date, inclusive
   # @param [Boolean] epics_only If true, only return logs with epic entries
-  # @param [Array] tags_filter If provided, only return logs with entries that have at least one of the tags
-  def self.days_between(start_date, end_date = nil, epics_only = nil, tags_filter = nil)
+  # @param [Array<String>] tags_filter If provided, only return logs with entries that have at least one of the tags
+  def days_between(start_date, end_date = nil, epics_only = nil, tags_filter = nil)
     return [] unless folder_exists?
 
     logs = []
@@ -66,20 +71,20 @@ module Storage
 
   # Create file for a new day if it does not exist
   # @param [Date] date The date, used as the file name.
-  def self.create_file_skeleton(date)
+  def create_file_skeleton(date)
     create_folder
 
     File.write(filepath(date), YAML.dump(DailyLog.new(date:, entries: []))) unless File.exist?(filepath(date))
   end
 
-  def self.load_log(file)
+  def load_log(file)
     load_log!(file)
   rescue LogNotFoundError
     WorkLogger.error "No work log found for #{file}. Aborting."
     nil
   end
 
-  def self.load_log!(file)
+  def load_log!(file)
     WorkLogger.debug "Loading file #{file}"
     begin
       log = YAML.load_file(file, permitted_classes: [Date, Time, DailyLog, LogEntry])
@@ -92,7 +97,7 @@ module Storage
     end
   end
 
-  def self.write_log(file, daily_log)
+  def write_log(file, daily_log)
     create_folder
 
     WorkLogger.debug "Writing to file #{file}"
@@ -102,7 +107,7 @@ module Storage
     end
   end
 
-  def self.load_single_log_file(file, headline = true)
+  def load_single_log_file(file, headline = true)
     daily_log = load_log!(file)
     puts "Work log for #{Rainbow(daily_log.date).gold}:" if headline
     daily_log.entries
@@ -110,7 +115,7 @@ module Storage
 
   # Load all people from the people file
   # @return [Array<Person>] List of people
-  def self.load_people!
+  def load_people!
     people_file = File.join(DATA_DIR, 'people.yaml')
     return [] unless File.exist?(people_file)
 
@@ -119,28 +124,24 @@ module Storage
 
   # Write people to the people file
   # @param [Array<Person>] people List of people
-  def self.write_people!(people)
+  def write_people!(people)
     create_folder
 
-    people_file = File.join(DATA_DIR, 'people.yaml')
+    people_file = File.join(@config.storage_path, 'people.yaml')
     File.open(people_file, 'w') do |f|
       f.puts people.to_yaml
     end
   end
 
-  private
-
   # Create folder if not exists already.
   def create_folder
-    Dir.mkdir(DATA_DIR) unless Dir.exist?(DATA_DIR)
+    Dir.mkdir(@config.storage_path) unless Dir.exist?(@config.storage_path)
   end
 
   # Construct filepath for a given date.
   # @param [Date] date The date
   # @return [String] The filepath
   def filepath(date)
-    File.join(DATA_DIR, "#{date}#{FILE_SUFFIX}")
+    File.join(@config.storage_path, "#{date}#{FILE_SUFFIX}")
   end
-
-  module_function :create_folder, :filepath
 end
