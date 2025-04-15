@@ -116,7 +116,7 @@ class Worklog
     puts "#{format_left('Total days')}: #{stats.total_days}"
     puts "#{format_left('Total entries')}: #{stats.total_entries}"
     puts "#{format_left('Total epics')}: #{stats.total_epics}"
-    puts "#{format_left('Entries per day')}: #{'%.2f' % stats.avg_entries}"
+    puts "#{format_left('Entries per day')}: #{format('%.2f', stats.avg_entries)}"
     puts "#{format_left('First entry')}: #{stats.first_entry}"
     puts "#{format_left('Last entry')}: #{stats.last_entry}"
   end
