@@ -18,14 +18,15 @@ end
 
 def load_configuration
   # TODO: Implement loading configuration from a file
-  if File.exist?(File.join(Dir.home, '.worklog.yaml'))
-    file_cfg = YAML.load_file(File.join(Dir.home, '.worklog.yaml'))
+  file_path = File.join(Dir.home, '.worklog.yaml')
+  if File.exist?(file_path)
+    file_cfg = YAML.load_file(file_path)
     Configuration.new do |cfg|
       cfg.storage_path = file_cfg['storage_path'] if file_cfg['storage_path']
       cfg.log_level = file_cfg['log_level'].to_sym if file_cfg['log_level']
       cfg.webserver_port = file_cfg['webserver_port'] if file_cfg['webserver_port']
     end
   else
-    puts 'File does not exist'
+    puts "Configuration file does not exist in #{file_path}"
   end
 end
