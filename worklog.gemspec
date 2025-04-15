@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'httparty', '~> 0.22.0'
   spec.add_dependency 'logger', '~> 1.6'
+  spec.add_dependency 'puma', '~> 6.6'
   spec.add_dependency 'rack', '~> 3.1'
   spec.add_dependency 'rackup', '~> 2.2'
   spec.add_dependency 'rainbow', '~> 3.1'
