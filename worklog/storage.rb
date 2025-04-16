@@ -11,7 +11,6 @@ class Storage
   class LogNotFoundError < StandardError; end
 
   FILE_SUFFIX = '.yaml'
-  DATA_DIR = File.join(Dir.home, '.worklog')
 
   def initialize(config)
     @config = config
@@ -116,7 +115,7 @@ class Storage
   # Load all people from the people file
   # @return [Array<Person>] List of people
   def load_people!
-    people_file = File.join(DATA_DIR, 'people.yaml')
+    people_file = File.join(@config.storage_path, 'people.yaml')
     return [] unless File.exist?(people_file)
 
     YAML.load_file(people_file, permitted_classes: [Person])
