@@ -15,6 +15,7 @@ group :development do
   gem 'guard', '~> 2.19'
   gem 'guard-bundler', '~> 3.0'
   gem 'guard-minitest', '~> 2.4'
+  gem 'guard-rubocop', '~> 1.5'
   gem 'minitest', '~> 5.25'
   gem 'puma', '~> 6.6'
   gem 'rake', '~> 13.2'
