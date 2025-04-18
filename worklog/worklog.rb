@@ -90,10 +90,21 @@ class Worklog
 
     mentions = {}
     all_logs = @storage.all_days
+    all_people = @storage.load_people
+    people_map = all_people.to_h { |person| [person.handle, person] }
+
     all_logs.map(&:people).each do |people|
       mentions.merge!(people) { |_key, oldval, newval| oldval + newval }
     end
-    mentions.each { |k, v| puts "#{Rainbow(k).gold}: #{v} #{pluralize(v, 'occurrence')}" }
+
+    mentions.each do |handle, v|
+      if people_map.key?(handle)
+        print "#{Rainbow(people_map[handle].name).gold} (#{handle})"
+      else
+        print handle
+      end
+      puts ": #{v} #{pluralize(v, 'occurrence')}"
+    end
   end
 
   def tags(_options = {})

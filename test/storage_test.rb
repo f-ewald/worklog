@@ -5,6 +5,7 @@ require 'minitest/autorun'
 require_relative 'test_helper'
 require_relative '../worklog/configuration'
 require_relative '../worklog/worklog'
+require_relative '../worklog/person'
 require_relative '../worklog/storage'
 require_relative '../worklog/log_entry'
 
@@ -23,6 +24,10 @@ class StorageTest < Minitest::Test
       cfg.storage_path = File.join(Dir.tmpdir, 'worklog_test')
     end
     @storage = Storage.new(configuration)
+
+    @person_alex = Person.new('alex', 'Alex Test', 'alext@example.com', 'Team A', ['Note 1'])
+    @person_laura = Person.new('laura', 'Laura Test', 'laurat@example.com', 'Team B', ['Note 2'])
+    @storage.write_people!([@person_alex, @person_laura])
   end
 
   def test_all_days
@@ -80,10 +85,6 @@ class StorageTest < Minitest::Test
 
   def test_load_people
     people = @storage.load_people!
-    assert_empty people
-  end
-
-  def test_write_people
-    @storage.write_people!([])
+    assert_equal [@person_alex, @person_laura], people
   end
 end

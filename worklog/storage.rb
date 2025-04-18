@@ -112,6 +112,13 @@ class Storage
     daily_log.entries
   end
 
+  def load_people
+    load_people!
+  rescue Errno::ENOENT
+    WorkLogger.info 'Unable to load people.'
+    []
+  end
+
   # Load all people from the people file
   # @return [Array<Person>] List of people
   def load_people!
