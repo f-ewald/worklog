@@ -15,4 +15,10 @@ class Person
   def to_s
     "#{name} (~#{handle}) <#{email}>"
   end
+
+  def ==(other)
+    return false unless other.is_a?(Person)
+
+    handle == other.handle && name == other.name && email == other.email && team == other.team && notes == other.notes
+  end
 end
