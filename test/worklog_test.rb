@@ -28,6 +28,10 @@ class WorklogTest < Minitest::Test
     @worklog.people
   end
 
+  def test_people_interaction
+    @worklog.people('person1')
+  end
+
   def test_tags
     @worklog.tags
   end

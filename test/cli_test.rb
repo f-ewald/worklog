@@ -59,4 +59,8 @@ class CliTest < Minitest::Test
   def test_tags
     @cli.invoke(:tags, [], verbose: true)
   end
+
+  def test_people
+    @cli.invoke(:people, [], verbose: true)
+  end
 end
