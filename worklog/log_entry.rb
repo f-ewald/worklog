@@ -38,7 +38,7 @@ class LogEntry
     people.each do |person|
       next unless known_people && known_people[person]
 
-      msg.gsub!(PERSON_REGEX) do |match|
+      msg.gsub!(/[~@]#{person}/) do |match|
         s = ''
         s += ' ' if match[0] == ' '
         s += "#{Rainbow(known_people[person].name).underline} (~#{person})" if known_people && known_people[person]
