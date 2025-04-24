@@ -3,6 +3,7 @@
 require 'minitest/autorun'
 require_relative 'test_helper'
 require_relative '../worklog/log_entry'
+require_relative '../worklog/person'
 
 class LogEntryTest < Minitest::Test
   def setup
@@ -55,6 +56,17 @@ class LogEntryTest < Minitest::Test
     @log_entry.epic = false
     msg_string = @log_entry.message_string
     assert_includes msg_string, 'This is a message'
+  end
+
+  def test_message_string_replace_people
+    known_people = {
+      'person1' => Person.new('person1', 'Person One', '', 'Team A'),
+      'person2' => Person.new('person2', 'Person Two', '', 'Team A')
+    }
+    msg_string = LogEntry.new(message: 'This is a message with a mention of ~person1 and ~person2').message_string(known_people)
+    refute_nil msg_string
+    assert_includes msg_string, 'Person One'
+    assert_includes msg_string, 'Person Two'
   end
 
   def test_people?
