@@ -6,6 +6,8 @@ require 'rainbow'
 class Printer
   attr_reader :people
 
+  # Initializes the printer with a list of people.
+  # @param people [Array<Person>] An array of Person objects.
   def initialize(people = nil)
     @people = (people || []).to_h { |person| [person.handle, person] }
   end

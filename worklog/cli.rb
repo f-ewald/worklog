@@ -98,9 +98,9 @@ class WorklogCLI < Thor
   end
 
   desc 'people', 'Show all people mentioned in the work log'
-  def people
+  def people(person = nil)
     worklog = Worklog.new
-    worklog.people(options)
+    worklog.people(person, options)
   end
 
   desc 'tags', 'Show all tags used in the work log'

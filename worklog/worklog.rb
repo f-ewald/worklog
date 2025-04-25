@@ -85,25 +85,42 @@ class Worklog
     end
   end
 
-  def people(_options = {})
-    puts 'People mentioned in the work log:'
-
-    mentions = {}
+  def people(person = nil, _options = {})
+    all_people = @storage.load_people!
+    people_map = all_people.to_h { |p| [p.handle, p] }
     all_logs = @storage.all_days
-    all_people = @storage.load_people
-    people_map = all_people.to_h { |person| [person.handle, person] }
 
-    all_logs.map(&:people).each do |people|
-      mentions.merge!(people) { |_key, oldval, newval| oldval + newval }
-    end
-
-    mentions.each do |handle, v|
-      if people_map.key?(handle)
-        print "#{Rainbow(people_map[handle].name).gold} (#{handle})"
-      else
-        print handle
+    if person
+      person = person.strip
+      unless people_map.key?(person)
+        WorkLogger.error Rainbow("No person found with handle #{person}.").red
+        return
       end
-      puts ": #{v} #{pluralize(v, 'occurrence')}"
+
+      printer = Printer.new(all_people)
+      puts "All interactions with #{Rainbow(person).gold}:"
+      all_logs.each do |daily_log|
+        daily_log.entries.each do |entry|
+          printer.print_entry(daily_log, entry, true) if entry.people.include?(person)
+        end
+      end
+    else
+      puts 'People mentioned in the work log:'
+
+      mentions = {}
+
+      all_logs.map(&:people).each do |people|
+        mentions.merge!(people) { |_key, oldval, newval| oldval + newval }
+      end
+
+      mentions.each do |handle, v|
+        if people_map.key?(handle)
+          print "#{Rainbow(people_map[handle].name).gold} (#{handle})"
+        else
+          print handle
+        end
+        puts ": #{v} #{pluralize(v, 'occurrence')}"
+      end
     end
   end
 
