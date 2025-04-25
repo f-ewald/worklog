@@ -105,7 +105,6 @@ class Worklog
         end
       end
     else
-      # TODO: filter one person if person is provided
       puts 'People mentioned in the work log:'
 
       mentions = {}
