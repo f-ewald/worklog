@@ -13,6 +13,8 @@ class Person
   end
 
   def to_s
+    return "#{name} (~#{handle})" if @email.nil?
+
     "#{name} (~#{handle}) <#{email}>"
   end
 

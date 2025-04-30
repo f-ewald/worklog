@@ -91,19 +91,11 @@ class Worklog
     all_logs = @storage.all_days
 
     if person
-      person = person.strip
       unless people_map.key?(person)
         WorkLogger.error Rainbow("No person found with handle #{person}.").red
         return
       end
-
-      printer = Printer.new(all_people)
-      puts "All interactions with #{Rainbow(person).gold}:"
-      all_logs.each do |daily_log|
-        daily_log.entries.each do |entry|
-          printer.print_entry(daily_log, entry, true) if entry.people.include?(person)
-        end
-      end
+      person_detail(all_logs, all_people, people_map[person.strip])
     else
       puts 'People mentioned in the work log:'
 
@@ -120,6 +112,25 @@ class Worklog
           print handle
         end
         puts ": #{v} #{pluralize(v, 'occurrence')}"
+      end
+    end
+  end
+
+  def person_detail(all_logs, all_people, person)
+    printer = Printer.new(all_people)
+    puts "All interactions with #{Rainbow(person.name).gold}"
+
+    if person.notes
+      puts 'Notes:'
+      person.notes.each do |note|
+        puts "* #{note}"
+      end
+    end
+
+    puts 'Interactions:'
+    all_logs.each do |daily_log|
+      daily_log.entries.each do |entry|
+        printer.print_entry(daily_log, entry, true) if entry.people.include?(person.handle)
       end
     end
   end
