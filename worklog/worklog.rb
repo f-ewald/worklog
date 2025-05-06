@@ -105,6 +105,9 @@ class Worklog
         mentions.merge!(people) { |_key, oldval, newval| oldval + newval }
       end
 
+      # Sort the mentions by handle
+      mentions = mentions.to_a.sort_by { |handle, _| handle }
+
       mentions.each do |handle, v|
         if people_map.key?(handle)
           print "#{Rainbow(people_map[handle].name).gold} (#{handle})"
