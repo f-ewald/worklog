@@ -26,8 +26,9 @@ end
 
 # Class to render the main page of the WorkLog web application.
 class WorkLogResponse
-  def initialize(storage)
+  def initialize(storage, tags)
     @storage = storage
+    @tags = tags
   end
 
   def response(request)
@@ -67,11 +68,12 @@ end
 class WorkLogApp
   def initialize(storage)
     @storage = storage
+    @tags = @storage.tags
   end
 
   def call(env)
     req = Rack::Request.new(env)
-    WorkLogResponse.new(@storage).response(req)
+    WorkLogResponse.new(@storage, @tags).response(req)
   end
 end
 

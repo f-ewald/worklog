@@ -55,7 +55,7 @@ class WorkLogResponseTest < Minitest::Test
       cfg.storage_path = File.join(Dir.tmpdir, 'worklog_test')
     end
     @storage = Storage.new(config)
-    @response = WorkLogResponse.new @storage
+    @response = WorkLogResponse.new @storage, {}
   end
 
   def test_nil_response
