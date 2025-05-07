@@ -23,7 +23,7 @@ An (incomplete) list of the currently available features.
 
 * Track line items of work and add urls, ticket ids, tags, people, milestones (epics)
 * Show past entries with multiple filters
-* Show interactions with people
+* Show interactions with people, add notes, real names and organizational details
 * Show statistics
 * Show log as website, including a mode for presentation well suited for screen sharing
 

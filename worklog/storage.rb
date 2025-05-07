@@ -20,8 +20,8 @@ class Storage
     Dir.exist?(@config.storage_path)
   end
 
-  # Return all days with logs
-  # @return [Array<DailyLog>] List of logs
+  # Return all logs for all available days
+  # @return [Array<DailyLog>] List of all logs
   def all_days
     return [] unless folder_exists?
 
@@ -35,6 +35,23 @@ class Storage
     logs
   end
 
+  # Return all tags as a set
+  # @return [Set<String>] Set of all tags
+  def tags
+    logs = all_days
+    tags = Set[]
+    logs.each do |log|
+      log.entries.each do |entry|
+        next unless entry.tags
+
+        entry.tags.each do |tag|
+          tags << tag
+        end
+      end
+    end
+    tags
+  end
+
   # Return days between start_date and end_date
   # If end_date is nil, return logs from start_date to today
   #
@@ -42,6 +59,7 @@ class Storage
   # @param [Date] end_date The end date, inclusive
   # @param [Boolean] epics_only If true, only return logs with epic entries
   # @param [Array<String>] tags_filter If provided, only return logs with entries that have at least one of the tags
+  # @return [Array<DailyLog>] List of logs
   def days_between(start_date, end_date = nil, epics_only = nil, tags_filter = nil)
     return [] unless folder_exists?
 

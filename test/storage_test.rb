@@ -39,6 +39,13 @@ class StorageTest < Minitest::Test
     end
   end
 
+  def test_tags
+    tags = @storage.tags
+    assert_instance_of Set, tags
+    assert tags.include?('tag1')
+    assert tags.include?('tag2')
+  end
+
   def test_filepath
     filepath = @storage.filepath(@date)
     assert_instance_of String, filepath

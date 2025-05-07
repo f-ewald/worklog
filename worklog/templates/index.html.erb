@@ -64,7 +64,6 @@
 
 
         </nav>
-
         <hr class="border border-primary border-2 opacity-75">
             <div class="pb-4">
             Show
@@ -101,21 +100,20 @@
             <div class="dropdown d-inline">
                 <a class="btn border-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <% if tags %>
-                        <%= tags.first %> tag
+                        <%= tags.size > 1 ? 'multiple tags' : "#{tags.first} tags" %>
                     <% else %>
                         all tags
                     <% end %>
                 </a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="<%= update_query({'tags' => nil}) %>">all tags</a></li>
-                    <li><a class="dropdown-item" href="<%= update_query({'tags' => ['oncall']}) %>">oncall tags</a></li>
-                    <li><a class="dropdown-item" href="<%= update_query({'tags' => ['1:1']}) %>">1:1 tags</a></li>
+                    <% @tags.to_a.each do |tag| %>
+                        <li><a class="dropdown-item" href="<%= update_query({'tags' => [tag]}) %>"><%= tag %> tags</a></li>
+                    <% end %>
                 </ul>
             </div>
             .
             </div>
-
-
 
         <%- logs.each do |log| -%>
             <section class="day">
@@ -140,10 +138,10 @@
             <p class="entries"><%= log.entries.size %> entries</p>
             </section>
         <%- end %>
-        <p><%= total_entries%> entries total</p>
+        <p><%= total_entries %> entries total</p>
     </div>
     <hr/>
-    <footer class="container pb-4">
+    <footer class="container pb-4 text-muted">
         Generated at <%= Time.now.strftime('%Y-%m-%d %H:%M %Z') %>
     </footer>
     </body>
