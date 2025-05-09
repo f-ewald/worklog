@@ -17,7 +17,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.4.1'
+        ruby-version: '3.4.3'
     - name: Install dependencies
       run: bundle install
     - name: Build pages
@@ -36,7 +36,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.4.1'
+          ruby-version: '3.4.3'
       - run: git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
       - run: git config user.name "$GITHUB_ACTOR"
       - run: echo OLD_VERSION=$(ruby -e "require_relative('worklog/version'); puts current_version") >> $GITHUB_ENV
