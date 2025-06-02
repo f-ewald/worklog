@@ -2,7 +2,7 @@
 
 require 'minitest/autorun'
 require_relative 'test_helper'
-require_relative '../worklog/person'
+require 'person'
 
 class PersonTest < Minitest::Test
   def setup

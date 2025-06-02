@@ -2,8 +2,8 @@
 
 require 'minitest/autorun'
 require_relative 'test_helper'
-require_relative '../worklog/log_entry'
-require_relative '../worklog/person'
+require 'log_entry'
+require 'person'
 
 class LogEntryTest < Minitest::Test
   def setup

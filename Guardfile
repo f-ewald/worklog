@@ -10,7 +10,7 @@ guard :minitest do
   require 'guard/minitest'
 
   watch(%r{^test/(.*)\.rb$})
-  watch(%r{^worklog/(.*).rb$}) { |m| "test/#{m[1]}_test.rb" }
+  watch(%r{^lib/(.*).rb$}) { |m| "test/#{m[1]}_test.rb" }
 
   # Execute all tests upon change of the test_helper.rb file
   watch(%r{^test/test_helper\.rb$}) { 'test' }

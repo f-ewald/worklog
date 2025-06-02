@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'date'
-require_relative 'storage'
+require 'storage'
 
 STATS = Data.define(:total_days, :total_entries, :total_epics, :avg_entries, :first_entry, :last_entry)
 

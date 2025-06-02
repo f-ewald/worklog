@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'minitest/autorun'
-require_relative '../worklog/version'
+require 'version'
 
 class VersionTest < Minitest::Test
   def test_current_version

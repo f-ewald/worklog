@@ -3,8 +3,8 @@
 require 'minitest/autorun'
 require_relative 'test_helper'
 
-require_relative '../worklog/configuration'
-require_relative '../worklog/statistics'
+require 'configuration'
+require 'statistics'
 
 class StatisticsTest < Minitest::Test
   def setup
@@ -13,6 +13,7 @@ class StatisticsTest < Minitest::Test
     end
     @statistics = Statistics.new(@config)
   end
+
   def test_calculate
     refute_nil @statistics.calculate
   end

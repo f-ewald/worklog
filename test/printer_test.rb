@@ -2,9 +2,9 @@
 
 require 'date'
 require 'minitest/autorun'
-require_relative '../worklog/daily_log'
-require_relative '../worklog/log_entry'
-require_relative '../worklog/printer'
+require 'daily_log'
+require 'log_entry'
+require 'printer'
 
 class PrinterTest < Minitest::Test
   def test_no_entries

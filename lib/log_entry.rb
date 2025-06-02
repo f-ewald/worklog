@@ -2,8 +2,8 @@
 
 require 'yaml'
 require 'rainbow'
-require_relative 'daily_log'
-require_relative 'hash'
+require 'daily_log'
+require 'hash'
 
 # A single log entry.
 class LogEntry

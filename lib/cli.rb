@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
 # Add the current directory to the load path
-curr_dir = File.expand_path(__dir__)
-$LOAD_PATH << curr_dir unless $LOAD_PATH.include?(curr_dir)
+# curr_dir = File.expand_path(__dir__)
+# $LOAD_PATH << curr_dir unless $LOAD_PATH.include?(curr_dir)
 
 require 'thor'
 require 'date'
-require 'logger'
+require 'worklogger'
 
-require_relative 'worklog'
+require 'worklog'
 require 'date_parser'
-require_relative 'configuration'
-require_relative 'editor'
-require_relative 'printer'
-require_relative 'statistics'
-require_relative 'storage'
-require_relative 'string_helper'
-require_relative 'summary'
-require_relative 'version'
-require_relative 'webserver'
+require 'configuration'
+require 'editor'
+require 'printer'
+require 'statistics'
+require 'storage'
+require 'string_helper'
+require 'summary'
+require 'version'
+require 'webserver'
 
 # CLI for the work log application
 class WorklogCLI < Thor

@@ -2,8 +2,8 @@
 
 require 'minitest/autorun'
 
-require_relative '../worklog/cli'
-require_relative '../worklog/configuration'
+require 'cli'
+require 'configuration'
 
 class ConfigurationTest < Minitest::Test
   def test_load_configuration

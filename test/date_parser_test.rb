@@ -3,7 +3,7 @@
 require 'date'
 require 'minitest/autorun'
 require_relative 'test_helper'
-require_relative '../worklog/date_parser'
+require_relative '../lib/date_parser'
 
 class DateParserTest < Minitest::Test
   def test_parse_date_string

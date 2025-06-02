@@ -4,10 +4,10 @@ require 'erb'
 require 'httparty'
 require 'json'
 
-require_relative 'logger'
+require 'worklogger'
 
 # AI Summary generation.
-module Summary
+class Summary
   MODEL = 'llama3.2'
   SUMMARY_INSTRUCTION = <<~INSTRUCTION
     <% entries.each do |entry| -%>
@@ -41,15 +41,19 @@ module Summary
     Example Output: "[Name] demonstrated outstanding performance during the review period. Key accomplishments include exceeding sales targets by 15% in Q3, implementing a new CRM system that improved customer response times by 30%, and mentoring two junior team members who achieved career advancements. These achievements highlight [Name]'s exceptional contributions to team success and organizational growth."
   INSTRUCTION
 
+  def initialize(config)
+    @config = config
+  end
+
   # Build the prompt from provided log entries.
-  def self.build_prompt(log_entries)
+  def build_prompt(log_entries)
     ERB.new(SUMMARY_INSTRUCTION, trim_mode: '-').result_with_hash(entries: log_entries)
   end
 
   # Generate a summary from provided log entries.
   # @param log_entries [Array<LogEntry>] The log entries to summarize.
   # @return [String] The generated summary.
-  def self.generate_summary(log_entries)
+  def generate_summary(log_entries)
     prompt = build_prompt(log_entries)
 
     WorkLogger.debug("Using prompt: #{prompt}")

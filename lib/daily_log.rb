@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'hash'
+require 'hash'
 
+# DailyLog is a container for a day's work log.
 class DailyLog
   # Container for a day's work log.
   include Hashify

@@ -2,7 +2,7 @@
 
 require 'minitest/autorun'
 require_relative 'test_helper'
-require_relative '../worklog/string_helper'
+require 'string_helper'
 
 class StringHelperTest < Minitest::Test
   def setup

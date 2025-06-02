@@ -2,7 +2,7 @@
 
 require 'minitest/autorun'
 require 'test_helper'
-require_relative '../worklog/hash'
+require 'hash'
 
 class HashTest < Minitest::Test
   def setup

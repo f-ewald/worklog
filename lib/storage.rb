@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 require 'rainbow'
-require_relative 'daily_log'
-require_relative 'log_entry'
-require_relative 'logger'
-require_relative 'person'
+require 'daily_log'
+require 'log_entry'
+require 'worklogger'
+require 'person'
 
+# Handles storage of daily logs and people
 class Storage
   # LogNotFoundError is raised when a log file is not found
   class LogNotFoundError < StandardError; end
