@@ -6,8 +6,8 @@ require 'rack'
 require 'rack/constants'
 require 'rackup'
 require 'uri'
-require_relative 'storage'
-require_relative 'worklog'
+require 'storage'
+require 'worklog'
 
 class DefaultHeaderMiddleware
   # Rack middleware to add default headers to the response.

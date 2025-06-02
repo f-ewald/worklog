@@ -3,6 +3,8 @@
 require 'simplecov'
 require 'simplecov-cobertura'
 
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+
 # Needed to generate coverage reports.
 # Otherwise the report will be generated too early, before the tests are run.
 SimpleCov.external_at_exit = true

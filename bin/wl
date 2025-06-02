@@ -8,9 +8,9 @@ if ENV['WL_PATH']
   # This is used during development to avoid having to rely on the order of the $PATH.
   puts "Loading worklog from #{ENV['WL_PATH']}. This should only be used during development."
   puts 'To use the installed worklog, unset the WL_PATH environment variable.'
-  require_relative File.join(ENV['WL_PATH'], 'worklog', 'cli')
+  require_relative File.join(ENV['WL_PATH'], 'lib', 'cli')
 else
-  require_relative '../worklog/cli'
+  require_relative '../lib/cli'
 end
 
 WorklogCLI.start

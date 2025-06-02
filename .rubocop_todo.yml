@@ -10,7 +10,7 @@
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Lint/NonAtomicFileOperation:
   Exclude:
-    - 'worklog/storage.rb'
+    - 'lib/storage.rb'
 
 # Offense count: 8
 # Configuration parameters: AllowedMethods, AllowedPatterns, CountRepeatedAttributes.
@@ -42,7 +42,7 @@ Metrics/PerceivedComplexity:
 # ForbiddenDelimiters: (?i-mx:(^|\s)(EO[A-Z]{1}|END)(\s|$))
 Naming/HeredocDelimiterNaming:
   Exclude:
-    - 'worklog/cli.rb'
+    - 'lib/cli.rb'
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
@@ -56,13 +56,13 @@ Style/Documentation:
   Exclude:
     - 'spec/**/*'
     - 'test/**/*'
-    - 'worklog/daily_log.rb'
-    - 'worklog/date_parser.rb'
-    - 'worklog/hash.rb'
-    - 'worklog/statistics.rb'
-    - 'worklog/storage.rb'
-    - 'worklog/webserver.rb'
-    - 'worklog/worklog.rb'
+    - 'lib/daily_log.rb'
+    - 'lib/date_parser.rb'
+    - 'lib/hash.rb'
+    - 'lib/statistics.rb'
+    - 'lib/storage.rb'
+    - 'lib/webserver.rb'
+    - 'lib/worklog.rb'
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
@@ -70,25 +70,25 @@ Style/Documentation:
 # SupportedStyles: format, sprintf, percent
 Style/FormatString:
   Exclude:
-    - 'worklog/cli.rb'
+    - 'lib/cli.rb'
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/GlobalStdStream:
   Exclude:
-    - 'worklog/cli.rb'
+    - 'lib/cli.rb'
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/HashTransformKeys:
   Exclude:
-    - 'worklog/hash.rb'
+    - 'lib/hash.rb'
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/MapToHash:
   Exclude:
-    - 'worklog/hash.rb'
+    - 'lib/hash.rb'
 
 # Offense count: 3
 # This cop supports unsafe autocorrection (--autocorrect-all).
@@ -97,23 +97,23 @@ Style/MapToHash:
 Style/NumericPredicate:
   Exclude:
     - 'spec/**/*'
-    - 'worklog/log_entry.rb'
-    - 'worklog/storage.rb'
+    - 'lib/log_entry.rb'
+    - 'lib/storage.rb'
 
 # Offense count: 6
 # Configuration parameters: AllowedMethods.
 # AllowedMethods: respond_to_missing?
 Style/OptionalBooleanParameter:
   Exclude:
-    - 'worklog/date_parser.rb'
-    - 'worklog/printer.rb'
-    - 'worklog/storage.rb'
+    - 'lib/date_parser.rb'
+    - 'lib/printer.rb'
+    - 'lib/storage.rb'
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/RedundantInterpolation:
   Exclude:
-    - 'worklog/log_entry.rb'
+    - 'lib/log_entry.rb'
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
@@ -121,14 +121,14 @@ Style/RedundantInterpolation:
 # AllowedMethods: present?, blank?, presence, try, try!
 Style/SafeNavigation:
   Exclude:
-    - 'worklog/webserver.rb'
+    - 'lib/webserver.rb'
 
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: Mode.
 Style/StringConcatenation:
   Exclude:
-    - 'worklog/log_entry.rb'
+    - 'lib/log_entry.rb'
 
 # Offense count: 4
 # This cop supports unsafe autocorrection (--autocorrect-all).
@@ -136,12 +136,12 @@ Style/StringConcatenation:
 # AllowedMethods: define_method
 Style/SymbolProc:
   Exclude:
-    - 'worklog/statistics.rb'
-    - 'worklog/storage.rb'
+    - 'lib/statistics.rb'
+    - 'lib/storage.rb'
 
 # Offense count: 3
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/ZeroLengthPredicate:
   Exclude:
-    - 'worklog/log_entry.rb'
-    - 'worklog/storage.rb'
+    - 'lib/log_entry.rb'
+    - 'lib/storage.rb'

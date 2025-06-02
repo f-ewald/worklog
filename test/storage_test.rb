@@ -3,11 +3,11 @@
 require 'date'
 require 'minitest/autorun'
 require_relative 'test_helper'
-require_relative '../worklog/configuration'
-require_relative '../worklog/worklog'
-require_relative '../worklog/person'
-require_relative '../worklog/storage'
-require_relative '../worklog/log_entry'
+require 'configuration'
+require 'worklog'
+require 'person'
+require 'storage'
+require 'log_entry'
 
 class StorageTest < Minitest::Test
   def setup

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require_relative 'test_helper'
-require_relative '../worklog/worklog'
-require_relative '../worklog/configuration'
+require 'worklog'
+require 'configuration'
 
 class WorklogTest < Minitest::Test
   def setup

@@ -3,8 +3,8 @@
 require 'date'
 require 'minitest/autorun'
 require_relative 'test_helper'
-require_relative '../worklog/daily_log'
-require_relative '../worklog/log_entry'
+require 'daily_log'
+require 'log_entry'
 
 class DailyLogTest < Minitest::Test
   def setup

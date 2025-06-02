@@ -5,15 +5,15 @@ require 'optparse'
 require 'rainbow'
 require 'yaml'
 
-require_relative 'hash'
-require_relative 'daily_log'
-require_relative 'date_parser'
-require_relative 'log_entry'
-require_relative 'storage'
-require_relative 'logger'
-require_relative 'string_helper'
-require_relative 'printer'
-require_relative 'statistics'
+require 'hash'
+require 'daily_log'
+require 'date_parser'
+require 'log_entry'
+require 'storage'
+require 'worklogger'
+require 'string_helper'
+require 'printer'
+require 'statistics'
 
 # Main class providing all worklog functionality.
 # This class is the main entry point for the application.
@@ -172,7 +172,7 @@ class Worklog
       Printer.new.no_entries(start_date, end_date)
       return
     end
-    puts Summary.generate_summary(entries)
+    puts Summary.new(@config).generate_summary(entries)
   end
 
   def remove(options = {})

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require 'minitest/autorun'
-require_relative '../worklog/configuration'
-require_relative '../worklog/storage'
-require_relative '../worklog/webserver'
+require 'configuration'
+require 'storage'
+require 'webserver'
 
 class DefaultHeaderMiddlewareTest < Minitest::Test
   def setup

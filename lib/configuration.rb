@@ -16,8 +16,9 @@ class Configuration
   end
 end
 
+# Load configuration from a YAML file.
+# The file should be located at ~/.worklog.yaml.
 def load_configuration
-  # TODO: Implement loading configuration from a file
   file_path = File.join(Dir.home, '.worklog.yaml')
   if File.exist?(file_path)
     file_cfg = YAML.load_file(file_path)
