@@ -15,6 +15,11 @@ end
 # @param part [String] The part of the version to increment.
 # @return [String] The incremented version.
 def increment_version(version, part = 'patch')
+  raise ArgumentError if version.nil? || version.empty? || !version.match?(/^\d+\.\d+\.\d+$/)
+
+  # Validate the part to increment
+  raise ArgumentError, "Invalid part: #{part}" unless %w[major minor patch].include?(part)
+
   major, minor, patch = version.split('.').map(&:to_i)
   case part
   when 'major'
