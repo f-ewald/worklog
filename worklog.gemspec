@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'worklog/version'
+require_relative 'lib/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'fewald-worklog'
@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.post_install_message = <<~MESSAGE
     Thanks for installing worklog! Now you can use it by running wl from your terminal.'
   MESSAGE
-  spec.files = Dir.glob('worklog/**/*.{erb,rb}') + ['.version']
+  spec.files = Dir.glob('lib/**/*.{erb,rb}') + ['.version']
   spec.executables = ['wl']
 
   spec.add_dependency 'httparty', '~> 0.22.0'

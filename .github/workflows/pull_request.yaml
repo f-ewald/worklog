@@ -27,6 +27,8 @@ jobs:
       run: bundle exec rake test
     - name: Generate Documentation
       run: bundle exec yard
+    - name: "Build Gem"
+      run: gem build
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:

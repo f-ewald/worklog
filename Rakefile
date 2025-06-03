@@ -15,6 +15,6 @@ task :package do
 end
 
 YARD::Rake::YardocTask.new do |t|
-  t.files = ['worklog/**/*.rb']
+  t.files = ['lib/**/*.rb']
   t.options = ['--title Worklog']
 end
