@@ -36,6 +36,10 @@ class WorklogTest < Minitest::Test
     @worklog.tags
   end
 
+  def test_tag_overview
+    @worklog.tag_overview
+  end
+
   def test_tag_detail
     @worklog.tag_detail('example_tag', {
       from: '2023-10-01',
