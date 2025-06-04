@@ -36,6 +36,17 @@ class WorklogTest < Minitest::Test
     @worklog.tags
   end
 
+  def test_tag_overview
+    @worklog.tag_overview
+  end
+
+  def test_tag_detail
+    @worklog.tag_detail('example_tag', {
+      from: '2023-10-01',
+      to: '2023-10-31'
+    })
+  end
+
   def test_stats
     @worklog.stats
   end
@@ -72,5 +83,9 @@ class WorklogTest < Minitest::Test
     start_date, end_date = @worklog.start_end_date(days: 0)
     assert_equal Date.today, start_date
     assert_equal Date.today, end_date
+
+    assert_raises ArgumentError do
+      @worklog.start_end_date
+    end
   end
 end

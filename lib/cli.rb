@@ -16,7 +16,6 @@ require 'printer'
 require 'statistics'
 require 'storage'
 require 'string_helper'
-require 'summary'
 require 'version'
 require 'webserver'
 
@@ -104,9 +103,22 @@ class WorklogCLI < Thor
   end
 
   desc 'tags', 'Show all tags used in the work log'
-  def tags
+  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d'),
+                desc: <<~DESC
+                  Show the work log for a specific date. If this option is provided, --from and --to and --days should not be used.
+                DESC
+  option :from, type: :string, desc: <<~EOF
+    Inclusive start date of the range. Takes precedence over --date, if defined.
+  EOF
+  option :to, type: :string, desc: <<~EOF
+    Inclusive end date of the range. Takes precedence over --date, if defined.
+  EOF
+  option :days, type: :numeric, desc: <<~EOF
+    Number of days to show starting from --date. Takes precedence over --from and --to if defined.
+  EOF
+  def tags(tag = nil)
     worklog = Worklog.new
-    worklog.tags(options)
+    worklog.tags(tag, options)
   end
 
   desc 'server', 'Start the work log server'

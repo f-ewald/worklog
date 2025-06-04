@@ -14,6 +14,7 @@ require 'worklogger'
 require 'string_helper'
 require 'printer'
 require 'statistics'
+require 'summary'
 
 # Main class providing all worklog functionality.
 # This class is the main entry point for the application.
@@ -138,9 +139,25 @@ class Worklog
     end
   end
 
-  def tags(_options = {})
-    all_logs = @storage.all_days
+  # Show all tags used in the work log or details for a specific tag
+  #
+  # @param tag [String, nil] the tag to show details for, or nil to show all tags
+  # @param options [Hash] the options hash containing date range
+  # @return [void]
+  #
+  # @example
+  #   worklog.tags('example_tag', from: '2023-10-01', to: '2023-10-31')
+  #   worklog.tags(nil) # Show all tags for all time
+  def tags(tag = nil, options = {})
+    if tag.nil? || tag.empty?
+      tag_overview
+    else
+      tag_detail(tag, options)
+    end
+  end
 
+  def tag_overview
+    all_logs = @storage.all_days
     puts Rainbow('Tags used in the work log:').gold
 
     # Count all tags used in the work log
@@ -151,6 +168,29 @@ class Worklog
     max_len = tags.empty? ? 0 : tags.keys.map(&:length).max + 1
 
     tags.sort.each { |k, v| puts "#{Rainbow(k.ljust(max_len)).gold}: #{v} #{pluralize(v, 'occurrence')}" }
+  end
+
+  # Show detailed information about a specific tag
+  #
+  # @param tag [String] the tag to show details for
+  # @param options [Hash] the options hash containing date range
+  # @return [void]
+  #
+  # @example
+  #   worklog.tag_detail('example_tag', from: '2023-10-01', to: '2023-10-31')
+  def tag_detail(tag, options)
+    printer = Printer.new(@storage.load_people!)
+    start_date, end_date = start_end_date(options)
+
+    @storage.days_between(start_date, end_date).each do |daily_log|
+      next unless daily_log.tags.include?(tag)
+
+      daily_log.entries.each do |entry|
+        next unless entry.tags.include?(tag)
+
+        printer.print_entry(daily_log, entry, true)
+      end
+    end
   end
 
   def stats(_options = {})
@@ -207,9 +247,11 @@ class Worklog
     elsif options[:from]
       start_date = DateParser.parse_date_string!(options[:from], true)
       end_date = DateParser.parse_date_string!(options[:to], false) if options[:to]
-    else
+    elsif options[:date]
       start_date = Date.strptime(options[:date], '%Y-%m-%d')
       end_date = start_date
+    else
+      raise ArgumentError, 'No date range specified. Use --days, --from, --to or --date options.'
     end
     [start_date, end_date]
   end
