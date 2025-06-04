@@ -31,7 +31,7 @@ class LogEntry
   end
 
   # Returns the message string with formatting without the time.
-  # @param people Hash[String, Person] A hash of people with their handles as keys.
+  # @param known_people Hash[String, Person] A hash of people with their handles as keys.
   def message_string(known_people = nil)
     # replace all mentions of people with their names.
     msg = @message.dup
