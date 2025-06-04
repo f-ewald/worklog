@@ -54,10 +54,10 @@ class DailyLogTest < Minitest::Test
 
     # Add an entry with tags and check if the tags are returned correctly.
     @log.entries << LogEntry.new(message: "Work on project", tags: ['work', 'project'])
-    assert_equal ['work', 'project'], @log.tags
+    assert_equal ['project', 'work'], @log.tags
 
     # Add another entry with different tags and check if both tags are returned.
     @log.entries << LogEntry.new(message: "Meeting with team", tags: ['meeting', 'team'])
-    assert_equal ['work', 'project', 'meeting', 'team'], @log.tags
+    assert_equal ['meeting', 'project', 'team', 'work'], @log.tags
   end
 end
