@@ -15,17 +15,19 @@ class DailyLog
     @entries = params[:entries]
   end
 
+  # Returns true if there are people mentioned in any entry of the current day.
+  #
+  # @return [Boolean] true if there are people mentioned, false otherwise.
   def people?
-    # Returns true if there are people mentioned in any entry of the current day.
     people.size.positive?
   end
 
+  # Returns a hash of people mentioned in the log for the current day
+  # with the number of times they are mentioned.
+  # People are defined as words starting with @ or ~.
+  #
+  # @return [Hash<String, Integer>]
   def people
-    # Returns a hash of people mentioned in the log for the current day
-    # with the number of times they are mentioned.
-    # People are defined as words starting with @ or ~.
-    #
-    # @return [Hash<String, Integer>]
     entries.map(&:people).flatten.tally
   end
 
@@ -41,6 +43,10 @@ class DailyLog
     entries.flat_map(&:tags).uniq.sort
   end
 
+  # Equals method to compare two DailyLog objects.
+  #
+  # @param other [DailyLog] the other DailyLog object to compare with
+  # @return [Boolean] true if both DailyLog objects have the same date and entries, false otherwise
   def ==(other)
     date == other.date && entries == other.entries
   end
