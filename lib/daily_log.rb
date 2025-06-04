@@ -29,6 +29,18 @@ class DailyLog
     entries.map(&:people).flatten.tally
   end
 
+  # Returns a sorted list of tags used in the entries for the current day.
+  #
+  # @return [Array<String>]
+  #
+  # @example
+  #   log = DailyLog.new(date: Date.today,
+  #                      entries: [LogEntry.new(message: "Work on something", tags: ['work', 'project'])])
+  #   log.tags # => ["project", "work"]
+  def tags
+    entries.flat_map(&:tags).uniq.sort
+  end
+
   def ==(other)
     date == other.date && entries == other.entries
   end
