@@ -111,6 +111,10 @@ class LogEntryTest < Minitest::Test
     # Test @ sign
     @log_entry.message = 'This is a message with a mention of @person1 and @person2'
     assert_equal %w[person1 person2], @log_entry.people
+
+    # Test person in the beginning
+    @log_entry.message = '~person1 This is a message with a mention of ~person2'
+    assert_equal %w[person1 person2], @log_entry.people
   end
 
   def test_to_yaml
