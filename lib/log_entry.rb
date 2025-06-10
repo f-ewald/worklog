@@ -7,7 +7,7 @@ require 'hash'
 
 # A single log entry.
 class LogEntry
-  PERSON_REGEX = /\s[~@](\w+)/
+  PERSON_REGEX = /(?:\s|^)[~@](\w+)/
 
   include Hashify
 
