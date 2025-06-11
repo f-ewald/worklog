@@ -3,6 +3,7 @@
 require_relative 'test_helper'
 require 'worklog'
 require 'configuration'
+require 'webserver'
 
 class WorklogTest < Minitest::Test
   def setup
@@ -57,6 +58,17 @@ class WorklogTest < Minitest::Test
 
   def test_remove
     # TODO: Implement test for remove method
+  end
+
+  def test_server
+    mock = Minitest::Mock.new
+    mock.expect :start, nil, []
+
+    WorkLogServer.stub :new, ->(app) { mock } do
+      @worklog.server
+    end
+
+    mock.verify
   end
 
   def test_start_end_date
