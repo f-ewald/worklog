@@ -123,8 +123,8 @@ class WorklogCLI < Thor
 
   desc 'server', 'Start the work log server'
   def server
-    app = WorkLogApp.new(@storage)
-    WorkLogServer.new(app).start
+    worklog = Worklog.new
+    worklog.server
   end
 
   desc 'stats', 'Show statistics for the work log'

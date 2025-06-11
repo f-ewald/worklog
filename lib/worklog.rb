@@ -233,6 +233,12 @@ class Worklog
     WorkLogger.info Rainbow("Removed entry: #{removed_entry.message}").green
   end
 
+  # Start webserver
+  def server
+    app = WorkLogApp.new(@storage)
+    WorkLogServer.new(app).start
+  end
+
   # Parse the start and end date based on the options provided
   #
   # @param options [Hash] the options hash
