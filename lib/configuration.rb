@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'worklogger'
 require 'yaml'
 
 # Configuration class for the application.
@@ -28,6 +29,6 @@ def load_configuration
       cfg.webserver_port = file_cfg['webserver_port'] if file_cfg['webserver_port']
     end
   else
-    puts "Configuration file does not exist in #{file_path}"
+    WorkLogger.debug "Configuration file does not exist in #{file_path}"
   end
 end
