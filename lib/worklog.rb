@@ -111,7 +111,9 @@ class Worklog
 
       mentions.each do |handle, v|
         if people_map.key?(handle)
-          print "#{Rainbow(people_map[handle].name).gold} (#{handle})"
+          person = people_map[handle]
+          print "#{Rainbow(person.name).gold} (#{handle})"
+          print " (#{person.team})" if person.team
         else
           print handle
         end
