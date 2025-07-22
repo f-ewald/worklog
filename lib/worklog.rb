@@ -38,7 +38,8 @@ module Worklog
     # @raise [ArgumentError] if the message is empty.
     #
     # @example
-    #   worklog.add('Worked on feature X', date: '2023-10-01', time: '10:00:00', tags: ['feature', 'x'], ticket: 'TICKET-123', url: 'https://example.com/', epic: true, project: 'my_project')
+    #   worklog.add('Worked on feature X', date: '2023-10-01', time: '10:00:00', tags: ['feature', 'x'], ticket:
+    #   'TICKET-123', url: 'https://example.com/', epic: true, project: 'my_project')
     #
     # @return [void]
     def add(message, options = {})
