@@ -327,7 +327,11 @@ module Worklog
 
     def validate_projects!(project_key)
       project_storage = ProjectStorage.new(@config)
-      projects = project_storage.load_projects
+      begin
+        projects = project_storage.load_projects
+      rescue Errno::ENOENT
+        raise ProjectNotFoundError, 'No projects found. Please create a project first.'
+      end
       return if projects.key?(project_key)
 
       raise ProjectNotFoundError, "Project with key '#{project_key}' does not exist."
