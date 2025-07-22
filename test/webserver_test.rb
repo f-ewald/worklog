@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'test_helper'
 require 'minitest/autorun'
 require 'configuration'
 require 'storage'
@@ -13,10 +14,7 @@ class DefaultHeaderMiddlewareTest < Minitest::Test
     end
     @middleware = DefaultHeaderMiddleware.new(@app)
 
-    config = Configuration.new do |cfg|
-      cfg.storage_path = File.join(Dir.tmpdir, 'worklog_test')
-    end
-    @storage = Storage.new(config)
+    @storage = storage_helper
   end
 
   def test_default_headers

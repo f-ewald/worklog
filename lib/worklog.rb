@@ -15,13 +15,15 @@ require 'string_helper'
 require 'printer'
 require 'statistics'
 require 'summary'
+require 'project_storage'
 
+module Worklog
 # Main class providing all worklog functionality.
 # This class is the main entry point for the application.
 # It handles command line arguments, configuration, and logging.
 class Worklog
   include StringHelper
-  attr_reader :config
+    attr_reader :config, :storage
 
   def initialize(config = nil)
     @config = config || Configuration.new
@@ -30,6 +32,15 @@ class Worklog
     WorkLogger.level = @config.log_level == :debug ? Logger::Severity::DEBUG : Logger::Severity::INFO
   end
 
+    # Add new entry to the work log.
+    # @param message [String] the message to add to the work log. This cannot be empty.
+    # @param options [Hash] the options hash containing date, time, tags, ticket, url, epic, and project.
+    # @raise [ArgumentError] if the message is empty.
+    #
+    # @example
+    #   worklog.add('Worked on feature X', date: '2023-10-01', time: '10:00:00', tags: ['feature', 'x'], ticket: 'TICKET-123', url: 'https://example.com/', epic: true, project: 'my_project')
+    #
+    # @return [void]
   def add(message, options = {})
     # Remove leading and trailing whitespaces
     # Raise an error if the message is empty
@@ -40,14 +51,23 @@ class Worklog
     time = Time.strptime(options[:time], '%H:%M:%S')
     @storage.create_file_skeleton(date)
 
+      # Validate that the project exists if provided
+      validate_projects!(options[:project]) if options[:project] && !options[:project].empty?
+
     daily_log = @storage.load_log!(@storage.filepath(date))
-    daily_log.entries << LogEntry.new(time:, tags: options[:tags], ticket: options[:ticket], url: options[:url],
-                                      epic: options[:epic], message:)
+      new_entry = LogEntry.new(time:, tags: options[:tags], ticket: options[:ticket], url: options[:url],
+                               epic: options[:epic], message:, project: options[:project])
+      daily_log.entries << new_entry
 
     # Sort by time in case an entry was added later out of order.
     daily_log.entries.sort_by!(&:time)
 
     @storage.write_log(@storage.filepath(options[:date]), daily_log)
+
+      people_hash = @storage.load_people_hash
+      (new_entry.people - people_hash.keys).each do |handle|
+        WorkLogger.warn "Person with handle #{handle} not found. Consider adding them to people.yaml"
+      end
 
     WorkLogger.info Rainbow("Added entry on #{options[:date]}: #{message}").green
   end
@@ -140,6 +160,20 @@ class Worklog
       end
     end
   end
+
+    def projects(_options = {})
+      project_storage = ProjectStorage.new(@config)
+      projects = project_storage.load_projects
+      puts Rainbow('Projects:').gold
+      projects.each_value do |project|
+        puts "#{Rainbow(project.name).gold} (#{project.key})"
+        puts "  Description: #{project.description}" if project.description
+        puts "  Start date: #{project.start_date}" if project.start_date
+        puts "  End date: #{project.end_date}" if project.end_date
+        puts "  Status: #{project.status}" if project.status
+      end
+      puts 'No projects found.' if projects.empty?
+    end
 
   # Show all tags used in the work log or details for a specific tag
   #
@@ -262,5 +296,14 @@ class Worklog
       raise ArgumentError, 'No date range specified. Use --days, --from, --to or --date options.'
     end
     [start_date, end_date]
+    end
+
+    def validate_projects!(project_key)
+      project_storage = ProjectStorage.new(@config)
+      projects = project_storage.load_projects
+      return if projects.key?(project_key)
+
+      raise ProjectNotFoundError, "Project with key '#{project_key}' does not exist."
+    end
   end
 end

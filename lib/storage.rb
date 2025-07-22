@@ -131,11 +131,20 @@ class Storage
     daily_log.entries
   end
 
+  # Load all people from the people file, or return an empty array if the file does not exist
+  #
+  # @return [Array<Person>] List of people
   def load_people
     load_people!
   rescue Errno::ENOENT
     WorkLogger.info 'Unable to load people.'
     []
+  end
+
+  # Load all people from the people file and return them as a hash with handle as key
+  # @return [Hash<String, Person>] Hash of people with handle as key
+  def load_people_hash
+    load_people.to_h { |person| [person.handle, person] }
   end
 
   # Load all people from the people file

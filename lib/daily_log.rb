@@ -28,7 +28,7 @@ class DailyLog
   #
   # @return [Hash<String, Integer>]
   def people
-    entries.map(&:people).flatten.tally
+    entries.map { |entry| entry.people.to_a }.flatten.tally
   end
 
   # Returns a sorted list of tags used in the entries for the current day.
