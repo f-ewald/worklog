@@ -20,7 +20,7 @@ class StorageTest < Minitest::Test
     assert_instance_of LogEntry, @daily_log.entries.first
 
     @storage = Storage.new(configuration_helper)
-
+    @storage.write_log(@storage.filepath(@date), @daily_log)
     @person_alex = Person.new('alex', 'Alex Test', 'alext@example.com', 'Team A', ['Note 1'])
     @person_laura = Person.new('laura', 'Laura Test', 'laurat@example.com', 'Team B', ['Note 2'])
     @storage.write_people!([@person_alex, @person_laura])
