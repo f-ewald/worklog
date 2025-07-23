@@ -31,7 +31,9 @@ class WorklogTest < Minitest::Test
       epic: true,
       project: 'P001'
     }
-    @worklog.add(message, options)
+    @worklog.stub :validate_projects!, nil do
+      @worklog.add(message, options)
+    end
     daily_log = @worklog.storage.load_log!(@worklog.storage.filepath(Date.parse(options[:date])))
     assert_instance_of LogEntry, daily_log.entries.last
     assert_equal message, daily_log.entries.last.message
