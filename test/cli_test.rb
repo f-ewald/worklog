@@ -9,10 +9,8 @@ require 'configuration'
 class CliTest < Minitest::Test
   def setup
     @cli = WorklogCLI.new
-    @cli.config = Configuration.new do |cfg|
-      cfg.storage_path = File.join(Dir.tmpdir, 'worklog_test')
-    end
-    @cli.storage = Storage.new(@cli.config)
+    @cli.config = configuration_helper
+    @cli.storage = storage_helper
   end
 
   def test_configure_cli

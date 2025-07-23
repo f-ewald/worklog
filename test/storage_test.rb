@@ -3,7 +3,6 @@
 require 'date'
 require 'minitest/autorun'
 require_relative 'test_helper'
-require 'configuration'
 require 'worklog'
 require 'person'
 require 'storage'
@@ -20,11 +19,8 @@ class StorageTest < Minitest::Test
     assert_instance_of DailyLog, @daily_log
     assert_instance_of LogEntry, @daily_log.entries.first
 
-    configuration = Configuration.new do |cfg|
-      cfg.storage_path = File.join(Dir.tmpdir, 'worklog_test')
-    end
-    @storage = Storage.new(configuration)
-
+    @storage = Storage.new(configuration_helper)
+    @storage.write_log(@storage.filepath(@date), @daily_log)
     @person_alex = Person.new('alex', 'Alex Test', 'alext@example.com', 'Team A', ['Note 1'])
     @person_laura = Person.new('laura', 'Laura Test', 'laurat@example.com', 'Team B', ['Note 2'])
     @storage.write_people!([@person_alex, @person_laura])
@@ -93,5 +89,12 @@ class StorageTest < Minitest::Test
   def test_load_people
     people = @storage.load_people!
     assert_equal [@person_alex, @person_laura], people
+  end
+
+  def test_load_people_hash
+    people_hash = @storage.load_people_hash
+    assert_instance_of Hash, people_hash
+    assert_equal @person_alex, people_hash['alex']
+    assert_equal @person_laura, people_hash['laura']
   end
 end

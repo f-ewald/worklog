@@ -82,7 +82,7 @@ class LogEntryTest < Minitest::Test
     assert_empty @log_entry.people
 
     @log_entry.message = 'This is a message with a mention of ~person1 and ~person2'
-    assert_equal %w[person1 person2], @log_entry.people
+    assert_equal Set.new(%w[person1 person2]), @log_entry.people
 
     # This is not a person because the tilde is not at the start.
     @log_entry.message = 'This is a message with a mention of~person1'
@@ -90,7 +90,7 @@ class LogEntryTest < Minitest::Test
 
     # Test uniqueness.
     @log_entry.message = 'This is a message with a mention of ~person1 and ~person1'
-    assert_equal %w[person1], @log_entry.people
+    assert_equal Set.new(%w[person1]), @log_entry.people
 
     # Test tilde only
     @log_entry.message = 'This is a message with a mention of ~ and ~'
@@ -98,28 +98,38 @@ class LogEntryTest < Minitest::Test
 
     # Test numbers only
     @log_entry.message = 'This is a message with a mention of ~123 and ~456'
-    assert_equal %w[123 456], @log_entry.people
+    assert_equal Set.new(%w[123 456]), @log_entry.people
 
     # Test punctuation
     @log_entry.message = 'This is a message with a mention of ~person1, ~person2, and ~person3'
-    assert_equal %w[person1 person2 person3], @log_entry.people
+    assert_equal Set.new(%w[person1 person2 person3]), @log_entry.people
 
     # Test sorting
     @log_entry.message = 'This is a message with a mention of ~person2, ~person1, and ~person3'
-    assert_equal %w[person1 person2 person3], @log_entry.people
+    assert_equal Set.new(%w[person1 person2 person3]), @log_entry.people
 
     # Test @ sign
     @log_entry.message = 'This is a message with a mention of @person1 and @person2'
-    assert_equal %w[person1 person2], @log_entry.people
+    assert_equal Set.new(%w[person1 person2]), @log_entry.people
 
     # Test person in the beginning
     @log_entry.message = '~person1 This is a message with a mention of ~person2'
-    assert_equal %w[person1 person2], @log_entry.people
+    assert_equal Set.new(%w[person1 person2]), @log_entry.people
   end
 
   def test_to_yaml
     yaml = @log_entry.to_yaml
 
     refute_nil yaml
+  end
+
+  def test_day
+    # Default case has no day.
+    assert_nil @log_entry.day
+
+    # Set a day and check if it is set correctly.
+    day = DailyLog.new(date: Date.today)
+    log_entry = LogEntry.new(time: '10:00', tags: ['tag1'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message', day: day)
+    assert_equal day, log_entry.day
   end
 end

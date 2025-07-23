@@ -4,6 +4,10 @@ require 'date'
 
 module DateParser
   # Best effort date parsing from multiple formats.
+  #
+  # @param date_str [String] The date string to parse.
+  # @param from_beginning [Boolean] If true, returns the beginning of the date (e.g., first day of month or year).
+  # @return [Date, nil] Returns a Date object if parsing is successful, or nil if parsing fails.
   def self.parse_date_string(date_str, from_beginning = true)
     return nil if date_str.nil?
     return nil if date_str.empty?
@@ -60,6 +64,7 @@ module DateParser
     Date.new(d.year, d.month + 2, -1)
   end
 
+  # Similar to parse_date_string, but raises an error if parsing fails.
   def self.parse_date_string!(date_str, from_beginning = true)
     date = parse_date_string(date_str, from_beginning)
     raise ArgumentError, "Could not parse date string: \"#{date_str}\"" if date.nil?

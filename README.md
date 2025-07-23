@@ -57,16 +57,23 @@ To show all the people you interacted with, type:
 wl people
 ```
 
-Run a basic webserver on port 9292 via:
+Show all currently active projects/initiatives
+
+```shell
+wl projects
+```
+
+Run a webserver on `localhost:9292` via:
 
 ```shell
 wl serve
 ```
 
-Show all used tags:
+Show all used tags or list all entries with a specific tags:
 
 ```shell
 wl tags
+wl tags bugfix
 ```
 
 Create an AI summary (experimental). Requires [Ollama](https://www.ollama.com) with `llama3.2`:
@@ -78,6 +85,12 @@ wl summary
 
 ```shell
 wl help [subcommand]
+```
+
+Fuzzy searching is not implemented directly in worklog. It is recommended to use a third-party tool, like [`skim`](https://github.com/skim-rs/skim) to search. Fuzzy searching over the past 180 days can be done like this:
+
+```shell
+wl show --days 180 2>/dev/null | sk
 ```
 
 ## Development

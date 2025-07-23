@@ -53,22 +53,23 @@ class WorklogCLI < Thor
   option :ticket, type: :string, desc: 'Ticket number associated with the entry. Can be any alphanumeric string.'
   option :url, type: :string, desc: 'URL to associate with the entry'
   option :epic, type: :boolean, default: false, desc: 'Mark the entry as an epic'
+  option :project, type: :string, desc: 'Key of the project. The project needs to be defined first.'
   def add(message)
-    worklog = Worklog.new
+    worklog = Worklog::Worklog.new
     worklog.add(message, options)
   end
 
   desc 'edit', 'Edit a day in the work log. By default, the current date is used.'
   option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
   def edit
-    worklog = Worklog.new
+    worklog = Worklog::Worklog.new
     worklog.edit(options)
   end
 
   desc 'remove', 'Remove last entry from the log'
   option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
   def remove
-    worklog = Worklog.new
+    worklog = Worklog::Worklog.new
     worklog.remove(options)
   end
 
@@ -92,14 +93,20 @@ class WorklogCLI < Thor
   option :epics_only, type: :boolean, default: false, desc: 'Show only entries that are marked as epic'
   option :tags, type: :array, default: [], desc: 'Filter entries by tags. Tags are treated as an OR condition.'
   def show
-    worklog = Worklog.new
+    worklog = Worklog::Worklog.new
     worklog.show(options)
   end
 
   desc 'people', 'Show all people mentioned in the work log'
   def people(person = nil)
-    worklog = Worklog.new
+    worklog = Worklog::Worklog.new
     worklog.people(person, options)
+  end
+
+  desc 'projects', 'Show all projects defined in the work log'
+  def projects(options = {})
+    worklog = Worklog::Worklog.new
+    worklog.projects(options)
   end
 
   desc 'tags', 'Show all tags used in the work log'
@@ -117,19 +124,19 @@ class WorklogCLI < Thor
     Number of days to show starting from --date. Takes precedence over --from and --to if defined.
   EOF
   def tags(tag = nil)
-    worklog = Worklog.new
+    worklog = Worklog::Worklog.new
     worklog.tags(tag, options)
   end
 
   desc 'server', 'Start the work log server'
   def server
-    worklog = Worklog.new
+    worklog = Worklog::Worklog.new
     worklog.server
   end
 
   desc 'stats', 'Show statistics for the work log'
   def stats
-    worklog = Worklog.new
+    worklog = Worklog::Worklog.new
     worklog.stats(options)
   end
 
@@ -145,7 +152,7 @@ class WorklogCLI < Thor
     'Number of days to show starting from --date. Takes precedence over --from and --to if defined.'
   EOF
   def summary
-    worklog = Worklog.new
+    worklog = Worklog::Worklog.new
     worklog.summary(options)
   end
 
@@ -158,4 +165,5 @@ class WorklogCLI < Thor
   map 'a' => :add
   map 'statistics' => :stats
   map 'serve' => :server
+  map 'project' => :projects
 end

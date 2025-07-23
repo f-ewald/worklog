@@ -12,7 +12,9 @@ class LogEntry
   include Hashify
 
   # Represents a single entry in the work log.
-  attr_accessor :time, :tags, :ticket, :url, :epic, :message
+  attr_accessor :time, :tags, :ticket, :url, :epic, :message, :project
+
+  attr_reader :day
 
   def initialize(params = {})
     @time = params[:time]
@@ -23,6 +25,10 @@ class LogEntry
     @url = params[:url] || ''
     @epic = params[:epic]
     @message = params[:message]
+    @project = params[:project]
+
+    # Back reference to the day
+    @day = params[:day] || nil
   end
 
   # Returns true if the entry is an epic, false otherwise.
@@ -62,18 +68,17 @@ class LogEntry
     # Add URL in brackets if defined.
     s += "  [#{@url}]" if @url && @url != ''
 
+    s += "  [#{@project}]" if @project && @project != ''
+
     s
   end
 
   def people
-    # Return people that are mentioned in the entry.
-    # People are defined as words starting with @ or ~.
-    # Whitespaces are used to separate people.
-    # Punctuation is not considered.
-    # Empty array if no people are mentioned.
-    #
-    # @return [Array<String>]
-    @message.scan(PERSON_REGEX).flatten.uniq.sort
+    # Return people that are mentioned in the entry. People are defined as character sequences
+    # starting with @ or ~. Whitespaces are used to separate people. Punctuation is ignored.
+    # Empty set if no people are mentioned.
+    # @return [Set<String>]
+    @message.scan(PERSON_REGEX).flatten.uniq.sort.to_set
   end
 
   def people?
