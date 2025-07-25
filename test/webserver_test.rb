@@ -49,9 +49,7 @@ end
 
 class WorkLogResponseTest < Minitest::Test
   def setup
-    config = Configuration.new do |cfg|
-      cfg.storage_path = File.join(Dir.tmpdir, 'worklog_test')
-    end
+    config = configuration_helper
     @storage = Storage.new(config)
     @response = WorkLogResponse.new @storage, {}
   end

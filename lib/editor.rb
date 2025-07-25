@@ -7,7 +7,7 @@ require 'tempfile'
 module Editor
   EDITOR_PREAMBLE = ERB.new <<~README
     # Edit the content below, then save the file and quit the editor.
-    # The update content will be saved. The content MUST be valid YAML
+    # The updated content will be saved. The content MUST be valid YAML
     # in order for the application to be able to update the records.
 
     <%= content %>

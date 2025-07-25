@@ -21,8 +21,9 @@ SimpleCov.start do
 end
 
 
+# Provide a sample configuration for testing purposes.
 def configuration_helper
-  Configuration.new do |config|
+  Worklog::Configuration.new do |config|
     config.storage_path = File.join(Dir.tmpdir, 'worklog_test')
     config.log_level = :debug
   end

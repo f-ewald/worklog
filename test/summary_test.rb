@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
+require_relative 'test_helper'
 require 'json'
 require 'minitest/autorun'
-require_relative 'test_helper'
 require 'webmock/minitest'
 
 require 'log_entry'
@@ -14,9 +14,7 @@ class SummaryTest < Minitest::Test
     stub_request(:post, 'http://localhost:11434/api/generate')
       .to_return(status: 200, body: { response: 'hello world' }.to_json, headers: { 'Content-Type' => 'application/json' })
 
-    @configuration = Configuration.new do |cfg|
-      cfg.storage_path = File.join(Dir.tmpdir, 'worklog_test')
-    end
+    @configuration = configuration_helper
     @summary = Summary.new(@configuration)
   end
 
