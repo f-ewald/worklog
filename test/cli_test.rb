@@ -14,7 +14,7 @@ class CliTest < Minitest::Test
   end
 
   def test_configure_cli
-    config = Configuration.new do |cfg|
+    config = Worklog::Configuration.new do |cfg|
       cfg.storage_path = 'test/storage'
       cfg.log_level = :debug
       cfg.webserver_port = 8080

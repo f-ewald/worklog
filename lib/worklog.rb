@@ -5,6 +5,7 @@ require 'optparse'
 require 'rainbow'
 require 'yaml'
 
+require 'configuration'
 require 'hash'
 require 'daily_log'
 require 'date_parser'
@@ -332,6 +333,7 @@ module Worklog
       rescue Errno::ENOENT
         raise ProjectNotFoundError, 'No projects found. Please create a project first.'
       end
+      WorkLogger.debug "Project with key '#{project_key}' exists."
       return if projects.key?(project_key)
 
       raise ProjectNotFoundError, "Project with key '#{project_key}' does not exist."
