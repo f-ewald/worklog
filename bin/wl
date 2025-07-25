@@ -6,12 +6,13 @@
 if ENV['WL_PATH']
   # Import the worklog CLI from the path specified in the WL_PATH environment variable
   # This is used during development to avoid having to rely on the order of the $PATH.
-  puts "Loading worklog from #{ENV['WL_PATH']}. This should only be used during development."
-  puts 'To use the installed worklog, unset the WL_PATH environment variable.'
+  warn "Loading worklog from #{ENV['WL_PATH']}. This should only be used during development."
+  warn 'To use the installed worklog, unset the WL_PATH environment variable.'
   $LOAD_PATH.unshift File.join(ENV['WL_PATH'], 'lib')
   require 'cli'
 else
   require_relative '../lib/cli'
 end
 
+# Start the Worklog CLI application (Thor application)
 WorklogCLI.start
