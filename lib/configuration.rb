@@ -5,6 +5,14 @@ require 'yaml'
 
 module Worklog
   # Configuration class for the application.
+  # @!attribute [rw] storage_path
+  #   @return [String] The path where the application stores its data.
+  # @!attribute [rw] log_level
+  #   @return [Symbol] The logging level for the application.
+  #   Possible values: :debug, :info, :warn, :error, :fatal
+  # @!attribute [rw] webserver_port
+  #   @return [Integer] The port on which the web server runs.
+  #   Default is 3000.
   class Configuration
     attr_accessor :storage_path, :log_level, :webserver_port
 
@@ -34,6 +42,18 @@ module Worklog
       end
 
       config
+    end
+
+    # Check if the storage path exists.
+    # @return [Boolean] true if the storage path exists, false otherwise
+    def storage_path_exist?
+      File.exist?(@storage_path)
+    end
+
+    # Check if the storage path is the default path.
+    # @return [Boolean] true if the storage path is the default, false otherwise
+    def default_storage_path?
+      @storage_path == File.join(Dir.home, '.worklog')
     end
   end
 end
