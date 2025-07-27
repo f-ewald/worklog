@@ -56,4 +56,25 @@ class ConfigurationTest < Minitest::Test
       end
     end
   end
+
+  def test_storage_path_exist
+    Dir.mktmpdir do |dir|
+      config = Worklog::Configuration.new
+      config.storage_path = dir
+      assert config.storage_path_exist?
+
+      # Create a non-existing path
+      config.storage_path = File.join(dir, 'non_existing_path')
+      refute config.storage_path_exist?
+    end
+  end
+
+  def test_default_storage_path
+    config = Worklog::Configuration.new
+    assert config.default_storage_path?
+
+    # Change storage path to a non-default value
+    config.storage_path = File.join(Dir.home, '.worklog_custom')
+    refute config.default_storage_path?
+  end
 end
