@@ -29,6 +29,7 @@ class StorageTest < Minitest::Test
   def test_all_days
     all_days = @storage.all_days
     assert_instance_of Array, all_days
+    refute_empty all_days
 
     all_days.each do |daily_log|
       assert_instance_of DailyLog, daily_log
@@ -96,5 +97,15 @@ class StorageTest < Minitest::Test
     assert_instance_of Hash, people_hash
     assert_equal @person_alex, people_hash['alex']
     assert_equal @person_laura, people_hash['laura']
+  end
+
+  def test_log_pattern
+    assert_match Storage::LOG_PATTERN, '2020-01-01.yaml'
+    refute_match Storage::LOG_PATTERN, '2020-01-01.yml'
+    refute_match Storage::LOG_PATTERN, '2020-01-01.txt'
+    refute_match Storage::LOG_PATTERN, '2020-01-01'
+    refute_match Storage::LOG_PATTERN, 'people.yaml'
+    refute_match Storage::LOG_PATTERN, '2020-01-01-01.yaml'
+    refute_match Storage::LOG_PATTERN, 'projects.yaml'
   end
 end
