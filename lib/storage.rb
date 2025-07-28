@@ -13,6 +13,9 @@ class Storage
 
   FILE_SUFFIX = '.yaml'
 
+  # Regular expression to match daily log file names
+  LOG_PATTERN = /\d{4}-\d{2}-\d{2}#{FILE_SUFFIX}\z/
+
   def initialize(config)
     @config = config
   end
@@ -28,7 +31,7 @@ class Storage
 
     logs = []
     Dir.glob(File.join(@config.storage_path, "*#{FILE_SUFFIX}")).map do |file|
-      next if file.end_with?('people.yaml')
+      next unless file.match?(LOG_PATTERN)
 
       logs << load_log(file)
     end
