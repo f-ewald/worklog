@@ -92,6 +92,7 @@ class WorklogCLI < Thor
   EOF
   option :epics_only, type: :boolean, default: false, desc: 'Show only entries that are marked as epic'
   option :tags, type: :array, default: [], desc: 'Filter entries by tags. Tags are treated as an OR condition.'
+  option :project, type: :string, desc: 'Filter entries by project key.'
   def show
     worklog = Worklog::Worklog.new
     worklog.show(options)

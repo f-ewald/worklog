@@ -15,7 +15,15 @@ class Printer
   # Prints a whole day of work log entries.
   # If date_inline is true, the date is printed inline with the time.
   # If epics_only is true, only epic entries are printed.
-  def print_day(daily_log, date_inline = false, epics_only = false)
+  # @param daily_log [DailyLog] The daily log containing entries.
+  # @param date_inline [Boolean] If true, the date is printed inline with the time.
+  # @param epics_only [Boolean] If true, only epic entries are printed.
+  # @param filter [Hash] A hash of filters to apply to the entries.
+  # @return [void]
+  # @example
+  #   printer.print_day(daily_log, date_inline: true, epics_only: false, project: 'xyz')
+  #   printer.print_day(daily_log, date_inline: false, epics_only: true)
+  def print_day(daily_log, date_inline = false, epics_only = false, filter = {})
     daily_log.date = Date.strptime(daily_log.date, '%Y-%m-%d') unless daily_log.date.respond_to?(:strftime)
 
     date_string = daily_log.date.strftime('%a, %B %-d, %Y')
@@ -23,6 +31,8 @@ class Printer
 
     daily_log.entries.each do |entry|
       next if epics_only && !entry.epic?
+
+      next unless filter.empty? || filter.all? { |k, v| entry.send(k) == v }
 
       print_entry(daily_log, entry, date_inline)
     end
