@@ -3,8 +3,24 @@
 module Worklog
   # Represents a project. A project is a longer running task or initiative.
   # Single log entries can be associated with a project.
+  # @!attribute [rw] key
+  #   @return [String] Unique identifier for the project, used in log entries.
+  # @!attribute [rw] name
+  #   @return [String] The human-readable name of the project.
+  # @!attribute [rw] description
+  #   @return [String, nil] A description of the project, can be nil
+  # @!attribute [rw] start_date
+  #   @return [Date, nil] The start date of the project, can be nil
+  # @!attribute [rw] end_date
+  #   @return [Date, nil] The end date of the project, can be nil
+  # @!attribute [rw] status
+  #   @return [String, nil] The status of the project, can be nil
+  #   Possible values: 'active', 'completed', 'archived', etc.
+  #   Indicates the current state of the project.
+  # @!attribute [rw] last_activity
+  #  @return [Date, nil] The last activity date or nil if not set.
   class Project
-    attr_accessor :key, :name, :description, :start_date, :end_date, :status
+    attr_accessor :key, :name, :description, :start_date, :end_date, :status, :last_activity
 
     # Creates a new Project instance from a hash of attributes.
     # @param hash [Hash] A hash containing project attributes

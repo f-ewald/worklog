@@ -127,7 +127,7 @@ class WorklogTest < Minitest::Test
 
   def test_validate_projects
     # Test with no projects
-    File.delete(File.join(@worklog.config.storage_path, 'projects.yml')) if File.exist?(File.join(@worklog.config.storage_path, 'projects.yml'))
+    File.delete(File.join(@worklog.config.storage_path, Worklog::ProjectStorage::FILE_NAME)) if File.exist?(File.join(@worklog.config.storage_path, Worklog::ProjectStorage::FILE_NAME))
 
     assert_raises Worklog::ProjectNotFoundError do
       @worklog.validate_projects!('P001')
@@ -142,7 +142,7 @@ class WorklogTest < Minitest::Test
         end_date: 2023-12-31
         status: active
     YAML
-    File.write(File.join(@worklog.config.storage_path, 'projects.yml'), yaml_content)
+    File.write(File.join(@worklog.config.storage_path, Worklog::ProjectStorage::FILE_NAME), yaml_content)
 
     assert_silent do
       @worklog.validate_projects!('P001')

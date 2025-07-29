@@ -93,8 +93,6 @@ class Storage
   # Create file for a new day if it does not exist
   # @param [Date] date The date, used as the file name.
   def create_file_skeleton(date)
-    create_folder
-
     File.write(filepath(date), YAML.dump(DailyLog.new(date:, entries: []))) unless File.exist?(filepath(date))
   end
 
@@ -119,8 +117,6 @@ class Storage
   end
 
   def write_log(file, daily_log)
-    create_folder
-
     WorkLogger.debug "Writing to file #{file}"
 
     File.open(file, 'w') do |f|
@@ -162,8 +158,6 @@ class Storage
   # Write people to the people file
   # @param [Array<Person>] people List of people
   def write_people!(people)
-    create_folder
-
     people_file = File.join(@config.storage_path, 'people.yaml')
     File.open(people_file, 'w') do |f|
       f.puts people.to_yaml
@@ -171,7 +165,10 @@ class Storage
   end
 
   # Create folder if not exists already.
-  def create_folder
+  def create_default_folder
+    # Do nothing if the storage path is not the default path
+    return unless @config.default_storage_path?
+
     Dir.mkdir(@config.storage_path) unless Dir.exist?(@config.storage_path)
   end
 

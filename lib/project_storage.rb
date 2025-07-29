@@ -10,6 +10,8 @@ module Worklog
 
   # ProjectStorage is responsible for loading and managing project data.
   # It provides methods to load projects from a YAML file and check if a project exists.
+  # @!attribute [w] projects
+  #  @return [Hash<String, Project>] A hash of projects keyed by their project keys.
   #
   # @see Project
   # @see Configuration
@@ -17,6 +19,11 @@ module Worklog
   class ProjectStorage
     attr_writer :projects
 
+    # The name of the YAML file where projects are stored.
+    FILE_NAME = 'projects.yaml'
+
+    # The template for the projects YAML file.
+    # This template is used to create a new projects file if it does not exist.
     PROJECT_TEMPLATE = <<~YAML
       # Each project is defined by the following attributes:
       # - key: <project_key>
@@ -44,7 +51,7 @@ module Worklog
     def load_projects
       create_template unless file_exist?
 
-      file_path = File.join(@configuration.storage_path, 'projects.yml')
+      file_path = File.join(@configuration.storage_path, FILE_NAME)
       projects = {}
       YAML.load_file(file_path, permitted_classes: [Date])&.each do |project_hash|
         project = Project.from_hash(project_hash)
@@ -54,12 +61,14 @@ module Worklog
       projects
     end
 
-    # Check if a project with a given handle exists.
-    # @param handle [String] The handle of the project to check.
+    # Check if a project with a given key exists.
+    # @param key [String] The key of the project to check.
     # @return [Boolean] Returns true if the project exists, false otherwise.
-    def exist?(handle)
+    # @note This method loads the projects from disk if they are not already loaded.
+    # @see load_projects
+    def exist?(key)
       projects = load_projects
-      projects.key?(handle)
+      projects.key?(key)
     end
 
     private
@@ -67,12 +76,20 @@ module Worklog
     # Check whether projects.yaml exists in the project_dir
     # @return [Boolean] Returns true if the project YAML file exists, false otherwise
     def file_exist?
-      file_path = File.join(@configuration.storage_path, 'projects.yml')
+      file_path = File.join(@configuration.storage_path, FILE_NAME)
       File.exist?(file_path)
     end
 
+    # Creates a template for the projects YAML file if it does not exist.
+    # This method writes a predefined template to the projects.yml file.
+    # @return [void]
+    # @note This method will overwrite any existing projects.yml file.
+    # @see PROJECT_TEMPLATE for the structure of the template.
     def create_template
-      File.write(File.join(@configuration.storage_path, 'projects.yml'), PROJECT_TEMPLATE)
+      return unless @configuration.storage_path_exist?
+
+      File.write(File.join(@configuration.storage_path, FILE_NAME), PROJECT_TEMPLATE)
+      nil
     end
   end
 end
