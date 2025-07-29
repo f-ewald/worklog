@@ -11,13 +11,13 @@ class ProjectStorageTest < Minitest::Test
   end
 
   def teardown
-    temp_file = File.join(@configuration.storage_path, 'projects.yml')
+    temp_file = File.join(@configuration.storage_path, Worklog::ProjectStorage::FILE_NAME)
     File.delete(temp_file) if File.exist?(temp_file)
   end
 
   def test_load_projects
-    # Create a temporary file to simulate the projects.yml file
-    temp_file = File.join(@configuration.storage_path, 'projects.yml')
+    # Create a temporary file to simulate the projects.yaml file
+    temp_file = File.join(@configuration.storage_path, Worklog::ProjectStorage::FILE_NAME)
     yaml_content = <<~YAML
       - key: P001
         name: Test Project
@@ -74,5 +74,22 @@ class ProjectStorageTest < Minitest::Test
     }
 
     assert_equal 2, project_storage.projects.size
+  end
+
+  def test_load_folder_does_not_exist
+    project_storage = Worklog::ProjectStorage.new(@configuration)
+    assert_instance_of Worklog::ProjectStorage, project_storage
+
+    # Temporarily change the storage path to a non-existent folder
+    original_path = @configuration.storage_path
+    @configuration.storage_path = '/non/existent/path'
+
+    assert_raises(Errno::ENOENT) do
+      project_storage.load_projects
+    end
+
+  ensure
+    # Restore the original storage path
+    @configuration.storage_path = original_path
   end
 end

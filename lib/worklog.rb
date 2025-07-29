@@ -22,6 +22,22 @@ module Worklog
   # Main class providing all worklog functionality.
   # This class is the main entry point for the application.
   # It handles command line arguments, configuration, and logging.
+  # @!attribute [r] config
+  #   @return [Configuration] The configuration object containing settings for the application.
+  # @!attribute [r] storage
+  #   @return [Storage] The storage object for managing file operations.
+  #
+  # @see Configuration
+  # @see Storage
+  # @see ProjectStorage
+  #
+  # @example
+  #   worklog = Worklog.new
+  #   worklog.add('Worked on feature X',
+  #                date: '2023-10-01',
+  #                time: '10:00:00',
+  #                tags: ['feature', 'x'],
+  #                ticket: 'TICKET-123')
   class Worklog
     include StringHelper
     attr_reader :config, :storage
@@ -31,6 +47,13 @@ module Worklog
       @storage = Storage.new(@config)
 
       WorkLogger.level = @config.log_level == :debug ? Logger::Severity::DEBUG : Logger::Severity::INFO
+
+      bootstrap
+    end
+
+    # Bootstrap the worklog application.
+    def bootstrap
+      @storage.create_default_folder
     end
 
     # Add new entry to the work log.
@@ -326,6 +349,15 @@ module Worklog
       [start_date, end_date]
     end
 
+    # Validate that the project exists in the project storage if a project key is provided.
+    #
+    # @param project_key [String] the project key to validate
+    # @raise [ProjectNotFoundError] if the project does not exist
+    #
+    # @return [void]
+    #
+    # @example
+    #   validate_projects!('P001')
     def validate_projects!(project_key)
       project_storage = ProjectStorage.new(@config)
       begin
