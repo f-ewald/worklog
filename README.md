@@ -22,7 +22,8 @@ Worklog is currently (early/mid 2025) in **active development**. The main functi
 An (incomplete) list of the currently available features.
 
 * Track line items of work and add urls, ticket ids, tags, people, milestones (epics)
-* Show past entries with multiple filters
+* Show past entries with multiple filters, see `wl help show`
+* Manage projects
 * Show interactions with people, add notes, real names and organizational details
 * Show statistics
 * Show log as website, including a mode for presentation well suited for screen sharing
@@ -50,6 +51,8 @@ Then verify that it is saved by printing all logs from the current day:
 ```shell
 wl show
 ```
+
+This commands prints by default the current day, depending on the system time. It is also possible to show a date range, show only epics or filter by tag or project. To view all possible options and filters, run `wl help show`.
 
 To show all the people you interacted with, type:
 

@@ -115,6 +115,20 @@ module Worklog
       WorkLogger.info Rainbow("Updated work log for #{options[:date]}").green
     end
 
+    # Show the work log for a specific date range or a single date.
+    #
+    # @param options [Hash] the options hash containing date range or single date.
+    # @option options [Integer] :days the number of days to show from today (default: 1).
+    # @option options [String] :from the start date in 'YYYY-MM-DD' format.
+    # @option options [String] :to the end date in 'YYYY-MM-DD' format.
+    # @option options [String] :date a specific date in 'YYYY-MM-DD' format.
+    # @option options [Boolean] :epics_only whether to show only entries with epics (default: false).
+    # @option options [String] :project the project key to filter entries by project.
+    #
+    # @example
+    #   worklog.show(days: 7)
+    #   worklog.show(from: '2023-10-01', to: '2023-10-31')
+    #   worklog.show(date: '2023-10-01')
     def show(options = {})
       people = @storage.load_people!
       printer = Printer.new(people)
@@ -126,7 +140,7 @@ module Worklog
         printer.no_entries(start_date, end_date)
       else
         entries.each do |entry|
-          printer.print_day(entry, entries.size > 1, options[:epics_only])
+          printer.print_day(entry, entries.size > 1, options[:epics_only], project: options[:project])
         end
       end
     end
@@ -193,8 +207,8 @@ module Worklog
       projects.each_value do |project|
         puts "#{Rainbow(project.name).gold} (#{project.key})"
         puts "  Description: #{project.description}" if project.description
-        puts "  Start date: #{project.start_date}" if project.start_date
-        puts "  End date: #{project.end_date}" if project.end_date
+        puts "  Start date: #{project.start_date.strftime('%b %d, %Y')}" if project.start_date
+        puts "  End date: #{project.end_date.strftime('%b %d, %Y')}" if project.end_date
         puts "  Status: #{project.status}" if project.status
       end
       puts 'No projects found.' if projects.empty?
