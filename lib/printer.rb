@@ -32,7 +32,7 @@ class Printer
     daily_log.entries.each do |entry|
       next if epics_only && !entry.epic?
 
-      next unless filter.empty? || filter.all? { |k, v| entry.send(k) == v }
+      next unless filter.compact.all? { |k, v| entry.send(k) == v }
 
       print_entry(daily_log, entry, date_inline)
     end
