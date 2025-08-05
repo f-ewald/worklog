@@ -25,7 +25,10 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.4.0'
   spec.bindir = 'bin'
   spec.post_install_message = <<~MESSAGE
-    Thanks for installing worklog! Now you can use it by running wl from your terminal.'
+    =====
+    Thanks for installing #{spec.name}! Now you can use it by running wl from your terminal.
+    For more information, visit https://f-ewald.github.io/worklog or run wl help.
+    =====
   MESSAGE
   spec.files = Dir.glob('lib/**/*.{erb,rb}') + ['.version']
   spec.executables = ['wl']
