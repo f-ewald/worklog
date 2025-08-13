@@ -124,6 +124,7 @@ class Storage
     end
   end
 
+  # Load a single log file and return its entries
   def load_single_log_file(file, headline = true)
     daily_log = load_log!(file)
     puts "Work log for #{Rainbow(daily_log.date).gold}:" if headline
