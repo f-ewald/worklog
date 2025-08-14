@@ -104,6 +104,22 @@ module Worklog
       people.size.positive?
     end
 
+    # Create a LogEntry from a hash with symbolized keys
+    #
+    # @param hash [Hash] the hash to convert
+    # @return [LogEntry] the created LogEntry object
+    def self.from_hash(hash)
+      new(
+        time: hash[:time],
+        tags: hash[:tags],
+        ticket: hash[:ticket],
+        url: hash[:url],
+        epic: hash[:epic],
+        message: hash[:message],
+        project: hash[:project]
+      )
+    end
+
     # Convert the log entry to YAML format.
     def to_yaml
       to_hash.to_yaml
