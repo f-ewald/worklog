@@ -31,7 +31,7 @@ class WorklogCLI < Thor
   # Initialize the CLI with the given arguments, options, and configuration
   def initialize(args = [], options = {}, config = {})
     @config = Worklog::Configuration.load
-    @storage = Storage.new(@config)
+    @storage = Worklog::Storage.new(@config)
     super
   end
 

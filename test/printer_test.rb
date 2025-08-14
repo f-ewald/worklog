@@ -20,15 +20,15 @@ class PrinterTest < Minitest::Test
   end
 
   def test_print_entry
-    daily_log = DailyLog.new(date: Date.new(2020, 1, 1), entries: [])
-    entry = LogEntry.new(time: '12:00:00', message: 'Test message')
+    daily_log = Worklog::DailyLog.new(date: Date.new(2020, 1, 1), entries: [])
+    entry = Worklog::LogEntry.new(time: '12:00:00', message: 'Test message')
     Printer.new.print_entry(daily_log, entry, false)
     Printer.new.print_entry(daily_log, entry, true)
   end
 
   def test_print_day
-    daily_log = DailyLog.new(date: Date.new(2020, 1, 1), entries: [
-      LogEntry.new(time: '09:00:00', message: 'Morning work', epic: false, project: 'xyz'),
+    daily_log = Worklog::DailyLog.new(date: Date.new(2020, 1, 1), entries: [
+      Worklog::LogEntry.new(time: '09:00:00', message: 'Morning work', epic: false, project: 'xyz'),
     ])
     @printer.print_day(daily_log, false, false, project: 'xyz')
   end

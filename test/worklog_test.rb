@@ -35,7 +35,7 @@ class WorklogTest < Minitest::Test
       @worklog.add(message, options)
     end
     daily_log = @worklog.storage.load_log!(@worklog.storage.filepath(Date.parse(options[:date])))
-    assert_instance_of LogEntry, daily_log.entries.last
+    assert_instance_of Worklog::LogEntry, daily_log.entries.last
     assert_equal message, daily_log.entries.last.message
     assert_equal options[:tags], daily_log.entries.last.tags
     assert_equal options[:ticket], daily_log.entries.last.ticket
