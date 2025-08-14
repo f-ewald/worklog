@@ -8,7 +8,7 @@ require 'log_entry'
 
 class DailyLogTest < Minitest::Test
   def setup
-    @log = DailyLog.new(date: Date.new(2021, 1, 1), entries: [])
+    @log = Worklog::DailyLog.new(date: Date.new(2021, 1, 1), entries: [])
   end
 
   def test_date
@@ -23,9 +23,9 @@ class DailyLogTest < Minitest::Test
   end
 
   def test_equality
-    log1 = DailyLog.new(date: Date.new(2021, 1, 1), entries: [])
-    log2 = DailyLog.new(date: Date.new(2021, 1, 1), entries: [])
-    log3 = DailyLog.new(date: Date.new(2021, 1, 2), entries: [])
+    log1 = Worklog::DailyLog.new(date: Date.new(2021, 1, 1), entries: [])
+    log2 = Worklog::DailyLog.new(date: Date.new(2021, 1, 1), entries: [])
+    log3 = Worklog::DailyLog.new(date: Date.new(2021, 1, 2), entries: [])
 
     assert_equal log1, log2
     refute_equal log1, log3
@@ -39,11 +39,11 @@ class DailyLogTest < Minitest::Test
   def test_people
     assert_empty @log.people
 
-    @log.entries << LogEntry.new(message: "Hello, ~world!")
+    @log.entries << Worklog::LogEntry.new(message: "Hello, ~world!")
     _expected = { 'world' => 1 }
     assert_equal _expected, @log.people
 
-    @log.entries << LogEntry.new(message: "Hello, ~world! ~person2 Hello, ~world!")
+    @log.entries << Worklog::LogEntry.new(message: "Hello, ~world! ~person2 Hello, ~world!")
     _expected = { 'person2' => 1, 'world' => 2 }
     assert_equal _expected, @log.people
   end
@@ -53,11 +53,11 @@ class DailyLogTest < Minitest::Test
     assert_empty @log.tags
 
     # Add an entry with tags and check if the tags are returned correctly.
-    @log.entries << LogEntry.new(message: "Work on project", tags: ['work', 'project'])
+    @log.entries << Worklog::LogEntry.new(message: "Work on project", tags: ['work', 'project'])
     assert_equal ['project', 'work'], @log.tags
 
     # Add another entry with different tags and check if both tags are returned.
-    @log.entries << LogEntry.new(message: "Meeting with team", tags: ['meeting', 'team'])
+    @log.entries << Worklog::LogEntry.new(message: "Meeting with team", tags: ['meeting', 'team'])
     assert_equal ['meeting', 'project', 'team', 'work'], @log.tags
   end
 end

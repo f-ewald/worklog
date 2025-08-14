@@ -38,5 +38,5 @@ def teardown_configuration
 end
 
 def storage_helper
-  Storage.new(configuration_helper)
+  Worklog::Storage.new(configuration_helper)
 end

@@ -25,9 +25,9 @@ class SummaryTest < Minitest::Test
 
   def test_generate_summary
     entries = [
-      LogEntry.new(time: Time.new(2020, 1, 1, 10, 0, 0), ticket: 'ticket-123', url: 'https://example.com/', epic: true,
+      Worklog::LogEntry.new(time: Time.new(2020, 1, 1, 10, 0, 0), ticket: 'ticket-123', url: 'https://example.com/', epic: true,
                    message: 'Created a feature to improve the performance of microservices by 200%'),
-      LogEntry.new(time: Time.new(2020, 1, 1, 11, 0, 0), ticket: 'ticket-123', url: 'https://example.com/', epic: true,
+      Worklog::LogEntry.new(time: Time.new(2020, 1, 1, 11, 0, 0), ticket: 'ticket-123', url: 'https://example.com/', epic: true,
                    message: 'Introduced heartbeat monitoring to microservices to detect failures early')
     ]
     generated_summary = @summary.generate_summary(entries)

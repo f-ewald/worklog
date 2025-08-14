@@ -12,14 +12,14 @@ class StorageTest < Minitest::Test
   def setup
     @date = Date.new(2020, 1, 1)
     @time = Time.new(2020, 1, 1, 10, 0, 0)
-    @daily_log = DailyLog.new(date: @date, entries: [LogEntry.new(time: @time, tags: ['tag1', 'tag2'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message')])
+    @daily_log = Worklog::DailyLog.new(date: @date, entries: [Worklog::LogEntry.new(time: @time, tags: ['tag1', 'tag2'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message')])
 
     assert_instance_of Date, @date
     assert_instance_of Time, @time
-    assert_instance_of DailyLog, @daily_log
-    assert_instance_of LogEntry, @daily_log.entries.first
+    assert_instance_of Worklog::DailyLog, @daily_log
+    assert_instance_of Worklog::LogEntry, @daily_log.entries.first
 
-    @storage = Storage.new(configuration_helper)
+    @storage = Worklog::Storage.new(configuration_helper)
     @storage.write_log(@storage.filepath(@date), @daily_log)
     @person_alex = Person.new('alex', 'Alex Test', 'alext@example.com', 'Team A', ['Note 1'])
     @person_laura = Person.new('laura', 'Laura Test', 'laurat@example.com', 'Team B', ['Note 2'])
@@ -36,7 +36,7 @@ class StorageTest < Minitest::Test
     refute_empty all_days
 
     all_days.each do |daily_log|
-      assert_instance_of DailyLog, daily_log
+      assert_instance_of Worklog::DailyLog, daily_log
     end
   end
 
@@ -50,7 +50,7 @@ class StorageTest < Minitest::Test
   def test_filepath
     filepath = @storage.filepath(@date)
     assert_instance_of String, filepath
-    assert filepath.end_with?("/2020-01-01#{Storage::FILE_SUFFIX}")
+    assert filepath.end_with?("/2020-01-01#{Worklog::Storage::FILE_SUFFIX}")
   end
 
   def test_create_file_skeleton
@@ -80,7 +80,7 @@ class StorageTest < Minitest::Test
 
   def test_load_log_not_found_with_exception
     not_found_date = Date.new(2020, 1, 2)
-    assert_raises(Storage::LogNotFoundError) do
+    assert_raises(Worklog::Storage::LogNotFoundError) do
       @storage.load_log!(@storage.filepath(not_found_date))
     end
   end
@@ -104,12 +104,12 @@ class StorageTest < Minitest::Test
   end
 
   def test_log_pattern
-    assert_match Storage::LOG_PATTERN, '2020-01-01.yaml'
-    refute_match Storage::LOG_PATTERN, '2020-01-01.yml'
-    refute_match Storage::LOG_PATTERN, '2020-01-01.txt'
-    refute_match Storage::LOG_PATTERN, '2020-01-01'
-    refute_match Storage::LOG_PATTERN, 'people.yaml'
-    refute_match Storage::LOG_PATTERN, '2020-01-01-01.yaml'
-    refute_match Storage::LOG_PATTERN, 'projects.yaml'
+    assert_match Worklog::Storage::LOG_PATTERN, '2020-01-01.yaml'
+    refute_match Worklog::Storage::LOG_PATTERN, '2020-01-01.yml'
+    refute_match Worklog::Storage::LOG_PATTERN, '2020-01-01.txt'
+    refute_match Worklog::Storage::LOG_PATTERN, '2020-01-01'
+    refute_match Worklog::Storage::LOG_PATTERN, 'people.yaml'
+    refute_match Worklog::Storage::LOG_PATTERN, '2020-01-01-01.yaml'
+    refute_match Worklog::Storage::LOG_PATTERN, 'projects.yaml'
   end
 end
