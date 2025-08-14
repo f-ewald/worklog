@@ -218,6 +218,10 @@ module Worklog
           end
         end
       end
+      print_projects(projects)
+    end
+
+    def print_projects(projects)
       puts Rainbow('Active Projects:').gold
       projects.each_value do |project|
         # Sort entries by descending time
