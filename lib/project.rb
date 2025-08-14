@@ -17,10 +17,18 @@ module Worklog
   #   @return [String, nil] The status of the project, can be nil
   #   Possible values: 'active', 'completed', 'archived', etc.
   #   Indicates the current state of the project.
+  # @!attribute [rw] entries
+  #   These entries are related to the work done on this project.
+  #   Entries are populated dynamically when processing daily logs.
+  #   They are not stored in the project itself.
+  #   @return [Array<LogEntry>] An array of log entries associated with the project.
   # @!attribute [rw] last_activity
-  #  @return [Date, nil] The last activity date or nil if not set.
+  #   The last activity is not stored in the project itself.
+  #   Instead, it is updated dynamically when processing daily logs.
+  #   It represents the most recent log entry time for this project.
+  #   @return [Date, nil] The last activity date or nil if not set.
   class Project
-    attr_accessor :key, :name, :description, :start_date, :end_date, :status, :last_activity
+    attr_accessor :key, :name, :description, :start_date, :end_date, :status, :entries, :last_activity
 
     # Creates a new Project instance from a hash of attributes.
     # @param hash [Hash] A hash containing project attributes

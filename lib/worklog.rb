@@ -54,6 +54,9 @@ module Worklog
     # Bootstrap the worklog application.
     def bootstrap
       @storage.create_default_folder
+
+      # Load all people as they're used in multiple/most of the methods.
+      @people = @storage.load_people_hash
     end
 
     # Add new entry to the work log.
@@ -89,8 +92,7 @@ module Worklog
 
       @storage.write_log(@storage.filepath(options[:date]), daily_log)
 
-      people_hash = @storage.load_people_hash
-      (new_entry.people - people_hash.keys).each do |handle|
+      (new_entry.people - @people.keys).each do |handle|
         WorkLogger.warn "Person with handle #{handle} not found. Consider adding them to people.yaml"
       end
 
@@ -130,8 +132,7 @@ module Worklog
     #   worklog.show(from: '2023-10-01', to: '2023-10-31')
     #   worklog.show(date: '2023-10-01')
     def show(options = {})
-      people = @storage.load_people!
-      printer = Printer.new(people)
+      printer = Printer.new(@people)
 
       start_date, end_date = start_end_date(options)
 
@@ -145,17 +146,16 @@ module Worklog
       end
     end
 
+    # Show all known people and details about a specific person.
     def people(person = nil, _options = {})
-      all_people = @storage.load_people!
-      people_map = all_people.to_h { |p| [p.handle, p] }
       all_logs = @storage.all_days
 
       if person
-        unless people_map.key?(person)
+        unless @people.key?(person)
           WorkLogger.error Rainbow("No person found with handle #{person}.").red
           return
         end
-        person_detail(all_logs, all_people, people_map[person.strip])
+        person_detail(all_logs, @people, @people[person.strip])
       else
         puts 'People mentioned in the work log:'
 
@@ -169,8 +169,8 @@ module Worklog
         mentions = mentions.to_a.sort_by { |handle, _| handle }
 
         mentions.each do |handle, v|
-          if people_map.key?(handle)
-            person = people_map[handle]
+          if @people.key?(handle)
+            person = @people[handle]
             print "#{Rainbow(person.name).gold} (#{handle})"
             print " (#{person.team})" if person.team
           else
@@ -203,13 +203,43 @@ module Worklog
     def projects(_options = {})
       project_storage = ProjectStorage.new(@config)
       projects = project_storage.load_projects
-      puts Rainbow('Projects:').gold
+
+      # Load all entries to find latest activity for each project
+      @storage.all_days.each do |daily_log|
+        daily_log.entries.each do |entry|
+          if projects.key?(entry.project)
+            project = projects[entry.project]
+            project.entries ||= []
+            project.entries << entry
+            # Update last activity date if entry time is more recent
+            project.last_activity = entry.time if project.last_activity.nil? || entry.time > project.last_activity
+          else
+            WorkLogger.debug "Project with key '#{entry.project}' not found in projects. Skipping."
+          end
+        end
+      end
+      print_projects(projects)
+    end
+
+    def print_projects(projects)
+      puts Rainbow('Active Projects:').gold
       projects.each_value do |project|
+        # Sort entries by descending time
+        project.entries.sort_by!(&:time).reverse!
+
         puts "#{Rainbow(project.name).gold} (#{project.key})"
         puts "  Description: #{project.description}" if project.description
         puts "  Start date: #{project.start_date.strftime('%b %d, %Y')}" if project.start_date
         puts "  End date: #{project.end_date.strftime('%b %d, %Y')}" if project.end_date
         puts "  Status: #{project.status}" if project.status
+        puts "  Last activity: #{project.last_activity.strftime('%b %d, %Y')}" if project.last_activity
+
+        next unless project.entries && !project.entries.empty?
+
+        puts "  Last #{[project.entries&.size, 3].min} entries:"
+        puts "    #{project.entries.last(3).map do |e|
+          "#{e.time.strftime('%b %d, %Y')} #{e.message_string(@people)}"
+        end.join("\n    ")}"
       end
       puts 'No projects found.' if projects.empty?
     end
@@ -254,7 +284,7 @@ module Worklog
     # @example
     #   worklog.tag_detail('example_tag', from: '2023-10-01', to: '2023-10-31')
     def tag_detail(tag, options)
-      printer = Printer.new(@storage.load_people!)
+      printer = Printer.new(@people)
       start_date, end_date = start_end_date(options)
 
       @storage.days_between(start_date, end_date).each do |daily_log|

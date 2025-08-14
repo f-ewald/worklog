@@ -26,6 +26,10 @@ class StorageTest < Minitest::Test
     @storage.write_people!([@person_alex, @person_laura])
   end
 
+  def teardown
+    teardown_configuration
+  end
+
   def test_all_days
     all_days = @storage.all_days
     assert_instance_of Array, all_days

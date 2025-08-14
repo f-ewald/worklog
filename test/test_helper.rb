@@ -23,10 +23,18 @@ end
 
 # Provide a sample configuration for testing purposes.
 def configuration_helper
+  tmp_dir = File.join(Dir.tmpdir, 'worklog_test')
+  Dir.mkdir(tmp_dir) unless Dir.exist?(tmp_dir)
+
   Worklog::Configuration.new do |config|
     config.storage_path = File.join(Dir.tmpdir, 'worklog_test')
     config.log_level = :debug
   end
+end
+
+def teardown_configuration
+  tmp_dir = File.join(Dir.tmpdir, 'worklog_test')
+  FileUtils.rm_rf(tmp_dir) if Dir.exist?(tmp_dir)
 end
 
 def storage_helper
