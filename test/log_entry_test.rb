@@ -132,4 +132,26 @@ class LogEntryTest < Minitest::Test
     log_entry = Worklog::LogEntry.new(time: '10:00', tags: ['tag1'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message', day: day)
     assert_equal day, log_entry.day
   end
+
+  def test_from_hash
+    hash = {
+      time: '10:00',
+      tags: ['tag1', 'tag2'],
+      ticket: 'ticket-123',
+      url: 'https://example.com/',
+      epic: true,
+      message: 'This is a message',
+      project: 'project-1'
+    }
+    log_entry = Worklog::LogEntry.from_hash(hash)
+
+    assert_instance_of Worklog::LogEntry, log_entry
+    assert_equal '10:00', log_entry.time
+    assert_equal ['tag1', 'tag2'], log_entry.tags
+    assert_equal 'ticket-123', log_entry.ticket
+    assert_equal 'https://example.com/', log_entry.url
+    assert_equal true, log_entry.epic
+    assert_equal 'This is a message', log_entry.message
+    assert_equal 'project-1', log_entry.project
+  end
 end

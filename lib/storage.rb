@@ -114,7 +114,10 @@ module Worklog
       # Alias DailyLog to Worklog::DailyLog
 
       begin
-        log = YAML.load_file(file, permitted_classes: [Date, Time, DailyLog, LogEntry])
+        yaml_content = File.read(file)
+        cleaned_yaml = yaml_content.gsub(%r{!ruby/object:[^\s]+}, '')
+        log = DailyLog.from_hash(YAML.safe_load(cleaned_yaml, permitted_classes: [Date, Time], symbolize_names: true))
+
         log.entries.each do |entry|
           entry.time = Time.parse(entry.time) unless entry.time.respond_to?(:strftime)
         end

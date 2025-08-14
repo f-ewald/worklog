@@ -44,6 +44,17 @@ module Worklog
       entries.flat_map(&:tags).uniq.sort
     end
 
+    # Create a DailyLog from a hash with symbolized keys
+    #
+    # @param hash [Hash] the hash to convert
+    # @return [DailyLog] the created DailyLog object
+    def self.from_hash(hash)
+      new(
+        date: hash[:date],
+        entries: hash[:entries].map { |entry| LogEntry.from_hash(entry) }
+      )
+    end
+
     # Equals method to compare two DailyLog objects.
     #
     # @param other [DailyLog] the other DailyLog object to compare with
