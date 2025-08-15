@@ -6,10 +6,6 @@ require 'log_entry'
 require 'worklogger'
 require 'person'
 
-# Alias for classes to handle existing log entries
-DailyLog = Worklog::DailyLog
-LogEntry = Worklog::LogEntry
-
 module Worklog
   # Handles storage of daily logs and people
   class Storage
@@ -110,9 +106,6 @@ module Worklog
 
     def load_log!(file)
       WorkLogger.debug "Loading file #{file}"
-
-      # Alias DailyLog to Worklog::DailyLog
-
       begin
         yaml_content = File.read(file)
         cleaned_yaml = yaml_content.gsub(%r{!ruby/object:[^\s]+}, '')
