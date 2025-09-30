@@ -261,6 +261,7 @@ module Worklog
       end
     end
 
+    # Show overview of all tags used in the work log including their count.
     def tag_overview
       all_logs = @storage.all_days
       puts Rainbow('Tags used in the work log:').gold
@@ -268,11 +269,21 @@ module Worklog
       # Count all tags used in the work log
       tags = all_logs.map(&:entries).flatten.map(&:tags).flatten.compact.tally
 
+      # Calculate the maximum count for scaling the output if needed
+      max_count = tags.values.max || 0
+      factor = 32.0 / max_count # Scale to a maximum of 32 characters wide
+
+      # Calculate longest number length for formatting
+      num_length = max_count.to_s.length
+
       # Determine length of longest tag for formatting
-      # Add one additonal space for formatting
+      # Add one additional space for formatting
       max_len = tags.empty? ? 0 : tags.keys.map(&:length).max + 1
 
-      tags.sort.each { |k, v| puts "#{Rainbow(k.ljust(max_len)).gold}: #{v} #{pluralize(v, 'occurrence')}" }
+      tags.sort.each do |k, v|
+        print "#{Rainbow(k.to_s.rjust(max_len)).gold}: #{v.to_s.rjust(num_length)} "
+        puts '#' * (v * factor).ceil
+      end
     end
 
     # Show detailed information about a specific tag
