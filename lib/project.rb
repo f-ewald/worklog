@@ -67,5 +67,28 @@ module Worklog
     def ended?
       !end_date.nil? && end_date < Date.today
     end
+
+    # Generate an ASCII activity graph for the project.
+    # The graph shows activity over time, with each character representing a day.
+    # More active days are represented with a different character.
+    # @return [String] An ASCII representation of the activity graph.
+    def activity_graph
+      graph = String.new
+      # Generate the graph for the last 30 days
+      (0..29).each do |i|
+        date = Date.today - i
+        graph << if entries.any? { |entry| entry.time.to_date == date }
+                   '#'
+                 else
+                   '.'
+                 end
+      end
+
+      graph.reverse!
+
+      graph << "\n"
+      graph << ("#{' ' * 31}^\n")
+      graph << ("#{' ' * 31}Today")
+    end
   end
 end

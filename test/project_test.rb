@@ -3,6 +3,7 @@
 require 'minitest/autorun'
 require_relative 'test_helper'
 require 'project'
+require 'log_entry'
 
 class ProjectTest < Minitest::Test
   def setup
@@ -13,6 +14,7 @@ class ProjectTest < Minitest::Test
     @project.start_date = Date.today - 10
     @project.end_date = Date.today + 10
     @project.status = 'active'
+    @project.entries = []
   end
 
   def test_from_hash_missing_key
@@ -58,5 +60,21 @@ class ProjectTest < Minitest::Test
     assert_equal Date.new(2023, 1, 1), project.start_date
     assert_equal Date.new(2023, 12, 31), project.end_date
     assert_equal 'active', project.status
+  end
+
+  def test_activity_graph
+    # Add entries for the last 5 days
+    (0..4).each do |i|
+      entry = Worklog::LogEntry.new
+      entry.time = DateTime.now - i
+      entry.message = "Work log entry #{i}"
+      @project.entries << entry
+    end
+
+    graph = @project.activity_graph
+    assert graph.is_a?(String)
+    assert_includes graph, '#'
+    assert_includes graph, '.'
+    assert_includes graph, 'Today'
   end
 end
