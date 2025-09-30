@@ -233,6 +233,7 @@ module Worklog
         puts "  End date: #{project.end_date.strftime('%b %d, %Y')}" if project.end_date
         puts "  Status: #{project.status}" if project.status
         puts "  Last activity: #{project.last_activity.strftime('%b %d, %Y')}" if project.last_activity
+        puts "  #{project.activity_graph}"
 
         next unless project.entries && !project.entries.empty?
 
