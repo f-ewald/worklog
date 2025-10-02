@@ -157,7 +157,13 @@ module Worklog
       people_file = File.join(@config.storage_path, 'people.yaml')
       return [] unless File.exist?(people_file)
 
-      YAML.load_file(people_file, permitted_classes: [Person])
+      yamltext = File.read(people_file)
+      if yamltext != yamltext.gsub(/^- !.*$/, '-')
+        WorkLogger.debug 'The people.yaml file contains deprecated syntax. Migrating now.'
+        yamltext.gsub!(/^- !.*$/, '-')
+        File.write(people_file, yamltext)
+      end
+      YAML.load(yamltext, permitted_classes: []).map { |person_hash| Person.from_hash(person_hash) }
     end
 
     # Write people to the people file

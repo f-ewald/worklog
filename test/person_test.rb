@@ -20,4 +20,20 @@ class PersonTest < Minitest::Test
     person = Person.new('jdoe', 'John Doe', nil, 'Engineering', [])
     assert_equal 'John Doe (~jdoe)', person.to_s
   end
+
+  def test_from_hash
+    hash = {
+      'handle' => 'jdoe',
+      'name' => 'John Doe',
+      'email' => 'john_doe@example.org',
+      'team' => 'Engineering',
+      'notes' => ['Note1', 'Note2']
+    }
+    person = Person.from_hash(hash)
+    assert_equal 'jdoe', person.handle
+    assert_equal 'John Doe', person.name
+    assert_equal 'john_doe@example.org', person.email
+    assert_equal 'Engineering', person.team
+    assert_equal ['Note1', 'Note2'], person.notes
+  end
 end
