@@ -60,10 +60,10 @@ To show all the people you interacted with, type:
 wl people
 ```
 
-Show all currently active projects/initiatives
+Show all currently active projects/initiatives, optionally as one line for a quick overview
 
 ```shell
-wl projects
+wl projects [--oneline]
 ```
 
 Run a webserver on `localhost:9292` via:

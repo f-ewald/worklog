@@ -148,4 +148,26 @@ class WorklogTest < Minitest::Test
       @worklog.validate_projects!('P001')
     end
   end
+
+  # Test for the oneline option in projects
+  # This checks whether the method successfully runs without error
+  def test_projects_oneline
+    yaml_content = <<~YAML
+      - key: P001
+        name: Test Project One
+        description: First test project
+        start_date: 2023-01-01
+        end_date: 2023-12-31
+        status: active
+      - key: P002
+        name: Test Project Two
+        description: Second test project
+        start_date: 2023-02-01
+        end_date: 2023-11-30
+        status: active
+    YAML
+    File.write(File.join(@worklog.config.storage_path, Worklog::ProjectStorage::FILE_NAME), yaml_content)
+
+    @worklog.projects_oneline()
+  end
 end

@@ -200,6 +200,23 @@ module Worklog
       end
     end
 
+    # Show all projects, one line per project.
+    # This is a compact view showing only project names and keys.
+    def projects_oneline(_options = {})
+      project_storage = ProjectStorage.new(@config)
+      projects = project_storage.load_projects
+
+      # Find longest project name for formatting
+      max_len = projects.values.map { |p| p.name.length }.max || 0
+
+      projects.each_value do |project|
+        puts "#{Rainbow(project.name.ljust(max_len)).gold} #{project.key}"
+      end
+    end
+
+    # Show all projects with details and recent activity.
+    # This method loads all projects and their associated log entries.
+    # It also calculates the last activity date for each project based on log entries.
     def projects(_options = {})
       project_storage = ProjectStorage.new(@config)
       projects = project_storage.load_projects

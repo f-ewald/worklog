@@ -105,9 +105,15 @@ class WorklogCLI < Thor
   end
 
   desc 'projects', 'Show all projects defined in the work log'
-  def projects(options = {})
+  option :oneline, type: :boolean, default: false, desc: 'Show only project titles and keys in a single line format'
+  def projects
     worklog = Worklog::Worklog.new
-    worklog.projects(options)
+
+    if options[:oneline]
+      worklog.projects_oneline(options)
+    else
+      worklog.projects(options)
+    end
   end
 
   desc 'tags', 'Show all tags used in the work log'
