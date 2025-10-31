@@ -45,6 +45,32 @@ class WorklogTest < Minitest::Test
     assert_equal options[:project], daily_log.entries.last.project
   end
 
+  # Test add with time format without seconds
+  def test_add_time
+    message = 'Worked on feature X'
+    options = {
+      date: '2023-09-01',
+      time: '08:30',  # Test time without seconds
+      tags: ['development', 'feature-x'],
+      ticket: 'TICKET-123',
+      url: 'http://example.com/ticket/TICKET-123',
+      epic: true,
+      project: 'P001'
+    }
+    @worklog.stub :validate_projects!, nil do
+      @worklog.add(message, options)
+    end
+    daily_log = @worklog.storage.load_log!(@worklog.storage.filepath(Date.parse(options[:date])))
+    assert_instance_of Worklog::LogEntry, daily_log.entries.last
+    assert_equal message, daily_log.entries.last.message
+    assert_equal options[:tags], daily_log.entries.last.tags
+    assert_equal options[:ticket], daily_log.entries.last.ticket
+    assert_equal options[:url], daily_log.entries.last.url
+    assert_equal options[:epic], daily_log.entries.last.epic
+    puts daily_log
+    assert_equal options[:project], daily_log.entries.last.project
+  end
+
   def test_show
     @worklog.show(date: '2023-10-01')
   end

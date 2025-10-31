@@ -76,7 +76,11 @@ module Worklog
       raise ArgumentError, 'Message cannot be empty' if message.empty?
 
       date = Date.strptime(options[:date], '%Y-%m-%d')
-      time = Time.strptime(options[:time], '%H:%M:%S')
+
+      # Append seconds to time if not provided
+      time = options[:time]
+      time += ':00' if options[:time].split(':').size == 2
+      time = Time.strptime(time, '%H:%M:%S')
       @storage.create_file_skeleton(date)
 
       # Validate that the project exists if provided
