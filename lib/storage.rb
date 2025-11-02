@@ -80,7 +80,7 @@ module Worklog
 
           if tags_filter
             # Safeguard against entries without any tags, not just empty array
-            tmp_logs.entries.keep_if { |entry| entry.tags && (entry.tags & tags_filter).size > 0 }
+            tmp_logs.entries.keep_if { |entry| entry.tags&.intersect?(tags_filter) }
           end
 
           logs << tmp_logs if tmp_logs.entries.length > 0

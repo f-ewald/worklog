@@ -24,6 +24,7 @@ class WorklogCLI < Thor
   attr_accessor :config, :storage
 
   include StringHelper
+
   class_option :verbose, type: :boolean, aliases: '-v', desc: 'Enable verbose output'
 
   package_name 'Worklog'

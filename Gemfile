@@ -25,7 +25,7 @@ group :development do
   gem 'rubocop-minitest', '~> 0.36.0'
   gem 'rubocop-rake', '~> 0.6.0'
   gem 'simplecov', '~> 0.22.0'
-  gem 'simplecov-cobertura', '~> 2.1'
+  gem 'simplecov-cobertura', '~> 3.1'
   gem 'terminal-notifier-guard', '~> 1.7'
   gem 'webmock', '~> 3.24'
   gem 'yard', '~> 0.9.37'

@@ -87,8 +87,8 @@ module Worklog
       graph.reverse!
 
       graph << "\n"
-      graph << ("#{' ' * 31}^\n")
-      graph << ("#{' ' * 31}Today")
+      graph << "#{' ' * 31}^\n"
+      graph << "#{' ' * 31}Today"
     end
   end
 end
