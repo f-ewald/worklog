@@ -14,9 +14,10 @@ require 'storage'
 require 'worklogger'
 require 'string_helper'
 require 'printer'
+require 'project_storage'
 require 'statistics'
 require 'summary'
-require 'project_storage'
+require 'takeout'
 
 module Worklog
   # Main class providing all worklog functionality.
@@ -282,6 +283,22 @@ module Worklog
       else
         tag_detail(tag, options)
       end
+    end
+
+    # Export all work log data as a tar.gz archive.
+    # The archive contains all log files and settings.
+    # The filename will be in the format worklog_takeout_YYYYMMDD_HHMMSS.tar.gz
+    def takeout
+      takeout = Takeout.new(@config)
+      tar_gz_data = takeout.to_tar_gz
+
+      filename = "worklog_takeout_#{Time.now.strftime('%Y%m%d_%H%M%S')}.tar.gz"
+      File.binwrite(filename, tar_gz_data)
+
+      WorkLogger.info Rainbow("Created takeout archive: #{filename}").green
+
+      # Return filename for further processing if needed
+      filename
     end
 
     # Show overview of all tags used in the work log including their count.

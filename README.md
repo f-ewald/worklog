@@ -27,6 +27,7 @@ An (incomplete) list of the currently available features.
 * Show interactions with people, add notes, real names and organizational details
 * Show statistics
 * Show log as website, including a mode for presentation well suited for screen sharing
+* Export all entries and settings as a tar.gz archive
 
 ## Installation
 
@@ -79,6 +80,12 @@ wl tags
 wl tags bugfix
 ```
 
+Export all worklog data as a tar.gz archive:
+
+```shell
+wl takeout
+```
+
 Create an AI summary (experimental). Requires [Ollama](https://www.ollama.com) with `llama3.2`:
 
 ```shell
@@ -90,7 +97,7 @@ wl summary
 wl help [subcommand]
 ```
 
-Fuzzy searching is not implemented directly in worklog. It is recommended to use a third-party tool, like [`skim`](https://github.com/skim-rs/skim) to search. Fuzzy searching over the past 180 days can be done like this:
+Fuzzy searching is not directly implemented in worklog. It is recommended to use a third-party tool, like [`skim`](https://github.com/skim-rs/skim), or [`fzf`](https://github.com/junegunn/fzf) to search. Fuzzy searching over the past 180 days can be done like this:
 
 ```shell
 wl show --days 180 2>/dev/null | sk

@@ -136,6 +136,15 @@ class WorklogCLI < Thor
     worklog.tags(tag, options)
   end
 
+  desc 'takeout', <<~EOF
+    Export all work log data as a tar.gz archive. The archive contains all log files and settings.
+    The filename will be in the format worklog_takeout_YYYYMMDD_HHMMSS.tar.gz
+  EOF
+  def takeout
+    worklog = Worklog::Worklog.new
+    worklog.takeout
+  end
+
   desc 'server', 'Start the work log server'
   def server
     worklog = Worklog::Worklog.new
