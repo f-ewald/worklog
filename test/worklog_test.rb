@@ -99,7 +99,11 @@ class WorklogTest < Minitest::Test
   end
 
   def test_takeout
-    @worklog.takeout
+    filename = @worklog.takeout
+    assert File.exist?(filename)
+
+    # Delete the file after test
+    File.delete(filename) if File.exist?(filename)
   end
 
   def test_stats

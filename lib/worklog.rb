@@ -293,11 +293,12 @@ module Worklog
       tar_gz_data = takeout.to_tar_gz
 
       filename = "worklog_takeout_#{Time.now.strftime('%Y%m%d_%H%M%S')}.tar.gz"
-      File.open(filename, 'wb') do |file|
-        file.write(tar_gz_data)
-      end
+      File.binwrite(filename, tar_gz_data)
 
       WorkLogger.info Rainbow("Created takeout archive: #{filename}").green
+
+      # Return filename for further processing if needed
+      filename
     end
 
     # Show overview of all tags used in the work log including their count.
