@@ -40,6 +40,7 @@ module Worklog
   #                ticket: 'TICKET-123')
   class Worklog
     include StringHelper
+
     attr_reader :config, :storage
 
     def initialize(config = nil)
