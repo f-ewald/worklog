@@ -98,6 +98,10 @@ class WorklogTest < Minitest::Test
     })
   end
 
+  def test_takeout
+    @worklog.takeout
+  end
+
   def test_stats
     @worklog.stats
   end
