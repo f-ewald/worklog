@@ -204,4 +204,24 @@ class WorklogTest < Minitest::Test
 
     @worklog.projects_oneline()
   end
+
+  def test_parse_time_string
+    test_cases = [
+      ['08:30:00', Time.parse('08:30:00')],
+      ['08:30', Time.parse('08:30:00')],
+      ['8:05', Time.parse('08:05:00')],
+      ['730', Time.parse('07:30:00')],
+      ['07:30:12', Time.parse('07:30:12')],
+      ['1645', Time.parse('16:45:00')]
+    ]
+
+    test_cases.each do |input, expected|
+      time = @worklog.parse_time_string!(input)
+      assert_equal expected, time
+    end
+
+    assert_raises ArgumentError do
+      @worklog.parse_time_string!('invalid-time')
+    end
+  end
 end

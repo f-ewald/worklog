@@ -21,7 +21,7 @@ group :development do
   gem 'rake', '~> 13.2'
   gem 'rdoc', '~> 6.12'
   gem 'reline', '~> 0.6.0'
-  gem 'rubocop', '~> 1.70'
+  gem 'rubocop', '~> 1.81'
   gem 'rubocop-minitest', '~> 0.36.0'
   gem 'rubocop-rake', '~> 0.6.0'
   gem 'simplecov', '~> 0.22.0'

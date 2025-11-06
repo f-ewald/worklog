@@ -155,7 +155,7 @@ DEPENDENCIES
   rake (~> 13.2)
   rdoc (~> 6.12)
   reline (~> 0.6.0)
-  rubocop (~> 1.70)
+  rubocop (~> 1.81)
   rubocop-minitest (~> 0.36.0)
   rubocop-rake (~> 0.6.0)
   simplecov (~> 0.22.0)
@@ -169,4 +169,4 @@ RUBY VERSION
    ruby 3.4.7p58
 
 BUNDLED WITH
-   2.6.9
+   2.7.2
