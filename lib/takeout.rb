@@ -24,13 +24,6 @@ module Worklog
     def to_tar_gz
       tar_io = StringIO.new
 
-      # Build a mapping of file names to their stats for timestamp preservation
-      file_stats = {}
-      all_files.each do |file_path|
-        file_name = File.basename(file_path)
-        file_stats[file_name] = File.stat(file_path)
-      end
-
       Gem::Package::TarWriter.new(tar_io) do |tar|
         all_files.each do |file_path|
           file_name = File.basename(file_path)
