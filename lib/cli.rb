@@ -49,7 +49,9 @@ class WorklogCLI < Thor
     an alphanumeric string.
   LONGDESC
   option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d'), desc: 'Set the date of the entry'
-  option :time, type: :string, default: DateTime.now.strftime('%H:%M:%S'), desc: 'Set the time of the entry'
+  option :time, type: :string, default: DateTime.now.strftime('%H:%M:%S'), desc: <<~DESC
+    Set the time of the entry. Can be provided in HHMM, HH:MM, or HH:MM:SS format.
+  DESC
   option :tags, type: :array, default: [], desc: 'Add tags to the entry'
   option :ticket, type: :string, desc: 'Ticket number associated with the entry. Can be any alphanumeric string.'
   option :url, type: :string, desc: 'URL to associate with the entry'

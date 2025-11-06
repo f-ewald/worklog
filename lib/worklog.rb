@@ -80,9 +80,7 @@ module Worklog
       date = Date.strptime(options[:date], '%Y-%m-%d')
 
       # Append seconds to time if not provided
-      time = options[:time]
-      time += ':00' if options[:time].split(':').size == 2
-      time = Time.strptime(time, '%H:%M:%S')
+      time = parse_time_string!(options[:time])
       @storage.create_file_skeleton(date)
 
       # Validate that the project exists if provided
@@ -464,6 +462,28 @@ module Worklog
       return if projects.key?(project_key)
 
       raise ProjectNotFoundError, "Project with key '#{project_key}' does not exist."
+    end
+
+    # Parse a time string in HHMM, HH:MM, or HH:MM:SS format.
+    # @param time_string [String] the time string to parse
+    # @return [Time] the parsed Time object
+    def parse_time_string!(time_string)
+      # Validate the time string format
+      unless time_string.match?(/^\d{1,2}:?\d{2}:?\d{2}?$/)
+        raise ArgumentError, 'Invalid time format. Expected HHMM, HH:MM, or HH:MM:SS.'
+      end
+
+      # Prefix with 0 if needed
+      time_string = "0#{time_string}" if time_string.length == 3
+
+      # Split hours and minutes if in HHMM format
+      if time_string.length == 4 && time_string.match?(/^\d{4}$/)
+        time_string = "#{time_string[0..1]}:#{time_string[2..3]}"
+      end
+
+      # Append seconds to time if not provided
+      time_string += ':00' if time_string.split(':').size == 2
+      Time.strptime(time_string, '%H:%M:%S')
     end
   end
 end
