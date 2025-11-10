@@ -8,6 +8,8 @@ require 'hash'
 module Worklog
   # A single log entry in a DailyLog.
   # @see DailyLog
+  # @!attribute [rw] key
+  #   @return [String] the unique key of the log entry. The key is generated based on the time and message.
   # @!attribute [rw] time
   #   @return [DateTime] the date and time of the log entry.
   # @!attribute [rw] tags
@@ -27,11 +29,13 @@ module Worklog
 
     include Hashify
 
-    attr_accessor :time, :tags, :ticket, :url, :epic, :message, :project
+    attr_accessor :key, :time, :tags, :ticket, :url, :epic, :message, :project
 
     attr_reader :day
 
     def initialize(params = {})
+      # key can be nil. This is needed for backwards compatibility with older log entries.
+      @key = params[:key]
       @time = params[:time]
       # If tags are nil, set to empty array.
       # This is similar to the CLI default value.
@@ -105,19 +109,12 @@ module Worklog
     end
 
     # Create a LogEntry from a hash with symbolized keys
+    # This is an alias for the constructor and here for consistency with other classes.
     #
     # @param hash [Hash] the hash to convert
     # @return [LogEntry] the created LogEntry object
     def self.from_hash(hash)
-      new(
-        time: hash[:time],
-        tags: hash[:tags],
-        ticket: hash[:ticket],
-        url: hash[:url],
-        epic: hash[:epic],
-        message: hash[:message],
-        project: hash[:project]
-      )
+      new(**hash)
     end
 
     # Convert the log entry to YAML format.

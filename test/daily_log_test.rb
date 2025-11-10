@@ -11,6 +11,12 @@ class DailyLogTest < Minitest::Test
     @log = Worklog::DailyLog.new(date: Date.new(2021, 1, 1), entries: [])
   end
 
+  def test_initialize_empty_entries
+    log = Worklog::DailyLog.new(date: Date.new(2021, 1, 1))
+    assert_equal Date.new(2021, 1, 1), log.date
+    assert_empty log.entries
+  end
+
   def test_date
     # Test that the date is correctly set.
     date = Date.new(2021, 1, 1)
