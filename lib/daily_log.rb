@@ -13,7 +13,7 @@ module Worklog
 
     def initialize(params = {})
       @date = params[:date]
-      @entries = params[:entries]
+      @entries = params[:entries] || []
     end
 
     # Returns true if there are people mentioned in any entry of the current day.

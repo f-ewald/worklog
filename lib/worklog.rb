@@ -6,6 +6,7 @@ require 'rainbow'
 require 'yaml'
 
 require 'configuration'
+require 'digest'
 require 'hash'
 require 'daily_log'
 require 'date_parser'
@@ -86,8 +87,11 @@ module Worklog
       # Validate that the project exists if provided
       validate_projects!(options[:project]) if options[:project] && !options[:project].empty?
 
+      # Use the first 7 characters of the SHA256 hash of message as the key
+      key = Digest::SHA256.hexdigest(message)[..6]
+
       daily_log = @storage.load_log!(@storage.filepath(date))
-      new_entry = LogEntry.new(time:, tags: options[:tags], ticket: options[:ticket], url: options[:url],
+      new_entry = LogEntry.new(key:, time:, tags: options[:tags], ticket: options[:ticket], url: options[:url],
                                epic: options[:epic], message:, project: options[:project])
       daily_log.entries << new_entry
 
