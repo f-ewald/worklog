@@ -89,4 +89,28 @@ class DailyLogTest < Minitest::Test
     assert_equal 1, log.entries.size
     assert_instance_of Worklog::LogEntry, log.entries.first
   end
+
+  # Test accessing entries by their unique keys.
+  def test_access_entry_by_key
+    entry1 = Worklog::LogEntry.new(key: 'entry-1', message: 'First entry')
+    entry2 = Worklog::LogEntry.new(key: 'entry-2', message: 'Second entry')
+    @log.entries << entry1
+    @log.entries << entry2
+
+    assert_equal entry1, @log['entry-1']
+    assert_equal entry2, @log['entry-2']
+    assert_nil @log['non-existent-entry']
+  end
+
+  # If the key is nil or empty string, it should return nil
+  # In the future, all entries will have a unique key.
+  def test_entry_empty_keys
+    entry1 = Worklog::LogEntry.new(message: 'First entry without key')
+    entry2 = Worklog::LogEntry.new(key: '', message: 'Second entry with empty key')
+    @log.entries << entry1
+    @log.entries << entry2
+
+    assert_nil @log[nil]
+    assert_nil @log['']
+  end
 end
