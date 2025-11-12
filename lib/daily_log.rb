@@ -62,5 +62,16 @@ module Worklog
     def ==(other)
       date == other.date && entries == other.entries
     end
+
+    # Access a log entry by its unique key.
+    # To safeguard against multiple entries with the same key, and future-proofing,
+    # an empty string will return nil.
+    # @param key [String] the unique key of the log entry
+    # @return [LogEntry, nil] the log entry with the specified key, or nil if not found
+    def [](key)
+      return nil if key.nil? || key.empty?
+
+      @entries.find { |entry| entry.key == key }
+    end
   end
 end
