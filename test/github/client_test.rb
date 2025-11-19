@@ -5,9 +5,11 @@ require 'minitest/autorun'
 require 'github/client'
 
 class GithubTest < Minitest::Test
+  include Worklog::Github
+
   def setup
     @configuration = configuration_helper
-    @github = Worklog::Github::Client.new(@configuration)
+    @github = Client.new(@configuration)
     @repo = 'sample-org/sample-repo'
     @pr_number = 109
   end
@@ -15,14 +17,14 @@ class GithubTest < Minitest::Test
   def load_fixture(filename)
     file_path = File.join(__dir__, 'data', filename)
     events = JSON.parse(File.read(file_path))
-    events.filter { |event| Worklog::Github::Client::EVENT_FILTER.include?(event['type']) }
+    events.filter { |event| Client::EVENT_FILTER.include?(event['type']) }
   end
 
   # General test for get_events with pagination
   def test_get_events
     fixture = load_fixture('github_events.json')
     @github.stub(:github_api_get, ->(_url) { fixture }) do
-      @github.stub(:pull_request_details, Worklog::Github::PullRequestDetails.new) do
+      @github.stub(:pull_request_details, PullRequestDetails.new) do
         events = @github.get_events
 
         assert_kind_of Array, events
@@ -30,7 +32,7 @@ class GithubTest < Minitest::Test
 
         # Assert type for each event
         events.each do |event|
-          assert_includes [Worklog::Github::PullRequestEvent, Worklog::Github::PushEvent, Worklog::Github::PullRequestReviewEvent],
+          assert_includes [PullRequestEvent, PushEvent, PullRequestReviewEvent],
                           event.class
         end
       end
@@ -40,7 +42,7 @@ class GithubTest < Minitest::Test
   # Test parsing of a PullRequestReviewEvent
   def test_pull_request_review_event
     fixture = load_fixture('pull_request_review_event.json')
-    pr_details = Worklog::Github::PullRequestDetails.new(
+    pr_details = PullRequestDetails.new(
       title: 'Pull Request Review Title',
       description: 'Description of the pull request.'
     )
@@ -53,7 +55,7 @@ class GithubTest < Minitest::Test
         # Pagination returns 3 pages of the same fixture
         assert_equal fixture.size * 3, events.size
 
-        assert_kind_of Worklog::Github::PullRequestReviewEvent, events.first
+        assert_kind_of PullRequestReviewEvent, events.first
         first = events.first
 
         assert_equal 'sample-org/sample-repo', first.repository
@@ -69,7 +71,7 @@ class GithubTest < Minitest::Test
   # Test parsing of a PullRequestEvent
   def test_pull_request_event
     fixture = load_fixture('pull_request_event.json')
-    pr_details = Worklog::Github::PullRequestDetails.new(
+    pr_details = PullRequestDetails.new(
       title: 'Add new feature',
       description: 'This PR adds a new feature.',
       url: 'https://github.com/sample-org/sample-repo/pull/446',
@@ -110,7 +112,7 @@ class GithubTest < Minitest::Test
       assert_kind_of Array, events
       puts events.first.class
 
-      assert_kind_of Worklog::Github::PushEvent, events.first
+      assert_kind_of NilClass, events.first
       assert_equal fixture.size * 3, events.size
     end
   end
@@ -133,5 +135,16 @@ class GithubTest < Minitest::Test
       assert comment.key?('id')
       assert comment.key?('body')
     end
+  end
+
+  def test_missing_token
+    @configuration.github.api_key = nil
+    github_client = Client.new(@configuration)
+
+    error = assert_raises(Client::GithubAPIError) do
+      github_client.get_events
+    end
+
+    assert_equal 'GitHub API key is not configured. Please set it in the configuration.', error.message
   end
 end

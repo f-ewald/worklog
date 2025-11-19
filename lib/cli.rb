@@ -71,6 +71,12 @@ class WorklogCLI < Thor
     worklog.edit(options)
   end
 
+  desc 'github', 'Fetch latest events from GitHub for a specified user and add them to the work log.'
+  def github
+    worklog = Worklog::Worklog.new
+    worklog.github(options)
+  end
+
   desc 'remove', 'Remove last entry from the log'
   option :date, type: :string, default: Time.now.strftime('%Y-%m-%d')
   def remove

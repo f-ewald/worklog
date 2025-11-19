@@ -12,12 +12,12 @@ module Worklog
   module Github
     # Client to interact with GitHub API
     class Client
-      class GithubAPIException < StandardError; end
+      class GithubAPIError < StandardError; end
 
       EVENT_FILTER = Set.new(%w[
                                PullRequestEvent
                                PullRequestReviewEvent
-                               PushEvent
+
                              ]).freeze
 
       def initialize(configuration)
@@ -26,6 +26,8 @@ module Worklog
 
       # Fetch events for a given user from Github API
       def get_events
+        verify_token!
+
         WorkLogger.debug 'Fetching most recent GitHub events...'
         responses = fetch_events
         events = []
@@ -110,10 +112,10 @@ module Worklog
                                 headers: { 'Authorization' => "token #{@configuration.github.api_key}" })
         WorkLogger.debug "Received response with HTTP code #{response.code} for PR ##{pr_number} in #{repo}."
         if response.code == 403
-          raise GithubAPIException,
+          raise GithubAPIError,
                 'Failed to fetch PR details: Are you connected to the corporate VPN? (HTTP 403 Forbidden)'
         elsif response.code != 200
-          raise GithubAPIException, "Failed to fetch PR details: HTTPCode #{response.code}"
+          raise GithubAPIError, "Failed to fetch PR details: HTTPCode #{response.code}"
         end
 
         pr = response.parsed_response
@@ -132,7 +134,7 @@ module Worklog
       # Generic method to perform GET requests to GitHub API
       def github_api_get(url)
         response = HTTParty.get(url, headers: { 'Authorization' => "token #{@configuration.github.api_key}" })
-        raise GithubAPIException, "GitHub API request failed with code #{response.code}" unless response.code == 200
+        raise GithubAPIError, "GitHub API request failed with code #{response.code}" unless response.code == 200
 
         # TODO: Respect rate limit headers
         # headers = response.headers
@@ -165,7 +167,8 @@ module Worklog
       end
 
       def verify_token!
-        @configuration.github.api_key || raise(GithubAPIException, 'GitHub API key is not configured.')
+        @configuration.github.api_key || raise(GithubAPIError,
+                                               'GitHub API key is not configured. Please set it in the configuration.')
       end
     end
   end
