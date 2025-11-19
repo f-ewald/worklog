@@ -52,6 +52,7 @@ class WorklogCLI < Thor
   option :date, type: :string, default: Time.now.strftime('%Y-%m-%d'), desc: 'Set the date of the entry'
   option :time, type: :string, default: Time.now.strftime('%H:%M:%S'), desc: <<~DESC
     Set the time of the entry. Can be provided in HHMM, HH:MM, or HH:MM:SS format.
+    By default, the system time zone is used and converted to UTC for storage.
   DESC
   option :tags, type: :array, default: [], desc: 'Add tags to the entry'
   option :ticket, type: :string, desc: 'Ticket number associated with the entry. Can be any alphanumeric string.'

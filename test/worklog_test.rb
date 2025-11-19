@@ -217,9 +217,13 @@ class WorklogTest < Minitest::Test
 
     test_cases.each do |input, expected|
       time = @worklog.parse_time_string!(input)
+      assert time.is_a?(Time)
       assert_equal expected, time
+      assert time.utc?
     end
+  end
 
+  def test_parse_invalid_time_string
     assert_raises ArgumentError do
       @worklog.parse_time_string!('invalid-time')
     end

@@ -474,7 +474,7 @@ module Worklog
 
     # Parse a time string in HHMM, HH:MM, or HH:MM:SS format.
     # @param time_string [String] the time string to parse
-    # @return [Time] the parsed Time object
+    # @return [Time] the parsed Time object in UTC
     def parse_time_string!(time_string)
       # Validate the time string format
       unless time_string.match?(/^\d{1,2}:?\d{2}:?\d{2}?$/)
@@ -491,7 +491,7 @@ module Worklog
 
       # Append seconds to time if not provided
       time_string += ':00' if time_string.split(':').size == 2
-      Time.strptime(time_string, '%H:%M:%S')
+      Time.strptime(time_string, '%H:%M:%S').utc
     end
   end
 end
