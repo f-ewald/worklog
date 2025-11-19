@@ -54,3 +54,17 @@ jobs:
       - name: Setup Rubygems credentials
         run: echo GEM_HOST_API_KEY=${{ secrets.RUBYGEMS_API_KEY }} >> $GITHUB_ENV
       - run: gem push *.gem
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.NEW_VERSION }}
+          name: Release v${{ env.NEW_VERSION }}
+          body: |
+            Release version ${{ env.NEW_VERSION }}
+
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/v${{ env.OLD_VERSION }}...v${{ env.NEW_VERSION }}
+          draft: false
+          prerelease: false
+          make_latest: true
+          files: |
+            *.gem
