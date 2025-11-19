@@ -7,8 +7,10 @@ class Printer
   attr_reader :people
 
   # Initializes the printer with a list of people.
+  # @param configuration [Configuration] The configuration.
   # @param people [Array<Person>] An array of Person objects.
-  def initialize(people = nil)
+  def initialize(configuration, people = nil)
+    @configuration = configuration
     @people = people || {}
   end
 
@@ -58,14 +60,18 @@ class Printer
   # @param entry [LogEntry]
   # @param date_inline [Boolean] If true, the date is printed inline with the time.
   def print_entry(daily_log, entry, date_inline = false)
-    entry.time = DateTime.strptime(entry.time, '%H:%M:%S') unless entry.time.respond_to?(:strftime)
+    # Backwards compatibility: convert strings to Date/Time objects if necessary
+    entry.time = Time.strptime(entry.time, '%H:%M:%S') unless entry.time.respond_to?(:strftime)
+
+    # Convert to local time zone
+    entry.time = entry.time.getlocal(@configuration.timezone) if @configuration.timezone
 
     time_string = if date_inline
                     "#{daily_log.date.strftime('%a, %Y-%m-%d')} #{entry.time.strftime('%H:%M')}"
                   else
                     entry.time.strftime('%H:%M')
                   end
-
+    print '  ' unless date_inline
     puts "#{Rainbow(time_string).gold} #{entry.message_string(@people)}"
   end
 end
