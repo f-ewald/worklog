@@ -91,7 +91,7 @@ module Worklog
       @timezone = TZInfo::Timezone.get(@timezone) if @timezone.is_a?(String)
       @webserver_port ||= 3000
       @project = ProjectConfig.new
-      @github = GithubConfig.new
+      @github ||= GithubConfig.new
     end
 
     # Load configuration from a YAML file in the user's home directory.
