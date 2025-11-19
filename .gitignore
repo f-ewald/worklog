@@ -1,4 +1,6 @@
+.vscode/
 .yardoc/
 coverage/
 doc/
 *.gem
+.DS_Store
