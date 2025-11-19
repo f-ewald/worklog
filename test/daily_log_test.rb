@@ -113,4 +113,12 @@ class DailyLogTest < Minitest::Test
     assert_nil @log[nil]
     assert_nil @log['']
   end
+
+  def test_add_entry
+    entry = Worklog::LogEntry.new(key: 'entry-1', message: 'First entry')
+    @log << entry
+
+    assert_equal 1, @log.entries.size
+    assert_equal entry, @log.entries.first
+  end
 end

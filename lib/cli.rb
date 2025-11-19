@@ -36,6 +36,7 @@ class WorklogCLI < Thor
     super
   end
 
+  # Set the exit on failure behavior from Thor to true
   def self.exit_on_failure?
     true
   end
@@ -48,9 +49,10 @@ class WorklogCLI < Thor
     People can be referenced either by using the tilde "~" or the at symbol "@", followed by
     an alphanumeric string.
   LONGDESC
-  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d'), desc: 'Set the date of the entry'
-  option :time, type: :string, default: DateTime.now.strftime('%H:%M:%S'), desc: <<~DESC
+  option :date, type: :string, default: Time.now.strftime('%Y-%m-%d'), desc: 'Set the date of the entry'
+  option :time, type: :string, default: Time.now.strftime('%H:%M:%S'), desc: <<~DESC
     Set the time of the entry. Can be provided in HHMM, HH:MM, or HH:MM:SS format.
+    By default, the system time zone is used and converted to UTC for storage.
   DESC
   option :tags, type: :array, default: [], desc: 'Add tags to the entry'
   option :ticket, type: :string, desc: 'Ticket number associated with the entry. Can be any alphanumeric string.'
@@ -63,14 +65,14 @@ class WorklogCLI < Thor
   end
 
   desc 'edit', 'Edit a day in the work log. By default, the current date is used.'
-  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
+  option :date, type: :string, default: Time.now.strftime('%Y-%m-%d')
   def edit
     worklog = Worklog::Worklog.new
     worklog.edit(options)
   end
 
   desc 'remove', 'Remove last entry from the log'
-  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
+  option :date, type: :string, default: Time.now.strftime('%Y-%m-%d')
   def remove
     worklog = Worklog::Worklog.new
     worklog.remove(options)
@@ -80,7 +82,7 @@ class WorklogCLI < Thor
   long_desc <<~LONGDESC
     Show the work log for a specific date or a range of dates. As a default, all items from the current day will be shown.
   LONGDESC
-  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d'),
+  option :date, type: :string, default: Time.now.strftime('%Y-%m-%d'),
                 desc: <<~DESC
                   Show the work log for a specific date. If this option is provided, --from and --to and --days should not be used.
                 DESC
@@ -120,7 +122,7 @@ class WorklogCLI < Thor
   end
 
   desc 'tags', 'Show all tags used in the work log'
-  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d'),
+  option :date, type: :string, default: Time.now.strftime('%Y-%m-%d'),
                 desc: <<~DESC
                   Show the work log for a specific date. If this option is provided, --from and --to and --days should not be used.
                 DESC
@@ -160,7 +162,7 @@ class WorklogCLI < Thor
   end
 
   desc 'summary', 'Generate a summary of the work log entries'
-  option :date, type: :string, default: DateTime.now.strftime('%Y-%m-%d')
+  option :date, type: :string, default: Time.now.strftime('%Y-%m-%d')
   option :from, type: :string, desc: <<-EOF
     'Inclusive start date of the range. Takes precedence over --date if defined.'
   EOF

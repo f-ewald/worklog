@@ -11,7 +11,7 @@ module Worklog
   # @!attribute [rw] key
   #   @return [String] the unique key of the log entry. The key is generated based on the time and message.
   # @!attribute [rw] time
-  #   @return [DateTime] the date and time of the log entry.
+  #   @return [Time] the date and time of the log entry.
   # @!attribute [rw] tags
   #   @return [Array<String>] the tags associated with the log entry.
   # @!attribute [rw] ticket

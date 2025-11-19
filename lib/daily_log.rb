@@ -73,5 +73,16 @@ module Worklog
 
       @entries.find { |entry| entry.key == key }
     end
+
+    # Add a log entry to the daily log in the entries array at the end.
+    # At this point, the log is not checked for duplicates and not sorted.
+    # @param entry [LogEntry] the log entry to add
+    def <<(entry) = @entries << entry
+
+    def size = @entries.size
+    def length = @entries.length
+    def empty? = @entries.empty?
+    def clear = @entries.clear
+    def key?(key) = @entries.any? { |entry| entry.key == key }
   end
 end

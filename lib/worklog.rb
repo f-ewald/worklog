@@ -6,17 +6,17 @@ require 'rainbow'
 require 'yaml'
 
 require 'configuration'
-require 'digest'
-require 'hash'
 require 'daily_log'
 require 'date_parser'
+require 'hash'
+require 'hasher'
 require 'log_entry'
-require 'storage'
 require 'worklogger'
 require 'string_helper'
 require 'printer'
 require 'project_storage'
 require 'statistics'
+require 'storage'
 require 'summary'
 require 'takeout'
 
@@ -46,7 +46,10 @@ module Worklog
     attr_reader :config, :storage
 
     def initialize(config = nil)
-      @config = config || Configuration.new
+      # Load or use provided configuration
+      @config = config || Configuration.load
+
+      # Initialize storage
       @storage = Storage.new(@config)
 
       WorkLogger.level = @config.log_level == :debug ? Logger::Severity::DEBUG : Logger::Severity::INFO
@@ -88,12 +91,12 @@ module Worklog
       validate_projects!(options[:project]) if options[:project] && !options[:project].empty?
 
       # Use the first 7 characters of the SHA256 hash of message as the key
-      key = Digest::SHA256.hexdigest(message)[..6]
+      key = Hasher.sha256(message)
 
       daily_log = @storage.load_log!(@storage.filepath(date))
-      new_entry = LogEntry.new(key:, time:, tags: options[:tags], ticket: options[:ticket], url: options[:url],
-                               epic: options[:epic], message:, project: options[:project])
-      daily_log.entries << new_entry
+      new_entry = LogEntry.new(key:, source: 'manual', time:, tags: options[:tags], ticket: options[:ticket],
+                               url: options[:url], epic: options[:epic], message:, project: options[:project])
+      daily_log << new_entry
 
       # Sort by time in case an entry was added later out of order.
       daily_log.entries.sort_by!(&:time)
@@ -107,6 +110,7 @@ module Worklog
       WorkLogger.info Rainbow("Added entry on #{options[:date]}: #{message}").green
     end
 
+    # Edit an existing work log entry for a specific date.
     def edit(options = {})
       date = Date.strptime(options[:date], '%Y-%m-%d')
 
@@ -470,7 +474,7 @@ module Worklog
 
     # Parse a time string in HHMM, HH:MM, or HH:MM:SS format.
     # @param time_string [String] the time string to parse
-    # @return [Time] the parsed Time object
+    # @return [Time] the parsed Time object in UTC
     def parse_time_string!(time_string)
       # Validate the time string format
       unless time_string.match?(/^\d{1,2}:?\d{2}:?\d{2}?$/)
@@ -487,7 +491,7 @@ module Worklog
 
       # Append seconds to time if not provided
       time_string += ':00' if time_string.split(':').size == 2
-      Time.strptime(time_string, '%H:%M:%S')
+      Time.strptime(time_string, '%H:%M:%S').utc
     end
   end
 end
