@@ -17,12 +17,14 @@ module Worklog
     #  @return [String] the title of the pull request
     # @!attribute [rw] description
     #  @return [String] the description of the pull request
+    #  @!attribute [rw] creator
+    #  @return [String] the username of the pull request creator
     # @!attribute [rw] created_at
     #  @return [Time] the creation time of the pull request review, not the pull request itself
     # @!attribute [rw] state
     #  @return [String] the state of the review (e.g., 'approved', 'changes_requested', etc.)
     class PullRequestReviewEvent
-      attr_accessor :repository, :number, :url, :title, :description, :created_at, :state
+      attr_accessor :repository, :number, :url, :title, :description, :creator, :created_at, :state
 
       def initialize(params = {})
         params.each do |key, value|
@@ -39,9 +41,9 @@ module Worklog
       # Convert the PullRequestReviewEvent to a LogEntry
       # @return [LogEntry]
       def to_log_entry
-        message = 'Reviewed '
-        message += 'and approved ' if approved?
-        message += "PR ##{number}: #{title}"
+        message = String.new 'Reviewed '
+        message << 'and approved ' if approved?
+        message << "PR ##{number} #{creator}: #{title}"
         LogEntry.new(
           key: Hasher.sha256("#{repository}-#{number}-#{state}"),
           source: 'github',
@@ -54,7 +56,7 @@ module Worklog
       # String representation of the PullRequestReviewEvent
       # @return [String]
       def to_s
-        "#<PullRequestReviewEvent repository=#{repository} number=#{number} state=#{state} created_at=#{created_at}>"
+        "#<PullRequestReviewEvent repository=#{repository} number=#{number} state=#{state} creator=#{creator} created_at=#{created_at}>" # rubocop:disable Layout/LineLength
       end
     end
   end

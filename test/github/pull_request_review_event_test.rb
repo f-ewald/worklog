@@ -15,6 +15,7 @@ class PullRequestReviewEventTest < Minitest::Test
       state: 'approved',
       title: 'PR Title',
       description: 'PR description',
+      creator: 'creator-username',
       url: 'https://github.com/sample-org/sample-repo/pull/42#pullrequestreview-1234'
     )
     @log_entry = @event.to_log_entry
@@ -71,7 +72,7 @@ class PullRequestReviewEventTest < Minitest::Test
   end
 
   def test_to_s
-    expected_str = '#<PullRequestReviewEvent repository=sample-org/sample-repo number=42 state=approved>'
+    expected_str = '#<PullRequestReviewEvent repository=sample-org/sample-repo number=42 state=approved creator=creator-username created_at=>' # rubocop:disable Layout/LineLength
 
     assert_equal expected_str, @event.to_s
   end

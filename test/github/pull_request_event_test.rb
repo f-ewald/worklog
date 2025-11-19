@@ -87,7 +87,13 @@ class PullRequestEventTest < Minitest::Test
   end
 
   def test_to_s
-    expected_string = '#<PullRequestEvent repository=sample-org/sample-repo number=42 url=https://github.com/sample-org/sample-repo/pull/42 title=Sample Pull Request description=This is a sample pull request for testing. created_at=2024-01-01T12:00:00+00:00 merged_at=2024-01-02T12:00:00+00:00 closed_at=2024-01-03T12:00:00+00:00>'
+    expected_string = '#<PullRequestEvent repository=sample-org/sample-repo number=42 ' \
+                      'url=...po/pull/42 ' \
+                      'title=Sample Pull Request ' \
+                      'description=This is a sample ... ' \
+                      'created_at=2024-01-01 12:00:00 UTC ' \
+                      'merged_at=2024-01-02 12:00:00 UTC ' \
+                      'closed_at=2024-01-03 12:00:00 UTC>'
 
     assert_equal expected_string, @event.to_s
   end

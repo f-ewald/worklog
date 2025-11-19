@@ -88,7 +88,7 @@ class GithubTest < Minitest::Test
         # Pagination returns 3 pages of the same fixture
         assert_equal fixture.size * 3, events.size
 
-        assert_kind_of Worklog::Github::PullRequestEvent, events.first
+        assert_kind_of PullRequestEvent, events.first
         event = events.first
 
         assert_equal 'sample-org/sample-repo', event.repository

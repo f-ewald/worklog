@@ -74,6 +74,7 @@ module Worklog
               url:,
               title: pr_details.title,
               description: pr_details.description,
+              creator: pr_details.creator,
               state: review_state,
               created_at: created_at
             )
@@ -110,7 +111,7 @@ module Worklog
         WorkLogger.debug "Fetching details for PR ##{pr_number} in #{repo}..."
         response = HTTParty.get("https://api.github.com/repos/#{repo}/pulls/#{pr_number}",
                                 headers: { 'Authorization' => "token #{@configuration.github.api_key}" })
-        WorkLogger.debug "Received response with HTTP code #{response.code} for PR ##{pr_number} in #{repo}."
+
         if response.code == 403
           raise GithubAPIError,
                 'Failed to fetch PR details: Are you connected to the corporate VPN? (HTTP 403 Forbidden)'
@@ -122,6 +123,7 @@ module Worklog
         PullRequestDetails.new(
           title: pr['title'],
           description: pr['body'],
+          creator: pr['user'] ? pr['user']['login'] : nil,
           url: pr['html_url'],
           state: pr['state'],
           merged: pr['merged'],
@@ -166,7 +168,10 @@ module Worklog
         @configuration.timezone.utc_to_local(time)
       end
 
+      # Verify that the GitHub API token is present in the configuration
+      # @raise [GithubAPIError] if the API token is missing
       def verify_token!
+        WorkLogger.debug 'Verifying GitHub API token presence'
         @configuration.github.api_key || raise(GithubAPIError,
                                                'GitHub API key is not configured. Please set it in the configuration.')
       end

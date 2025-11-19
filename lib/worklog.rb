@@ -99,9 +99,6 @@ module Worklog
                                url: options[:url], epic: options[:epic], message:, project: options[:project])
       daily_log << new_entry
 
-      # Sort by time in case an entry was added later out of order.
-      daily_log.entries.sort_by!(&:time)
-
       @storage.write_log(@storage.filepath(options[:date]), daily_log)
 
       (new_entry.people - @people.keys).each do |handle|
