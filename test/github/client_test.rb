@@ -16,10 +16,10 @@ class GithubTest < Minitest::Test
 
   def load_fixture(*filenames)
     filenames.flat_map do |filename|
-    file_path = File.join(__dir__, 'data', filename)
-    events = JSON.parse(File.read(file_path))
-    events.filter { |event| Client::EVENT_FILTER.include?(event['type']) }
-  end
+      file_path = File.join(__dir__, 'data', filename)
+      events = JSON.parse(File.read(file_path))
+      events.filter { |event| Client::EVENT_FILTER.include?(event['type']) }
+    end
   end
 
   # General test for fetch_events with pagination
