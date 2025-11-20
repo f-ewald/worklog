@@ -162,17 +162,22 @@ class StorageTest < Minitest::Test
   end
 
   def test_store_sort_by_time_mixed_times
+
     tz_la = TZInfo::Timezone.get('America/Los_Angeles')
     unsorted_log = DailyLog.new(date: @date, entries: [
-      LogEntry.new(time: Time.new(2020, 1, 1, 15, 0, 0), message: 'Afternoon work UTC'),
+      LogEntry.new(time: Time.new(2020, 1, 1, 15, 0, 0, "UTC"), message: 'Afternoon work UTC'),
       LogEntry.new(time: tz_la.local_time(2020, 1, 1, 9, 0, 0), message: 'Morning work LA'),
-      LogEntry.new(time: Time.new(2020, 1, 1, 12, 0, 0), message: 'Noon work UTC')
+      LogEntry.new(time: Time.new(2020, 1, 1, 12, 0, 0, "UTC"), message: 'Noon work UTC')
     ])
 
     @storage.write_log(@storage.filepath(@date), unsorted_log)
     loaded_log = @storage.load_log(@storage.filepath(@date))
 
     sorted_times = loaded_log.entries.map(&:time)
-    assert_equal [tz_la.local_time(2020, 1, 1, 9, 0, 0), Time.new(2020, 1, 1, 12, 0, 0), Time.new(2020, 1, 1, 15, 0, 0)], sorted_times
+    assert_equal [
+      Time.new(2020, 1, 1, 12, 0, 0, "UTC"),
+      Time.new(2020, 1, 1, 15, 0, 0, "UTC"),
+      tz_la.local_time(2020, 1, 1, 9, 0, 0)
+      ], sorted_times
   end
 end
