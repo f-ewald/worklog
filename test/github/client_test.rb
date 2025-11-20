@@ -14,15 +14,17 @@ class GithubTest < Minitest::Test
     @pr_number = 109
   end
 
-  def load_fixture(filename)
+  def load_fixture(*filenames)
+    filenames.flat_map do |filename|
     file_path = File.join(__dir__, 'data', filename)
     events = JSON.parse(File.read(file_path))
     events.filter { |event| Client::EVENT_FILTER.include?(event['type']) }
   end
+  end
 
   # General test for fetch_events with pagination
   def test_fetch_events
-    fixture = load_fixture('github_events.json')
+    fixture = load_fixture('pull_request_event.json', 'pull_request_review_event.json', 'push_event.json')
     @github.stub(:github_api_get, ->(_url) { fixture }) do
       @github.stub(:pull_request_details, PullRequestDetails.new) do
         events = @github.fetch_events
