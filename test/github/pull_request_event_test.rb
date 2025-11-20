@@ -7,7 +7,7 @@ require 'github/pull_request_event'
 
 class PullRequestEventTest < Minitest::Test
   include Worklog
-  include Worklog::Github
+  include Github
 
   def setup
     @event = PullRequestEvent.new(
@@ -70,12 +70,12 @@ class PullRequestEventTest < Minitest::Test
 
   def test_to_log_entry
     assert_instance_of LogEntry, @log_entry
-    assert_equal Hasher.sha256('sample-org/sample-repo42'), @log_entry.key
+    assert_equal Hasher.sha256('sample-org/sample-repo42truetrue'), @log_entry.key
     assert_equal 'github', @log_entry.source
   end
 
   def test_log_entry_time
-    assert_equal Time.parse('2024-01-01T12:00:00Z'), @log_entry.time
+    assert_equal Time.parse('2024-01-02T12:00:00Z'), @log_entry.time
   end
 
   def test_log_entry_message
