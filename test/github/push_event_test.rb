@@ -5,9 +5,11 @@ require 'minitest/autorun'
 require 'github/push_event'
 
 class PushEventTest < Minitest::Test
-  def test_push_event_to_s
-    push_event = Worklog::Github::PushEvent.new
+  include Worklog::Github
 
-    assert_equal '#<struct Struct::PushEvent>', push_event.to_s
+  def test_push_event_to_s
+    push_event = PushEvent.new
+
+    assert_match(/\A#<Worklog::Github::PushEvent:0x[0-9a-f]+>\z/, push_event.to_s)
   end
 end
