@@ -6,7 +6,7 @@ require 'github/pull_request_review_event'
 
 class PullRequestReviewEventTest < Minitest::Test
   include Worklog
-  include Worklog::Github
+  include Github
 
   def setup
     @event = PullRequestReviewEvent.new(
