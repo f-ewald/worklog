@@ -1,0 +1,55 @@
+[
+    {
+        "id": "4533484421",
+        "type": "PullRequestEvent",
+        "actor": {
+            "id": 177914030,
+            "login": "f-ewald",
+            "display_login": "f-ewald",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/f-ewald",
+            "avatar_url": "https://avatars.githubusercontent.com/u/177914030?"
+        },
+        "repo": {
+            "id": 661384092,
+            "name": "sample-org/sample-repo",
+            "url": "https://api.github.com/repos/sample-org/sample-repo"
+        },
+        "payload": {
+            "action": "opened",
+            "number": 446,
+            "pull_request": {
+                "url": "https://api.github.com/repos/sample-org/sample-repo/pulls/446",
+                "id": 2991906024,
+                "number": 446,
+                "head": {
+                    "ref": "fewald/feature-1",
+                    "sha": "13c30c3663e77af5bdd75ae1098213eb17efca4c",
+                    "repo": {
+                        "id": 661384092,
+                        "url": "https://api.github.com/repos/sample-org/sample-repo",
+                        "name": "sample-org/sample-repo"
+                    }
+                },
+                "base": {
+                    "ref": "master",
+                    "sha": "aa81093995a2b0b5f4f4c7bd3787b553cffc3d9c",
+                    "repo": {
+                        "id": 661384092,
+                        "url": "https://api.github.com/repos/sample-org/sample-repo",
+                        "name": "sample-repo"
+                    }
+                }
+            }
+        },
+        "public": false,
+        "created_at": "2025-11-08T22:22:10Z",
+        "org": {
+            "id": 127226988,
+            "login": "sample-org",
+            "gravatar_id": "",
+            "url": "https://api.github.com/orgs/sample-org",
+            "avatar_url": "https://avatars.githubusercontent.com/u/127226988?"
+        }
+    }
+]
