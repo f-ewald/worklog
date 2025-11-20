@@ -25,68 +25,12 @@ module Worklog
       end
 
       # Fetch events for a given user from Github API
-      def get_events
+      def fetch_events
         verify_token!
 
         WorkLogger.debug 'Fetching most recent GitHub events...'
-        responses = fetch_events
-        events = []
-
-        responses.each do |event|
-          # Payload is available for each event
-          payload = event['payload']
-
-          case event['type']
-          when 'PullRequestEvent'
-            repo = event['repo']
-
-            # Retrieve details for the specific pull request
-            pr_details = pull_request_details(repo['name'], payload['number'])
-
-            events << PullRequestEvent.new(
-              repository: repo['name'],
-              number: payload['number'],
-              url: pr_details.url,
-              title: pr_details.title,
-              description: pr_details.description,
-              created_at: pr_details.created_at,
-              merged_at: pr_details.merged_at,
-              closed_at: pr_details.closed_at
-            )
-          when 'PushEvent'
-            # Handle PushEvent if needed
-            # TODO: Check if really needed
-            # events << PushEvent.new
-          when 'PullRequestReviewEvent'
-            repo_name = event['repo']['name']
-            pr_number = payload['pull_request']['number']
-
-            review = payload['review']
-            review_state = review['state']
-            url = review['html_url']
-            created_at = to_local_time(review['submitted_at'])
-
-            pr_details = pull_request_details(repo_name, pr_number)
-
-            events << PullRequestReviewEvent.new(
-              repository: repo_name,
-              number: pr_number,
-              url:,
-              title: pr_details.title,
-              description: pr_details.description,
-              creator: pr_details.creator,
-              state: review_state,
-              created_at: created_at
-            )
-          else
-            # Ignore other event types
-            # TODO: Ignore the events silently
-            WorkLogger.debug "Unhandled event type: #{event['type']}, skipping."
-
-          end
-        end
-
-        events
+        responses = fetch_event_pages
+        responses.filter_map { |event| create_event(event) }
       end
 
       def pull_request_data(repo, pr_number)
@@ -102,6 +46,55 @@ module Worklog
       end
 
       private
+
+      def create_event(event)
+        return unless EVENT_FILTER.include?(event['type'])
+
+        case event['type']
+        when 'PullRequestEvent'
+          create_pull_request_event(event)
+        when 'PullRequestReviewEvent'
+          create_pull_request_review_event(event)
+        end
+      end
+
+      def create_pull_request_event(event)
+        payload = event['payload']
+        repo = event['repo']
+
+        # Retrieve details for the specific pull request
+        pr_details = pull_request_details(repo['name'], payload['number'])
+
+        PullRequestEvent.new(
+          repository: repo['name'],
+          number: payload['number'],
+          **pr_details.to_h.slice(:url, :title, :description, :created_at, :merged_at, :closed_at)
+        )
+      end
+
+      def create_pull_request_review_event(event)
+        repo_name = event['repo']['name']
+        payload = event['payload']
+        pr_number = payload['pull_request']['number']
+
+        review = payload['review']
+        review_state = review['state']
+        url = review['html_url']
+        created_at = to_local_time(review['submitted_at'])
+
+        pr_details = pull_request_details(repo_name, pr_number)
+
+        PullRequestReviewEvent.new(
+          repository: repo_name,
+          number: pr_number,
+          url:,
+          title: pr_details.title,
+          description: pr_details.description,
+          creator: pr_details.creator,
+          state: review_state,
+          created_at: created_at
+        )
+      end
 
       # Get detailed information about a specific pull request
       # @param repo [String] Repository name in the format 'owner/repo'
@@ -149,7 +142,7 @@ module Worklog
 
       # Fetch the maximum number of events with pagination for the configured user
       # @return [Array<Hash>] Array of event hashes
-      def fetch_events
+      def fetch_event_pages
         responses = []
         (1..3).each do |page|
           responses += github_api_get("https://api.github.com/users/#{@configuration.github.username}/events?per_page=100&page=#{page}")

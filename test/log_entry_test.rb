@@ -11,7 +11,8 @@ class LogEntryTest < Minitest::Test
   end
 
   def test_time
-    assert_equal '10:00', @log_entry.time
+    assert @log_entry.time.is_a?(Time)
+    assert_equal Time.parse('10:00'), @log_entry.time
   end
 
   def test_tags
@@ -146,7 +147,7 @@ class LogEntryTest < Minitest::Test
     log_entry = Worklog::LogEntry.from_hash(hash)
 
     assert_instance_of Worklog::LogEntry, log_entry
-    assert_equal '10:00', log_entry.time
+    assert_equal Time.parse('10:00'), log_entry.time
     assert_equal ['tag1', 'tag2'], log_entry.tags
     assert_equal 'ticket-123', log_entry.ticket
     assert_equal 'https://example.com/', log_entry.url

@@ -78,7 +78,7 @@ module Worklog
       s = String.new
 
       # Prefix with [EPIC] if epic
-      s << Rainbow('[EPIC]').bg(:white).fg(:black) << ' ' if epic?
+      s << epic_prefix if epic?
 
       # Print the message
       s << if source == 'github'
@@ -89,14 +89,7 @@ module Worklog
 
       s << "  [#{Rainbow(@ticket).fg(:blue)}]" if @ticket
 
-      # Add tags in brackets if defined.
-      s << ('  [' + @tags.map { |tag| "#{tag}" }.join(', ') + ']') if @tags && @tags.size > 0
-
-      # Add URL in brackets if defined.
-      s << "  [#{@url}]" if @url && @url != ''
-
-      s << "  [#{@project}]" if @project && @project != ''
-
+      s << format_metadata
       s
     end
 
@@ -136,6 +129,26 @@ module Worklog
     def ==(other)
       time == other.time && tags == other.tags && ticket == other.ticket && url == other.url &&
         epic == other.epic && message == other.message
+    end
+
+    private
+
+    # Prefix for epic entries with formatting.
+    # @return [String]
+    def epic_prefix
+      "#{Rainbow('[EPIC]').bg(:white).fg(:black)} "
+    end
+
+    # Format metadata for display.
+    # @return [String]
+    def format_metadata
+      metadata_parts = []
+      metadata_parts << Rainbow(@ticket).fg(:blue) if @ticket
+      metadata_parts << @tags.join(', ') if @tags&.any?
+      metadata_parts << @url if @url && @url != ''
+      metadata_parts << @project if @project && @project != ''
+
+      metadata_parts.empty? ? '' : "  [#{metadata_parts.join(']  [')}]"
     end
   end
 end

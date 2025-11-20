@@ -20,12 +20,12 @@ class GithubTest < Minitest::Test
     events.filter { |event| Client::EVENT_FILTER.include?(event['type']) }
   end
 
-  # General test for get_events with pagination
-  def test_get_events
+  # General test for fetch_events with pagination
+  def test_fetch_events
     fixture = load_fixture('github_events.json')
     @github.stub(:github_api_get, ->(_url) { fixture }) do
       @github.stub(:pull_request_details, PullRequestDetails.new) do
-        events = @github.get_events
+        events = @github.fetch_events
 
         assert_kind_of Array, events
         assert_equal fixture.size * 3, events.size
@@ -48,9 +48,7 @@ class GithubTest < Minitest::Test
     )
     @github.stub(:github_api_get, ->(_url) { fixture }) do
       @github.stub(:pull_request_details, pr_details) do
-        events = @github.get_events
-
-        assert_kind_of Array, events
+        events = @github.fetch_events
 
         # Pagination returns 3 pages of the same fixture
         assert_equal fixture.size * 3, events.size
@@ -58,12 +56,18 @@ class GithubTest < Minitest::Test
         assert_kind_of PullRequestReviewEvent, events.first
         first = events.first
 
-        assert_equal 'sample-org/sample-repo', first.repository
-        assert_equal 511, first.number
-        assert_equal 'https://github.com/sample-org/sample-repo/pull/511#pullrequestreview-1234', first.url
-        assert_equal 'Pull Request Review Title', first.title
-        assert_equal 'Description of the pull request.', first.description
-        assert_equal 'approved', first.state
+        expected_attributes = {
+          repository: 'sample-org/sample-repo',
+          number: 511,
+          url: 'https://github.com/sample-org/sample-repo/pull/511#pullrequestreview-1234',
+          title: 'Pull Request Review Title',
+          description: 'Description of the pull request.',
+          state: 'approved'
+        }
+
+        expected_attributes.each do |attr, expected_value|
+          assert_equal expected_value, first.send(attr)
+        end
       end
     end
   end
@@ -81,9 +85,7 @@ class GithubTest < Minitest::Test
     )
     @github.stub(:github_api_get, ->(_url) { fixture }) do
       @github.stub(:pull_request_details, pr_details) do
-        events = @github.get_events
-
-        assert_kind_of Array, events
+        events = @github.fetch_events
 
         # Pagination returns 3 pages of the same fixture
         assert_equal fixture.size * 3, events.size
@@ -91,14 +93,20 @@ class GithubTest < Minitest::Test
         assert_kind_of PullRequestEvent, events.first
         event = events.first
 
-        assert_equal 'sample-org/sample-repo', event.repository
-        assert_equal 446, event.number
-        assert_equal pr_details.url, event.url
-        assert_equal pr_details.title, event.title
-        assert_equal pr_details.description, event.description
-        assert_equal '2021-09-01T12:34:56Z', event.created_at
-        assert_equal '2021-09-02T12:34:56Z', event.merged_at
-        assert_equal '2021-09-02T12:34:56Z', event.closed_at
+        expected_attributes = {
+          repository: 'sample-org/sample-repo',
+          number: 446,
+          url: pr_details.url,
+          title: pr_details.title,
+          description: pr_details.description,
+          created_at: '2021-09-01T12:34:56Z',
+          merged_at: '2021-09-02T12:34:56Z',
+          closed_at: '2021-09-02T12:34:56Z'
+        }
+
+        expected_attributes.each do |attr, expected_value|
+          assert_equal expected_value, event.send(attr)
+        end
       end
     end
   end
@@ -107,7 +115,7 @@ class GithubTest < Minitest::Test
   def test_push_event
     fixture = load_fixture('push_event.json')
     @github.stub(:github_api_get, ->(_url) { fixture }) do
-      events = @github.get_events
+      events = @github.fetch_events
 
       assert_kind_of Array, events
       puts events.first.class
@@ -142,7 +150,7 @@ class GithubTest < Minitest::Test
     github_client = Client.new(@configuration)
 
     error = assert_raises(Client::GithubAPIError) do
-      github_client.get_events
+      github_client.fetch_events
     end
 
     assert_equal 'GitHub API key is not configured. Please set it in the configuration.', error.message
