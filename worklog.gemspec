@@ -40,4 +40,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rackup', '~> 2.2'
   spec.add_dependency 'rainbow', '~> 3.1'
   spec.add_dependency 'thor', '~> 1.3'
+  spec.add_dependency 'tzinfo', '~> 2.0'
 end

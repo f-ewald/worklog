@@ -29,6 +29,9 @@ def configuration_helper
   Worklog::Configuration.new do |config|
     config.storage_path = File.join(Dir.tmpdir, 'worklog_test')
     config.log_level = :debug
+
+    config.github = Worklog::Configuration::GithubConfig.new
+    config.github.api_key = 'test-api-key'
   end
 end
 

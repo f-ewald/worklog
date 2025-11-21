@@ -15,7 +15,7 @@
 class Person
   attr_reader :handle, :name, :email, :team, :notes
 
-  def initialize(handle, name, email, team, notes = [])
+  def initialize(handle:, name:, email:, team:, notes: [])
     @handle = handle
     @name = name
     @email = email
@@ -40,7 +40,7 @@ class Person
     email = hash[:email] || hash['email']
     team = hash[:team] || hash['team']
     notes = hash[:notes] || hash['notes'] || []
-    Person.new(handle, name, email, team, notes)
+    Person.new(handle: handle, name: name, email: email, team: team, notes: notes)
   end
 
   def to_s

@@ -124,6 +124,9 @@ module Worklog
       WorkLogger.debug "Writing to file #{file}"
 
       File.open(file, 'w') do |f|
+        # Sort entries by time before saving
+        daily_log.entries.sort_by!(&:time)
+
         f.puts daily_log.to_yaml
       end
     end
