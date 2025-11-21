@@ -5,7 +5,6 @@ require 'github/pull_request_details'
 require 'github/pull_request_event'
 require 'github/pull_request_review_event'
 require 'github/push_event'
-require 'tzinfo'
 require 'worklogger'
 
 module Worklog

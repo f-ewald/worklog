@@ -24,8 +24,8 @@ class StorageTest < Minitest::Test
 
     @storage = Storage.new(configuration_helper)
     @storage.write_log(@storage.filepath(@date), @daily_log)
-    @person_alex = Person.new('alex', 'Alex Test', 'alext@example.com', 'Team A', ['Note 1'])
-    @person_laura = Person.new('laura', 'Laura Test', 'laurat@example.com', 'Team B', ['Note 2'])
+    @person_alex = Person.new(handle: 'alex', name: 'Alex Test', email: 'alext@example.com', team: 'Team A', notes: ['Note 1'])
+    @person_laura = Person.new(handle: 'laura', name: 'Laura Test', email: 'laurat@example.com', team: 'Team B', notes: ['Note 2'])
     @storage.write_people!([@person_alex, @person_laura])
   end
 

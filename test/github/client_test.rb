@@ -81,8 +81,8 @@ class GithubTest < Minitest::Test
       title: 'Add new feature',
       description: 'This PR adds a new feature.',
       url: 'https://github.com/sample-org/sample-repo/pull/446',
-      created_at: '2021-09-01T12:34:56Z',
-      merged_at: '2021-09-02T12:34:56Z',
+      created_at: Time.utc(2021, 9, 1, 12, 34, 56),
+      merged_at: Time.utc(2021, 9, 2, 12, 34, 56),
       closed_at: '2021-09-02T12:34:56Z'
     )
     @github.stub(:github_api_get, ->(_url) { fixture }) do
