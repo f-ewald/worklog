@@ -71,6 +71,11 @@ module Worklog
       projects.key?(key)
     end
 
+    # Alias for exist? method.
+    # @param key [String] The key of the project to check.
+    # @return [Boolean] Returns true if the project exists, false otherwise.
+    def key?(key) = exist?(key)
+
     private
 
     # Check whether projects.yaml exists in the project_dir
