@@ -83,7 +83,7 @@ class GithubTest < Minitest::Test
       url: 'https://github.com/sample-org/sample-repo/pull/446',
       created_at: Time.utc(2021, 9, 1, 12, 34, 56),
       merged_at: Time.utc(2021, 9, 2, 12, 34, 56),
-      closed_at: '2021-09-02T12:34:56Z'
+      closed_at: Time.utc(2021, 9, 2, 12, 34, 56)
     )
     @github.stub(:github_api_get, ->(_url) { fixture }) do
       @github.stub(:pull_request_details, pr_details) do
@@ -101,9 +101,9 @@ class GithubTest < Minitest::Test
           url: pr_details.url,
           title: pr_details.title,
           description: pr_details.description,
-          created_at: '2021-09-01T12:34:56Z',
-          merged_at: '2021-09-02T12:34:56Z',
-          closed_at: '2021-09-02T12:34:56Z'
+          created_at: Time.new('2021-09-01T12:34:56Z'),
+          merged_at: Time.new('2021-09-02T12:34:56Z'),
+          closed_at: Time.new('2021-09-02T12:34:56Z')
         }
 
         expected_attributes.each do |attr, expected_value|
