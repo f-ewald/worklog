@@ -7,6 +7,12 @@ require 'github/push_event'
 class PushEventTest < Minitest::Test
   include Worklog::Github
 
+  def test_to_log_entry
+    push_event = PushEvent.new
+    log_entry = push_event.to_log_entry
+    refute_nil log_entry
+  end
+
   def test_push_event_to_s
     push_event = PushEvent.new
 
