@@ -10,6 +10,7 @@ class PushEventTest < Minitest::Test
   def test_to_log_entry
     push_event = PushEvent.new
     log_entry = push_event.to_log_entry
+
     refute_nil log_entry
   end
 
