@@ -11,7 +11,8 @@ class LogEntryTest < Minitest::Test
   end
 
   def test_time
-    assert_equal '10:00', @log_entry.time
+    assert @log_entry.time.is_a?(Time)
+    assert_equal Time.parse('10:00'), @log_entry.time
   end
 
   def test_tags
@@ -60,8 +61,8 @@ class LogEntryTest < Minitest::Test
 
   def test_message_string_replace_people
     known_people = {
-      'person1' => Person.new('person1', 'Person One', '', 'Team A'),
-      'person2' => Person.new('person2', 'Person Two', '', 'Team A')
+      'person1' => Person.new(handle: 'person1', name: 'Person One', email: '', team: 'Team A'),
+      'person2' => Person.new(handle: 'person2', name: 'Person Two', email: '', team: 'Team A')
     }
     msg_string = Worklog::LogEntry.new(message: 'This is a message with a mention of ~person1 and ~person2').message_string(known_people)
     refute_nil msg_string
@@ -146,7 +147,7 @@ class LogEntryTest < Minitest::Test
     log_entry = Worklog::LogEntry.from_hash(hash)
 
     assert_instance_of Worklog::LogEntry, log_entry
-    assert_equal '10:00', log_entry.time
+    assert_equal Time.parse('10:00'), log_entry.time
     assert_equal ['tag1', 'tag2'], log_entry.tags
     assert_equal 'ticket-123', log_entry.ticket
     assert_equal 'https://example.com/', log_entry.url

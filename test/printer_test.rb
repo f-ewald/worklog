@@ -9,7 +9,8 @@ require 'printer'
 
 class PrinterTest < Minitest::Test
   def setup
-    @printer = Printer.new
+    @configuration = configuration_helper
+    @printer = Printer.new(@configuration)
   end
 
   def test_no_entries
@@ -22,8 +23,8 @@ class PrinterTest < Minitest::Test
   def test_print_entry
     daily_log = Worklog::DailyLog.new(date: Date.new(2020, 1, 1), entries: [])
     entry = Worklog::LogEntry.new(time: '12:00:00', message: 'Test message')
-    Printer.new.print_entry(daily_log, entry, false)
-    Printer.new.print_entry(daily_log, entry, true)
+    @printer.print_entry(daily_log, entry, false)
+    @printer.print_entry(daily_log, entry, true)
   end
 
   def test_print_day

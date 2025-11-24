@@ -1,0 +1,94 @@
+[
+    {
+        "id": "4553773007",
+        "type": "PullRequestReviewEvent",
+        "actor": {
+            "id": 177914030,
+            "login": "f-ewald",
+            "display_login": "f-ewald",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/f-ewald",
+            "avatar_url": "https://avatars.githubusercontent.com/u/177914030?"
+        },
+        "repo": {
+            "id": 661248456,
+            "name": "sample-org/sample-repo",
+            "url": "https://api.github.com/repos/sample-org/sample-repo"
+        },
+        "payload": {
+            "review": {
+                "id": 3438854081,
+                "node_id": "PRR_kwDOJ2nZyM7M-L_B",
+                "user": {
+                    "login": "f-ewald",
+                    "id": 177914030,
+                    "node_id": "U_kgDOCprAzA",
+                    "avatar_url": "https://avatars.githubusercontent.com/u/177914030?v=4",
+                    "gravatar_id": "",
+                    "url": "https://api.github.com/users/f-ewald",
+                    "html_url": "https://github.com/f-ewald",
+                    "followers_url": "https://api.github.com/users/f-ewald/followers",
+                    "following_url": "https://api.github.com/users/f-ewald/following{/other_user}",
+                    "gists_url": "https://api.github.com/users/f-ewald/gists{/gist_id}",
+                    "starred_url": "https://api.github.com/users/f-ewald/starred{/owner}{/repo}",
+                    "subscriptions_url": "https://api.github.com/users/f-ewald/subscriptions",
+                    "organizations_url": "https://api.github.com/users/f-ewald/orgs",
+                    "repos_url": "https://api.github.com/users/f-ewald/repos",
+                    "events_url": "https://api.github.com/users/f-ewald/events{/privacy}",
+                    "received_events_url": "https://api.github.com/users/f-ewald/received_events",
+                    "type": "User",
+                    "user_view_type": "public",
+                    "site_admin": false
+                },
+                "body": null,
+                "commit_id": "bdb3eec84b2c4902348f1884c8b4ceb0e540f2e4",
+                "submitted_at": "2025-11-08T22:08:57Z",
+                "state": "approved",
+                "html_url": "https://github.com/sample-org/sample-repo/pull/511#pullrequestreview-1234",
+                "pull_request_url": "https://api.github.com/repos/sample-org/sample-repo/pulls/511",
+                "_links": {
+                    "html": {
+                        "href": "https://github.com/sample-org/sample-repo/pull/511#pullrequestreview-1234"
+                    },
+                    "pull_request": {
+                        "href": "https://api.github.com/repos/sample-org/sample-repo/pulls/511"
+                    }
+                },
+                "updated_at": "2025-11-08T22:08:57Z"
+            },
+            "pull_request": {
+                "url": "https://api.github.com/repos/sample-org/sample-repo/pulls/511",
+                "id": 2990572438,
+                "number": 511,
+                "head": {
+                    "ref": "f-ewald/feature-1",
+                    "sha": "bdb3eec84b2c4902348f1884c8b4ceb0e540f2e4",
+                    "repo": {
+                        "id": 661248456,
+                        "url": "https://api.github.com/repos/sample-org/sample-repo",
+                        "name": "sample-repo"
+                    }
+                },
+                "base": {
+                    "ref": "master",
+                    "sha": "f2c7df89932162d00abb6e9d878297d72bd19650",
+                    "repo": {
+                        "id": 661248456,
+                        "url": "https://api.github.com/repos/sample-org/sample-repo",
+                        "name": "sample-repo"
+                    }
+                }
+            },
+            "action": "created"
+        },
+        "public": false,
+        "created_at": "2025-11-08T22:08:58Z",
+        "org": {
+            "id": 127256988,
+            "login": "sample-org",
+            "gravatar_id": "",
+            "url": "https://api.github.com/orgs/sample-org",
+            "avatar_url": "https://avatars.githubusercontent.com/u/127256988?"
+        }
+    }
+]

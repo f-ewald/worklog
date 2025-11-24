@@ -10,6 +10,8 @@ module Worklog
   # @see DailyLog
   # @!attribute [rw] key
   #   @return [String] the unique key of the log entry. The key is generated based on the time and message.
+  # @!attribute [rw] source
+  #   @return [String] the source of the log entry, e.g., 'github', 'manual', etc.
   # @!attribute [rw] time
   #   @return [Time] the date and time of the log entry.
   # @!attribute [rw] tags
@@ -29,14 +31,15 @@ module Worklog
 
     include Hashify
 
-    attr_accessor :key, :time, :tags, :ticket, :url, :epic, :message, :project
+    attr_accessor :key, :source, :time, :tags, :ticket, :url, :epic, :message, :project
 
     attr_reader :day
 
     def initialize(params = {})
       # key can be nil. This is needed for backwards compatibility with older log entries.
       @key = params[:key]
-      @time = params[:time]
+      @source = params[:source] || 'manual'
+      @time = params[:time].is_a?(String) ? Time.parse(params[:time]) : params[:time]
       # If tags are nil, set to empty array.
       # This is similar to the CLI default value.
       @tags = params[:tags] || []
@@ -72,24 +75,21 @@ module Worklog
         end
       end
 
-      s = ''
+      s = String.new
 
-      s += if epic
-             Rainbow("[EPIC] #{msg}").bg(:white).fg(:black)
+      # Prefix with [EPIC] if epic
+      s << epic_prefix if epic?
+
+      # Print the message
+      s << if source == 'github'
+             Rainbow(msg).fg(:green)
            else
              msg
            end
 
-      s += "  [#{Rainbow(@ticket).fg(:blue)}]" if @ticket
+      s << "  [#{Rainbow(@ticket).fg(:blue)}]" if @ticket
 
-      # Add tags in brackets if defined.
-      s += '  [' + @tags.map { |tag| "#{tag}" }.join(', ') + ']' if @tags && @tags.size > 0
-
-      # Add URL in brackets if defined.
-      s += "  [#{@url}]" if @url && @url != ''
-
-      s += "  [#{@project}]" if @project && @project != ''
-
+      s << format_metadata
       s
     end
 
@@ -129,6 +129,26 @@ module Worklog
     def ==(other)
       time == other.time && tags == other.tags && ticket == other.ticket && url == other.url &&
         epic == other.epic && message == other.message
+    end
+
+    private
+
+    # Prefix for epic entries with formatting.
+    # @return [String]
+    def epic_prefix
+      "#{Rainbow('[EPIC]').bg(:white).fg(:black)} "
+    end
+
+    # Format metadata for display.
+    # @return [String]
+    def format_metadata
+      metadata_parts = []
+      metadata_parts << Rainbow(@ticket).fg(:blue) if @ticket
+      metadata_parts << @tags.join(', ') if @tags&.any?
+      metadata_parts << @url if @url && @url != ''
+      metadata_parts << @project if @project && @project != ''
+
+      metadata_parts.empty? ? '' : "  [#{metadata_parts.join(']  [')}]"
     end
   end
 end

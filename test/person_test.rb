@@ -6,18 +6,19 @@ require 'person'
 
 class PersonTest < Minitest::Test
   def setup
-    @john_doe = Person.new('jdoe', 'John Doe', 'john_doe@example.org', 'Engineering', %w[Note1 Note2])
+    @john_doe = Person.new(handle: 'jdoe', name: 'John Doe', email: 'john_doe@example.org', team: 'Engineering', notes: %w[Note1 Note2])
+    @alice = Person.new(handle: 'asmith', name: 'Alice Smith', email: nil, team: 'Marketing', notes: [])
   end
 
   def test_initialize
     refute_nil @john_doe
+    refute_nil @alice
   end
 
   def test_to_s
-    person = Person.new('jdoe', 'John Doe', 'john_doe@example.org', 'Engineering', [])
-    assert_equal 'John Doe (~jdoe) <john_doe@example.org>', person.to_s
+    assert_equal 'John Doe (~jdoe) <john_doe@example.org>', @john_doe.to_s
 
-    person = Person.new('jdoe', 'John Doe', nil, 'Engineering', [])
+    person = Person.new(handle: 'jdoe', name: 'John Doe', email: nil, team: 'Engineering', notes: [])
     assert_equal 'John Doe (~jdoe)', person.to_s
   end
 

@@ -66,7 +66,7 @@ class ProjectTest < Minitest::Test
     # Add entries for the last 5 days
     (0..4).each do |i|
       entry = Worklog::LogEntry.new
-      entry.time = DateTime.now - i
+      entry.time = Time.now - i
       entry.message = "Work log entry #{i}"
       @project.entries << entry
     end

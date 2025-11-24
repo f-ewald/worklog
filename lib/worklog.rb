@@ -8,6 +8,7 @@ require 'yaml'
 require 'configuration'
 require 'daily_log'
 require 'date_parser'
+require 'github/client'
 require 'hash'
 require 'hasher'
 require 'log_entry'
@@ -98,9 +99,6 @@ module Worklog
                                url: options[:url], epic: options[:epic], message:, project: options[:project])
       daily_log << new_entry
 
-      # Sort by time in case an entry was added later out of order.
-      daily_log.entries.sort_by!(&:time)
-
       @storage.write_log(@storage.filepath(options[:date]), daily_log)
 
       (new_entry.people - @people.keys).each do |handle|
@@ -144,7 +142,7 @@ module Worklog
     #   worklog.show(from: '2023-10-01', to: '2023-10-31')
     #   worklog.show(date: '2023-10-01')
     def show(options = {})
-      printer = Printer.new(@people)
+      printer = Printer.new(@config, @people)
 
       start_date, end_date = start_end_date(options)
 
@@ -194,7 +192,7 @@ module Worklog
     end
 
     def person_detail(all_logs, all_people, person)
-      printer = Printer.new(all_people)
+      printer = Printer.new(@config, all_people)
       puts "All interactions with #{Rainbow(person.name).gold}"
 
       if person.notes
@@ -341,7 +339,7 @@ module Worklog
     # @example
     #   worklog.tag_detail('example_tag', from: '2023-10-01', to: '2023-10-31')
     def tag_detail(tag, options)
-      printer = Printer.new(@people)
+      printer = Printer.new(@config, @people)
       start_date, end_date = start_end_date(options)
 
       @storage.days_between(start_date, end_date).each do |daily_log|
@@ -371,7 +369,7 @@ module Worklog
 
       # Do nothing if no entries are found.
       if entries.empty?
-        Printer.new.no_entries(start_date, end_date)
+        Printer.new(@config).no_entries(start_date, end_date)
         return
       end
 

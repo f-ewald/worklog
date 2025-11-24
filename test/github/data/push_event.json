@@ -1,0 +1,35 @@
+[
+    {
+        "id": "5804524298",
+        "type": "PushEvent",
+        "actor": {
+            "id": 177914030,
+            "login": "f-ewald",
+            "display_login": "f-ewald",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/f-ewald",
+            "avatar_url": "https://avatars.githubusercontent.com/u/177914030?"
+        },
+        "repo": {
+            "id": 661384092,
+            "name": "sample-org/sample-repo",
+            "url": "https://api.github.com/repos/sample-org/sample-repo"
+        },
+        "payload": {
+            "repository_id": 661384092,
+            "push_id": 28100169659,
+            "ref": "refs/heads/fewald/feature-1",
+            "head": "13c30c3663e77af5bdd75ae1098213eb17efca4c",
+            "before": "dbb408bd976041bbcc6f9bbf5771fe1b2e0bba5f"
+        },
+        "public": false,
+        "created_at": "2025-11-08T23:03:31Z",
+        "org": {
+            "id": 127256988,
+            "login": "sample-org",
+            "gravatar_id": "",
+            "url": "https://api.github.com/orgs/sample-org",
+            "avatar_url": "https://avatars.githubusercontent.com/u/127236988?"
+        }
+    }
+]

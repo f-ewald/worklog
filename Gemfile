@@ -9,6 +9,7 @@ gem 'rack', '~> 3.1'
 gem 'rackup', '~> 2.2'
 gem 'rainbow', '~> 3.1'
 gem 'thor', '~> 1.3'
+gem 'tzinfo', '~> 2.0'
 
 # Gems required for development
 group :development do
