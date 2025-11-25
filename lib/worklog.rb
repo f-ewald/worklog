@@ -197,7 +197,6 @@ module Worklog
       printer = Printer.new(@config, all_people)
       puts "All interactions with #{Rainbow(person.name).gold}"
 
-
       puts "GitHub: #{Rainbow(person.github_username).blue}" if person.github_username
 
       if person.notes
