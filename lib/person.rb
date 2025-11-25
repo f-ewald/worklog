@@ -13,8 +13,10 @@ module Worklog
   #  @return [String, nil] The team the person belongs to, can be nil
   # !attribute [r] notes
   #  @return [Array<String>] An array of notes about the person
+  #  !attribute [r] inactive
+  #  @return [Boolean] Whether the person is inactive (for example left the company)
   class Person
-    attr_reader :handle, :github_username, :name, :email, :team, :notes
+    attr_reader :handle, :github_username, :name, :email, :team, :notes, :inactive
 
     def initialize(handle:, name:, **params)
       # params to symbol keys
@@ -26,6 +28,20 @@ module Worklog
       @email = params[:email]
       @team = params[:team]
       @notes = params[:notes] || []
+      @inactive = params[:inactive] || false
+    end
+
+    # Returns true if the person is active (not inactive).
+    # If not specified, persons are active by default.
+    # @return [Boolean] true if active, false otherwise
+    def active?
+      !@inactive
+    end
+
+    # Returns true if the person is marked as inactive.
+    # @return [Boolean] true if inactive, false otherwise
+    def inactive?
+      @inactive
     end
 
     # Creates a new Person instance from a hash of attributes.

@@ -157,7 +157,7 @@ module Worklog
     end
 
     # Show all known people and details about a specific person.
-    def people(person = nil, _options = {})
+    def people(person = nil, options = {})
       all_logs = @storage.all_days
 
       if person
@@ -180,6 +180,8 @@ module Worklog
 
         mentions.each do |handle, v|
           if @people.key?(handle)
+            next unless @people[handle].active? || options[:inactive]
+
             person = @people[handle]
             print "#{Rainbow(person.name).gold} (#{handle})"
             print " (#{person.team})" if person.team
@@ -194,6 +196,8 @@ module Worklog
     def person_detail(all_logs, all_people, person)
       printer = Printer.new(@config, all_people)
       puts "All interactions with #{Rainbow(person.name).gold}"
+
+      puts "GitHub: #{Rainbow(person.github_username).blue}" if person.github_username
 
       if person.notes
         puts 'Notes:'
