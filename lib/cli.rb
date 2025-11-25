@@ -110,6 +110,7 @@ class WorklogCLI < Thor
   end
 
   desc 'people', 'Show all people mentioned in the work log'
+  option :inactive, type: :boolean, default: false, desc: 'Include inactive people in the list'
   def people(person = nil)
     worklog = Worklog::Worklog.new
     worklog.people(person, options)

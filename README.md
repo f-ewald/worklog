@@ -55,10 +55,10 @@ wl show
 
 This commands prints by default the current day, depending on the system time. It is also possible to show a date range, show only epics or filter by tag or project. To view all possible options and filters, run `wl help show`.
 
-To show all the people you interacted with, type:
+To show all the people you interacted with, type the following command. In addition, you can show details about a specific person by providing their handle (e.g. `jdoe`):
 
 ```shell
-wl people
+wl people [--inactive] [handle]
 ```
 
 Show all currently active projects/initiatives, optionally as one line for a quick overview

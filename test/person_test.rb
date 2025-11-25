@@ -69,4 +69,24 @@ class PersonTest < Minitest::Test
     }
     assert_raises(ArgumentError) { Person.from_hash(hash) }
   end
+
+  def test_active?
+    person_active = Person.new(handle: 'active1', name: 'Active User', inactive: false)
+    person_inactive = Person.new(handle: 'inactive1', name: 'Inactive User', inactive: true)
+    person_default = Person.new(handle: 'default1', name: 'Default User')
+
+    assert person_active.active?
+    refute person_inactive.active?
+    assert person_default.active?
+  end
+
+  def test_inactive?
+    person_active = Person.new(handle: 'active2', name: 'Active User', inactive: false)
+    person_inactive = Person.new(handle: 'inactive2', name: 'Inactive User', inactive: true)
+    person_default = Person.new(handle: 'default2', name: 'Default User')
+
+    refute person_active.inactive?
+    assert person_inactive.inactive?
+    refute person_default.inactive?
+  end
 end
