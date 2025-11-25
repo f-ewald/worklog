@@ -6,8 +6,10 @@ require 'log_entry'
 require 'person'
 
 class LogEntryTest < Minitest::Test
+  include Worklog
+
   def setup
-    @log_entry = Worklog::LogEntry.new(time: '10:00', tags: ['tag1', 'tag2'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message')
+    @log_entry = LogEntry.new(time: '10:00', tags: ['tag1', 'tag2'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message')
   end
 
   def test_time
@@ -21,7 +23,7 @@ class LogEntryTest < Minitest::Test
 
   def test_empty_tags
     # Empty tags should be converted to an empty array.
-    assert_empty Worklog::LogEntry.new(time: '10:00', ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message').tags
+    assert_empty LogEntry.new(time: '10:00', ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message').tags
   end
 
   def test_ticket
@@ -42,7 +44,7 @@ class LogEntryTest < Minitest::Test
   end
 
   def test_equality
-    assert_equal Worklog::LogEntry.new(time: '10:00', tags: ['tag1', 'tag2'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message'), @log_entry
+    assert_equal LogEntry.new(time: '10:00', tags: ['tag1', 'tag2'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message'), @log_entry
   end
 
   def test_message_string
@@ -64,7 +66,7 @@ class LogEntryTest < Minitest::Test
       'person1' => Person.new(handle: 'person1', name: 'Person One', email: '', team: 'Team A'),
       'person2' => Person.new(handle: 'person2', name: 'Person Two', email: '', team: 'Team A')
     }
-    msg_string = Worklog::LogEntry.new(message: 'This is a message with a mention of ~person1 and ~person2').message_string(known_people)
+    msg_string = LogEntry.new(message: 'This is a message with a mention of ~person1 and ~person2').message_string(known_people)
     refute_nil msg_string
     assert_includes msg_string, 'Person One'
     assert_includes msg_string, 'Person Two'
@@ -129,8 +131,8 @@ class LogEntryTest < Minitest::Test
     assert_nil @log_entry.day
 
     # Set a day and check if it is set correctly.
-    day = Worklog::DailyLog.new(date: Date.today)
-    log_entry = Worklog::LogEntry.new(time: '10:00', tags: ['tag1'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message', day: day)
+    day = DailyLog.new(date: Date.today)
+    log_entry = LogEntry.new(time: '10:00', tags: ['tag1'], ticket: 'ticket-123', url: 'https://example.com/', epic: true, message: 'This is a message', day: day)
     assert_equal day, log_entry.day
   end
 
@@ -144,9 +146,9 @@ class LogEntryTest < Minitest::Test
       message: 'This is a message',
       project: 'project-1'
     }
-    log_entry = Worklog::LogEntry.from_hash(hash)
+    log_entry = LogEntry.from_hash(hash)
 
-    assert_instance_of Worklog::LogEntry, log_entry
+    assert_instance_of LogEntry, log_entry
     assert_equal Time.parse('10:00'), log_entry.time
     assert_equal ['tag1', 'tag2'], log_entry.tags
     assert_equal 'ticket-123', log_entry.ticket
