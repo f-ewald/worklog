@@ -77,6 +77,12 @@ class WorklogCLI < Thor
     worklog.github(options)
   end
 
+  desc 'init', 'Initialize the work log storage and configuration in the home directory'
+  def init
+    worklog = Worklog::Worklog.new
+    worklog.init(options)
+  end
+
   desc 'remove', 'Remove last entry from the log'
   option :date, type: :string, default: Time.now.strftime('%Y-%m-%d')
   def remove

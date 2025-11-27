@@ -5,9 +5,18 @@ require 'minitest/autorun'
 require 'cli'
 require 'configuration'
 require 'tzinfo'
+require 'erb'
 
 class ConfigurationTest < Minitest::Test
   include Worklog
+
+  def test_configuration_template
+    refute_nil Configuration::CONFIGURATION_TEMPLATE
+    assert_instance_of ERB, Configuration::CONFIGURATION_TEMPLATE
+
+    result = Configuration::CONFIGURATION_TEMPLATE.result
+    assert_instance_of String, result
+  end
 
   def test_initialize
     config = Configuration.new
@@ -152,5 +161,10 @@ class ConfigurationTest < Minitest::Test
 
     assert_equal '123abc', config.github.api_key
     assert_equal 'sample-user', config.github.username
+  end
+
+  def test_config_file_path
+    assert_instance_of String, Configuration.config_file_path
+    assert_equal File.join(Dir.home, '.worklog.yaml'), Configuration.config_file_path
   end
 end

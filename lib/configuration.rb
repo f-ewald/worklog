@@ -72,6 +72,27 @@ module Worklog
       end
     end
 
+    CONFIGURATION_TEMPLATE = ERB.new <<~YAML
+      # Worklog Configuration File
+      # This file contains configuration settings for Worklog.
+      # You can modify the values below to customize your setup.
+      # For more information, refer to the documentation.
+      storage_path: <%= Dir.home %>/.worklog
+      log_level: info
+      timezone: 'America/Los_Angeles'
+      webserver_port: 3000
+
+      project:
+        # Number of last projects to show in the project list
+        show_last: 3
+
+      github:
+        # Your GitHub API key for accessing the GitHub API
+        api_key: ""
+        # Your GitHub username for finding assigned issues and PRs
+        username: ""
+    YAML
+
     # Initialize configuration with optional block for setting attributes.
     # If no block is given, default values are used.
     # @example
@@ -98,7 +119,7 @@ module Worklog
     # If the file does not exist, it will use default values.
     # @return [Configuration] the loaded configuration
     def self.load
-      file_path = File.join(Dir.home, '.worklog.yaml')
+      file_path = config_file_path
       config = Configuration.new
       if File.exist?(file_path)
         file_cfg = YAML.load_file(file_path)
@@ -125,6 +146,12 @@ module Worklog
     # @return [Boolean] true if the storage path is the default, false otherwise
     def default_storage_path?
       @storage_path == File.join(Dir.home, '.worklog')
+    end
+
+    # Get the default configuration file path.
+    # @return [String] the default configuration file path
+    def self.config_file_path
+      File.join(Dir.home, '.worklog.yaml')
     end
   end
 end

@@ -22,11 +22,11 @@ class StorageTest < Minitest::Test
     assert_instance_of DailyLog, @daily_log
     assert_instance_of LogEntry, @daily_log.entries.first
 
-    @storage = Storage.new(configuration_helper)
+    @configuration = configuration_helper
+    @storage = Storage.new(@configuration)
     @storage.write_log(@storage.filepath(@date), @daily_log)
     @person_alex = Person.new(handle: 'alex', name: 'Alex Test', email: 'alext@example.com', team: 'Team A', notes: ['Note 1'])
     @person_laura = Person.new(handle: 'laura', name: 'Laura Test', email: 'laurat@example.com', team: 'Team B', notes: ['Note 2'])
-    @storage.write_people!([@person_alex, @person_laura])
   end
 
   def teardown
@@ -95,11 +95,13 @@ class StorageTest < Minitest::Test
   end
 
   def test_load_people
+    @storage.write_people!([@person_alex, @person_laura])
     people = @storage.load_people!
     assert_equal [@person_alex, @person_laura], people
   end
 
   def test_load_people_hash
+    @storage.write_people!([@person_alex, @person_laura])
     people_hash = @storage.load_people_hash
     assert_instance_of Hash, people_hash
     assert_equal @person_alex, people_hash['alex']
@@ -162,7 +164,6 @@ class StorageTest < Minitest::Test
   end
 
   def test_store_sort_by_time_mixed_times
-
     tz_la = TZInfo::Timezone.get('America/Los_Angeles')
     unsorted_log = DailyLog.new(date: @date, entries: [
       LogEntry.new(time: Time.new(2020, 1, 1, 15, 0, 0, "UTC"), message: 'Afternoon work UTC'),
@@ -179,5 +180,39 @@ class StorageTest < Minitest::Test
       Time.new(2020, 1, 1, 15, 0, 0, "UTC"),
       tz_la.local_time(2020, 1, 1, 9, 0, 0)
       ], sorted_times
+  end
+
+  def test_people_filepath
+    filepath = @storage.people_filepath
+    assert_instance_of String, filepath
+    assert filepath.end_with?('/people.yaml')
+  end
+
+  def test_create_default_people
+    @storage.create_default_files
+
+    assert_path_exists @storage.people_filepath
+    assert_includes File.read(@storage.people_filepath), 'Each person is defined by the following attributes:'
+  end
+
+  def test_create_default_configuration
+    Dir.mktmpdir do |dir|
+      Dir.stub :home, dir do
+        @storage.create_default_files
+
+        config_file = File.join(dir, '.worklog.yaml')
+        assert_path_exists config_file
+        assert_includes File.read(config_file), 'storage_path:'
+      end
+    end
+  end
+
+  def test_create_default_projects
+    skip "WIP: Implement ProjectStorage tests"
+    @storage.create_default_files
+
+    projects_file = File.join(@storage.config.storage_path, 'projects.yaml')
+    assert_path_exists projects_file
+    assert_equal [].to_yaml, File.read(projects_file)
   end
 end

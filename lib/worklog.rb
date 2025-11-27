@@ -24,7 +24,7 @@ require 'takeout'
 module Worklog
   # Main class providing all worklog functionality.
   # This class is the main entry point for the application.
-  # It handles command line arguments, configuration, and logging.
+  # It handles configuration, data storage, and logging.
   # @!attribute [r] config
   #   @return [Configuration] The configuration object containing settings for the application.
   # @!attribute [r] storage
@@ -40,7 +40,9 @@ module Worklog
   #                date: '2023-10-01',
   #                time: '10:00:00',
   #                tags: ['feature', 'x'],
-  #                ticket: 'TICKET-123')
+  #                ticket: 'TICKET-123',
+  #                epic: true,
+  #                project: 'my_project')
   class Worklog
     include StringHelper
 
@@ -50,10 +52,12 @@ module Worklog
       # Load or use provided configuration
       @config = config || Configuration.load
 
-      # Initialize storage
-      @storage = Storage.new(@config)
-
+      # Set log level based on configuration
       WorkLogger.level = @config.log_level == :debug ? Logger::Severity::DEBUG : Logger::Severity::INFO
+
+      # Initialize (project) storage
+      @storage = Storage.new(@config)
+      @project_storage = ProjectStorage.new(@config)
 
       bootstrap
     end
@@ -64,6 +68,9 @@ module Worklog
 
       # Load all people as they're used in multiple/most of the methods.
       @people = @storage.load_people_hash
+
+      # Load all projects from disk
+      @projects = @project_storage.load_projects
     end
 
     # Add new entry to the work log.
