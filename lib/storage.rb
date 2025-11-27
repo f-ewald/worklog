@@ -229,7 +229,6 @@ module Worklog
         File.write(Configuration.config_file_path,
                    Configuration::CONFIGURATION_TEMPLATE.result)
       end
-
     end
 
     # Construct filepath for a given date.
