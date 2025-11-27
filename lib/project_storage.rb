@@ -41,6 +41,9 @@ module Worklog
       @configuration = configuration
     end
 
+    # Returns all loaded projects.
+    # If the projects are not already loaded, it loads them from disk.
+    # @return [Hash<String, Project>] A hash of project objects keyed by their unique project keys.
     def projects
       @projects ||= load_projects
     end

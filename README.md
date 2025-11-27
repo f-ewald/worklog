@@ -39,6 +39,13 @@ gem install fewald-worklog
 
 This installs the worklog globally and adds the CLI as `wl`. Refer to the section "usage" on how to use the CLI or run `wl help`.
 
+As a next step it is recommended to run `wl init` to initialize the storage in your home directory (`~/.worklog`).
+Additionally, this will create:
+
+* a default configuration file at `~/.worklog.yaml`
+* a default people file at `~/.worklog/people.yaml`
+* a default projects file at `~/.worklog/projects.yaml`
+
 ## Usage
 
 To add an entry with todays date and the current time, run the following command:
