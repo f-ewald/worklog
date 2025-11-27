@@ -222,10 +222,14 @@ module Worklog
       end
 
       # Write the default config file if it does not exist
-      return if File.exist?(Configuration.config_file_path)
+      if File.exist?(Configuration.config_file_path)
+        WorkLogger.info "Configuration file (#{Configuration.config_file_path}) already exists, skipping creation."
+      else
+        WorkLogger.info "Creating default configuration file at #{Configuration.config_file_path}."
+        File.write(Configuration.config_file_path,
+                   Configuration::CONFIGURATION_TEMPLATE.result)
+      end
 
-      File.write(Configuration.config_file_path,
-                 Configuration::CONFIGURATION_TEMPLATE.result)
     end
 
     # Construct filepath for a given date.
