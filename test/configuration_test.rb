@@ -5,7 +5,6 @@ require 'minitest/autorun'
 require 'cli'
 require 'configuration'
 require 'tzinfo'
-require 'erb'
 
 class ConfigurationTest < Minitest::Test
   include Worklog
