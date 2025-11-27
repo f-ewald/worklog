@@ -134,6 +134,43 @@ module Worklog
       WorkLogger.info Rainbow("Updated work log for #{options[:date]}").green
     end
 
+    # Fetch latest events from GitHub for a specified user and add them to the work log.
+    #
+    # @param options [Hash] the options hash containing GitHub username and other parameters.
+    def github(_options = {})
+      github = Github::Client.new(@config)
+      github_events = github.fetch_events
+
+      WorkLogger.info Rainbow("Fetched #{github_events.size} events from GitHub.").green
+
+      events_by_date = github_events.group_by { |event| event.to_log_entry.time.to_date }
+
+      events_by_date.each do |date, events|
+        WorkLogger.info Rainbow("Found #{events.size} events for #{date}").green
+        puts "Processing #{events.size} events for '#{date}'"
+        @storage.create_file_skeleton(date)
+        daily_log = @storage.load_log!(@storage.filepath(date))
+        entries_before = daily_log.entries.size
+        events.each do |event|
+          log_entry = event.to_log_entry
+          WorkLogger.debug('Entry already exists, skipping') if daily_log.key?(log_entry.key)
+          daily_log << log_entry unless daily_log.key?(log_entry.key)
+          WorkLogger.debug "Added entry: #{log_entry.message_string}"
+        end
+        entries_after = daily_log.entries.size
+        WorkLogger.info Rainbow("Added #{entries_after - entries_before} new entries for #{date}").green
+
+        # Write log back to storage
+        @storage.write_log(@storage.filepath(date), daily_log)
+      end
+    end
+
+    # Initialize the work log storage with default files and folders.
+    # This method will not overwrite existing files and is thus safe to run multiple times.
+    def init(_options = {})
+      @storage.create_default_files
+    end
+
     # Show the work log for a specific date range or a single date.
     #
     # @param options [Hash] the options hash containing date range or single date.
