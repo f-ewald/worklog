@@ -3,6 +3,7 @@
 require_relative 'test_helper'
 require 'minitest/autorun'
 require 'people_storage'
+require 'person'
 
 class PeopleStorageTest < Minitest::Test
   include Worklog
