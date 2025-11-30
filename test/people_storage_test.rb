@@ -55,7 +55,6 @@ class PeopleStorageTest < Minitest::Test
     end
 
   end
-
   def test_people_filepath
     expected_path = File.join(@configuration.storage_path, PeopleStorage::PEOPLE_FILE)
     assert_equal expected_path, @people_storage.people_filepath
