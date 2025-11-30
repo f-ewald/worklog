@@ -17,21 +17,6 @@ module Worklog
     # Regular expression to match daily log file names
     LOG_PATTERN = /\d{4}-\d{2}-\d{2}#{FILE_SUFFIX}\z/
 
-    # The template for the people YAML file.
-    # This template is used to create a new people file if it does not exist.
-    PERSON_TEMPLATE = <<~YAML
-      ---
-      # Each person is defined by the following attributes:
-      # - handle: <unique_handle>
-      #   github_username: <github_username>
-      #   name: <full_name>
-      #   team: <team_name>
-      #   email: <email_address>
-      #   role: <role_in_team>
-      #   inactive: <true_or_false>
-      #   --- Define your people below this line ---
-    YAML
-
     def initialize(config)
       @config = config
     end
@@ -153,44 +138,6 @@ module Worklog
       daily_log.entries
     end
 
-    # Load all people from the people file, or return an empty array if the file does not exist
-    #
-    # @return [Array<Person>] List of people
-    def load_people
-      load_people!
-    rescue Errno::ENOENT
-      WorkLogger.info 'Unable to load people.'
-      []
-    end
-
-    # Load all people from the people file and return them as a hash with handle as key
-    # @return [Hash<String, Person>] Hash of people with handle as key
-    def load_people_hash
-      load_people.to_h { |person| [person.handle, person] }
-    end
-
-    # Load all people from the people file
-    # @return [Array<Person>] List of people
-    def load_people!
-      return [] unless File.exist?(people_filepath)
-
-      yamltext = File.read(people_filepath)
-      if yamltext != yamltext.gsub(/^- !.*$/, '-')
-        WorkLogger.debug 'The people.yaml file contains deprecated syntax. Migrating now.'
-        yamltext.gsub!(/^- !.*$/, '-')
-        File.write(people_filepath, yamltext)
-      end
-      YAML.load(yamltext, permitted_classes: []).map { |person_hash| Person.from_hash(person_hash) }
-    end
-
-    # Write people to the people file
-    # @param [Array<Person>] people List of people
-    def write_people!(people)
-      File.open(people_filepath, 'w') do |f|
-        f.puts people.to_yaml
-      end
-    end
-
     # Create folder if not exists already.
     # @return [void]
     def create_default_folder
@@ -214,13 +161,6 @@ module Worklog
       #   File.write(projects_file, [].to_yaml)
       # end
 
-      if File.exist?(people_filepath)
-        WorkLogger.info 'people.yaml already exists, skipping creation.'
-      else
-        WorkLogger.info 'Creating default people.yaml file.'
-        File.write(people_filepath, PERSON_TEMPLATE)
-      end
-
       # Write the default config file if it does not exist
       if File.exist?(Configuration.config_file_path)
         WorkLogger.info "Configuration file (#{Configuration.config_file_path}) already exists, skipping creation."
@@ -236,12 +176,6 @@ module Worklog
     # @return [String] The filepath
     def filepath(date)
       File.join(@config.storage_path, "#{date}#{FILE_SUFFIX}")
-    end
-
-    # Return the full absolute filepath for the people.yaml file
-    # @return [String] The filepath
-    def people_filepath
-      File.join(@config.storage_path, 'people.yaml')
     end
   end
 end

@@ -94,20 +94,6 @@ class StorageTest < Minitest::Test
     assert_equal @daily_log, @storage.load_log(@storage.filepath(@date))
   end
 
-  def test_load_people
-    @storage.write_people!([@person_alex, @person_laura])
-    people = @storage.load_people!
-    assert_equal [@person_alex, @person_laura], people
-  end
-
-  def test_load_people_hash
-    @storage.write_people!([@person_alex, @person_laura])
-    people_hash = @storage.load_people_hash
-    assert_instance_of Hash, people_hash
-    assert_equal @person_alex, people_hash['alex']
-    assert_equal @person_laura, people_hash['laura']
-  end
-
   def test_log_pattern
     assert_match Storage::LOG_PATTERN, '2020-01-01.yaml'
     refute_match Storage::LOG_PATTERN, '2020-01-01.yml'
@@ -180,19 +166,6 @@ class StorageTest < Minitest::Test
       Time.new(2020, 1, 1, 15, 0, 0, "UTC"),
       tz_la.local_time(2020, 1, 1, 9, 0, 0)
       ], sorted_times
-  end
-
-  def test_people_filepath
-    filepath = @storage.people_filepath
-    assert_instance_of String, filepath
-    assert filepath.end_with?('/people.yaml')
-  end
-
-  def test_create_default_people
-    @storage.create_default_files
-
-    assert_path_exists @storage.people_filepath
-    assert_includes File.read(@storage.people_filepath), 'Each person is defined by the following attributes:'
   end
 
   def test_create_default_configuration

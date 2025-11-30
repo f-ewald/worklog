@@ -14,6 +14,7 @@ require 'hasher'
 require 'log_entry'
 require 'worklogger'
 require 'string_helper'
+require 'people_storage'
 require 'printer'
 require 'project_storage'
 require 'statistics'
@@ -57,6 +58,7 @@ module Worklog
 
       # Initialize (project) storage
       @storage = Storage.new(@config)
+      @people_storage = PeopleStorage.new(@config)
       @project_storage = ProjectStorage.new(@config)
 
       bootstrap
@@ -67,7 +69,7 @@ module Worklog
       @storage.create_default_folder
 
       # Load all people as they're used in multiple/most of the methods.
-      @people = @storage.load_people_hash
+      @people = @people_storage.load_people_hash
 
       # Load all projects from disk
       @projects = @project_storage.load_projects
@@ -169,6 +171,7 @@ module Worklog
     # This method will not overwrite existing files and is thus safe to run multiple times.
     def init(_options = {})
       @storage.create_default_files
+      @people_storage.create_default_file
     end
 
     # Show the work log for a specific date range or a single date.
