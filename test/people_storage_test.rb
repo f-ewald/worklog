@@ -38,6 +38,7 @@ class PeopleStorageTest < Minitest::Test
         inactive: false
     YAML
   end
+
   def test_load_people_hash
     create_example_people_file
     people_hash = @people_storage.load_people_hash
@@ -55,6 +56,7 @@ class PeopleStorageTest < Minitest::Test
     end
 
   end
+
   def test_people_filepath
     expected_path = File.join(@configuration.storage_path, PeopleStorage::PEOPLE_FILE)
     assert_equal expected_path, @people_storage.people_filepath
@@ -106,6 +108,18 @@ class PeopleStorageTest < Minitest::Test
     @people_storage.write_people!(people)
     loaded_people = @people_storage.load_people
     assert_equal people, loaded_people
+  end
+
+  def test_write_people_nil_raises_error
+    assert_raises(ArgumentError) do
+      @people_storage.write_people!(nil)
+    end
+  end
+
+  def test_write_people_not_array_raises_error
+    assert_raises(ArgumentError) do
+      @people_storage.write_people!('not an array')
+    end
   end
 
   def test_find_by_handle

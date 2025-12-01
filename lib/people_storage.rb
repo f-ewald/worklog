@@ -18,7 +18,7 @@ module Worklog
       #   name: <full_name>
       #   team: <team_name>
       #   email: <email_address>
-      #   role: <role_in_team>
+      #   title: <title_or_role>
       #   inactive: <true_or_false>
       #   --- Define your people below this line ---
     YAML
@@ -73,9 +73,14 @@ module Worklog
     # Write people to the people file
     # @param [Array<Person>] people List of people
     def write_people!(people)
+      if people.nil? || !people.is_a?(Array)
+        raise ArgumentError, 'people must be an array of Person objects'
+      end
+
       File.open(people_filepath, 'w') do |f|
         f.puts people.to_yaml
       end
+      @people = people
     end
 
     # Create the default people file if it does not exist

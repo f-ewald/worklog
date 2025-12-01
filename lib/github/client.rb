@@ -16,7 +16,6 @@ module Worklog
       EVENT_FILTER = Set.new(%w[
                                PullRequestEvent
                                PullRequestReviewEvent
-
                              ]).freeze
 
       def initialize(configuration)
