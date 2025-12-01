@@ -18,6 +18,15 @@ class PullRequestReviewEventTest < Minitest::Test
       creator: 'creator-username',
       url: 'https://github.com/sample-org/sample-repo/pull/42#pullrequestreview-1234'
     )
+    @person = Person.new(
+      handle: 'person-handle',
+      github_username: 'creator-username',
+      name: 'Full Name',
+      team: 'Team Name',
+      email: 'email@example.com',
+      title: 'Title',
+      inactive: false
+    )
     @log_entry = @event.to_log_entry
   end
 
@@ -70,18 +79,11 @@ class PullRequestReviewEventTest < Minitest::Test
   # Test to_log_entry with people storage, ensuring it resolves the handle
   def test_to_log_entry_person_storage
     people_storage = Minitest::Mock.new
-    person = Person.new(
-      handle: 'person-handle',
-      github_username: 'creator-username',
-      name: 'Full Name',
-      team: 'Team Name',
-      email: 'email@example.com',
-      title: 'Title',
-      inactive: false
-    )
+
     people_storage.expect :nil?, false
-    people_storage.expect :find_by_github_username, person, ['creator-username']
+    people_storage.expect :find_by_github_username, @person, ['creator-username']
     log_entry = @event.to_log_entry(people_storage)
+
     assert_includes log_entry.message, '~person-handle'
   end
 

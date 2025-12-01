@@ -70,6 +70,7 @@ module Worklog
       #  resolve_username(people_storage) #=> "~johndoe"
       def resolve_username(people_storage)
         return if people_storage.nil?
+
         person = people_storage.find_by_github_username(creator)
         person ? "~#{person.handle}" : nil
       end
