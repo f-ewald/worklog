@@ -73,9 +73,7 @@ module Worklog
     # Write people to the people file
     # @param [Array<Person>] people List of people
     def write_people!(people)
-      if people.nil? || !people.is_a?(Array)
-        raise ArgumentError, 'people must be an array of Person objects'
-      end
+      raise ArgumentError, 'people must be an array of Person objects' if people.nil? || !people.is_a?(Array)
 
       File.open(people_filepath, 'w') do |f|
         f.puts people.to_yaml
