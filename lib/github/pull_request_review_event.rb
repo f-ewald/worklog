@@ -66,6 +66,8 @@ module Worklog
       # Resolve the GitHub username to a person handle using the provided PeopleStorage
       # @param [PeopleStorage, nil] people_storage The PeopleStorage instance to use for resolution
       # @return [String, nil] The person handle if found, otherwise nil
+      # @example
+      #  resolve_username(people_storage) #=> "~johndoe"
       def resolve_username(people_storage)
         return if people_storage.nil?
         person = people_storage.find_by_github_username(creator)

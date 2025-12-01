@@ -5,7 +5,9 @@ require 'worklogger'
 require 'yaml'
 
 module Worklog
-  # Handles storage of people
+  # Finding, reading, and writing of people
+  # @see Person
+  # @see Storage
   class PeopleStorage
     PEOPLE_FILE = 'people.yaml'
 
@@ -15,7 +17,11 @@ module Worklog
       ---
       # Each person is defined by the following attributes:
       # - handle: <unique_handle>
+      #     Unique handle used to reference this person (e.g., ~jdoe)
       #   github_username: <github_username>
+      #     GitHub username of the person, used to link GitHub events to this person.
+      #     This can be omitted if the person does not have a GitHub account and can
+      #     be different from the handle.
       #   name: <full_name>
       #   team: <team_name>
       #   email: <email_address>
