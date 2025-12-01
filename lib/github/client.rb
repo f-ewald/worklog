@@ -163,8 +163,10 @@ module Worklog
       # @raise [GithubAPIError] if the API token is missing
       def verify_token!
         WorkLogger.debug 'Verifying GitHub API token presence'
-        @configuration.github.api_key || raise(GithubAPIError,
-                                               'GitHub API key is not configured. Please set it in the configuration.')
+        return unless @configuration.github.api_key.nil? || @configuration.github.api_key.empty?
+
+        raise(GithubAPIError,
+              'GitHub API key is not configured. Please set it in the configuration.')
       end
     end
   end
