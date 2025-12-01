@@ -157,4 +157,15 @@ class GithubTest < Minitest::Test
 
     assert_equal 'GitHub API key is not configured. Please set it in the configuration.', error.message
   end
+
+  def test_empty_token
+    @configuration.github.api_key = ''
+    github_client = Client.new(@configuration)
+
+    error = assert_raises(Client::GithubAPIError) do
+      github_client.fetch_events
+    end
+
+    assert_equal 'GitHub API key is not configured. Please set it in the configuration.', error.message
+  end
 end
