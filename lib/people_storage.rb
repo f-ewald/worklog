@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require 'person'
+require 'worklogger'
 require 'yaml'
-require_relative 'worklogger'
-require_relative 'person'
+
 module Worklog
   # Handles storage of people
   class PeopleStorage

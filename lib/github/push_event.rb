@@ -6,7 +6,7 @@ module Worklog
   module Github
     # Event representing a push event
     class PushEvent
-      def to_log_entry
+      def to_log_entry(*)
         WorkLogger.debug('Converting PushEvent to LogEntry')
         LogEntry.new(
           key: 'github-push-event',

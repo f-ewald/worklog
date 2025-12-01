@@ -40,10 +40,12 @@ module Worklog
 
       # Convert the PullRequestReviewEvent to a LogEntry
       # @return [LogEntry]
-      def to_log_entry
+      def to_log_entry(people_storage = nil)
+        handle = resolve_username(people_storage) || creator
+
         message = String.new 'Reviewed '
         message << 'and approved ' if approved?
-        message << "PR ##{number} #{creator}: #{title}"
+        message << "PR ##{number} #{handle}: #{title}"
         LogEntry.new(
           key: Hasher.sha256("#{repository}-#{number}-#{state}"),
           source: 'github',
@@ -57,6 +59,17 @@ module Worklog
       # @return [String]
       def to_s
         "#<PullRequestReviewEvent repository=#{repository} number=#{number} state=#{state} creator=#{creator} created_at=#{created_at}>" # rubocop:disable Layout/LineLength
+      end
+
+      private
+
+      # Resolve the GitHub username to a person handle using the provided PeopleStorage
+      # @param [PeopleStorage, nil] people_storage The PeopleStorage instance to use for resolution
+      # @return [String, nil] The person handle if found, otherwise nil
+      def resolve_username(people_storage)
+        return if people_storage.nil?
+        person = people_storage.find_by_github_username(creator)
+        person ? "~#{person.handle}" : nil
       end
     end
   end

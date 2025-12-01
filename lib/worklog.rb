@@ -154,7 +154,7 @@ module Worklog
         daily_log = @storage.load_log!(@storage.filepath(date))
         entries_before = daily_log.entries.size
         events.each do |event|
-          log_entry = event.to_log_entry
+          log_entry = event.to_log_entry(@people_storage)
           WorkLogger.debug('Entry already exists, skipping') if daily_log.key?(log_entry.key)
           daily_log << log_entry unless daily_log.key?(log_entry.key)
           WorkLogger.debug "Added entry: #{log_entry.message_string}"

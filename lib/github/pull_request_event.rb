@@ -50,7 +50,7 @@ module Worklog
 
       # Convert the PullRequestEvent to a LogEntry
       # @return [LogEntry]
-      def to_log_entry
+      def to_log_entry(*)
         message = if merged?
                     'Merged PR '
                   elsif closed?

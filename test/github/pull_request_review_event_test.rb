@@ -67,6 +67,24 @@ class PullRequestReviewEventTest < Minitest::Test
     assert_includes @log_entry.message, 'and approved'
   end
 
+  # Test to_log_entry with people storage, ensuring it resolves the handle
+  def test_to_log_entry_person_storage
+    people_storage = Minitest::Mock.new
+    person = Person.new(
+      handle: 'person-handle',
+      github_username: 'creator-username',
+      name: 'Full Name',
+      team: 'Team Name',
+      email: 'email@example.com',
+      title: 'Title',
+      inactive: false
+    )
+    people_storage.expect :nil?, false
+    people_storage.expect :find_by_github_username, person, ['creator-username']
+    log_entry = @event.to_log_entry(people_storage)
+    assert_includes log_entry.message, '~person-handle'
+  end
+
   def test_approved?
     assert_predicate @event, :approved?
   end
