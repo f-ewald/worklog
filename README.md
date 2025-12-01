@@ -15,7 +15,7 @@ The app has been created with the following **design principles** in mind:
 * Use **reasonable defaults**. The application should work for the user, not the other way around
 * High **unit test coverage**, with the goal of 100%.
 
-Worklog is currently (early/mid 2025) in **active development**. The main functionality is implemented and works reliably. I am using the app multiple times per day.
+Worklog is currently (late 2025) in **active development**. The main functionality is implemented and works reliably. I am using the app multiple times per day.
 
 ## Features
 
@@ -28,6 +28,7 @@ An (incomplete) list of the currently available features.
 * Show statistics
 * Show log as website, including a mode for presentation well suited for screen sharing
 * Export all entries and settings as a tar.gz archive
+* Synchronization of Github pull requests and reviews as worklog entries
 
 ## Installation
 
@@ -74,7 +75,23 @@ Show all currently active projects/initiatives, optionally as one line for a qui
 wl projects [--oneline]
 ```
 
-Run a webserver on `localhost:9292` via:
+Github pull requests and reviews can be synchronized as worklog entries. This downloads up to 30 days and 300 events (whichever is less) as worklog entries. Duplicate entries are ignored, so it is safe to run this command multiple times. This command requires a configured username and token.
+
+You will need to set the follwing configuration options in your `~/.worklog.yaml` file:
+
+```yaml
+github:
+  api_key: your_github_personal_access_token
+  username: your_github_username
+```
+
+To synchronize the Github account, run the following command:
+
+```shell
+wl github
+```
+
+Run a webserver on [localhost:9292](http://localhost:9292) via:
 
 ```shell
 wl serve
@@ -87,7 +104,7 @@ wl tags
 wl tags bugfix
 ```
 
-Export all worklog data as a tar.gz archive:
+Export all worklog data as a `tar.gz` archive:
 
 ```shell
 wl takeout
