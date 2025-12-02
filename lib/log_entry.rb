@@ -68,9 +68,9 @@ module Worklog
         next unless known_people && known_people[person]
 
         msg.gsub!(/[~@]#{person}/) do |match|
-          s = ''
-          s += ' ' if match[0] == ' '
-          s += "#{Rainbow(known_people[person].name).underline} (~#{person})" if known_people && known_people[person]
+          s = String.new
+          s << ' ' if match[0] == ' '
+          s << "#{Rainbow(known_people[person].name).underline} (~#{person})" if known_people && known_people[person]
           s
         end
       end
@@ -86,8 +86,6 @@ module Worklog
            else
              msg
            end
-
-      s << "  [#{Rainbow(@ticket).fg(:blue)}]" if @ticket
 
       s << format_metadata
       s
