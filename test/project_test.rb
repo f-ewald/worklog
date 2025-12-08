@@ -75,6 +75,16 @@ class ProjectTest < Minitest::Test
     assert_instance_of Github::Repository, project.repositories.first
   end
 
+  def test_project_metadata
+    metadata = @project.project_metadata
+    assert_includes metadata, 'Test Project'
+    assert_includes metadata, 'PROJ'
+    assert_includes metadata, 'A project for testing purposes'
+    assert_includes metadata, 'active'
+    assert_includes metadata, 'owner/repository'
+    assert_includes metadata, 'owner/repo2'
+  end
+
   def test_activity_graph
     # Add entries for the last 5 days
     (0..4).each do |i|

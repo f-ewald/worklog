@@ -89,6 +89,21 @@ module Worklog
       repositories.include? repository
     end
 
+    # Returns a string with project metadata.
+    # @return [String] A string containing project metadata.
+    def project_metadata
+      m = String.new
+      m << "#{Rainbow(name).gold} (#{key})\n"
+      m << "  Description: #{description}\n" if description
+      m << "  Start date: #{start_date.strftime('%b %d, %Y')}\n" if start_date
+      m << "  End date: #{end_date.strftime('%b %d, %Y')}\n" if end_date
+      m << "  Status: #{status}\n" if status
+      m << "  Repositories: #{repositories.map(&:to_s).join(', ')}\n" unless repositories.empty?
+      m << "  Last activity: #{last_activity.strftime('%b %d, %Y')}\n" if last_activity
+      m << "  #{activity_graph}"
+      m
+    end
+
     # Generate an ASCII activity graph for the project.
     # The graph shows activity over time, with each character representing a day.
     # More active days are represented with a different character.
