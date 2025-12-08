@@ -309,6 +309,7 @@ module Worklog
         puts "  Start date: #{project.start_date.strftime('%b %d, %Y')}" if project.start_date
         puts "  End date: #{project.end_date.strftime('%b %d, %Y')}" if project.end_date
         puts "  Status: #{project.status}" if project.status
+        puts "  Repositories: #{project.repositories.map(&:to_s).join(', ')}" unless project.repositories.empty?
         puts "  Last activity: #{project.last_activity.strftime('%b %d, %Y')}" if project.last_activity
         puts "  #{project.activity_graph}"
 

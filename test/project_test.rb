@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
-require 'minitest/autorun'
 require_relative 'test_helper'
+require 'minitest/autorun'
 require 'project'
 require 'log_entry'
 
 class ProjectTest < Minitest::Test
+  include Worklog
+
   def setup
-    @project = Worklog::Project.new
+    @project = Project.new
     @project.key = 'PROJ'
     @project.name = 'Test Project'
     @project.description = 'A project for testing purposes'
@@ -15,11 +17,19 @@ class ProjectTest < Minitest::Test
     @project.end_date = Date.today + 10
     @project.status = 'active'
     @project.entries = []
+    @project.repositories = [
+      Github::Repository.from_url('https://github.com/owner/repository'),
+      Github::Repository.from_url('https://github.com/owner/repo2')
+    ]
   end
 
   def test_from_hash_missing_key
     assert_raises ArgumentError do
-      Worklog::Project.from_hash({})
+      Project.from_hash({})
+    end
+
+    assert_raises ArgumentError do
+      Project.from_hash(nil)
     end
   end
 
@@ -48,24 +58,27 @@ class ProjectTest < Minitest::Test
       description: 'A project for testing purposes',
       start_date: Date.new(2023, 1, 1),
       end_date: Date.new(2023, 12, 31),
-      status: 'active'
+      status: 'active',
+      repositories: ['https://github.com/owner/repository', 'owner/repo2']
     }
 
-    project = Worklog::Project.from_hash(project_data)
+    project = Project.from_hash(project_data)
 
-    assert_instance_of Worklog::Project, project
+    assert_instance_of Project, project
     assert_equal 'PROJ1', project.key
     assert_equal 'Test Project', project.name
     assert_equal 'A project for testing purposes', project.description
     assert_equal Date.new(2023, 1, 1), project.start_date
     assert_equal Date.new(2023, 12, 31), project.end_date
     assert_equal 'active', project.status
+    assert_equal 2, project.repositories.size
+    assert_instance_of Github::Repository, project.repositories.first
   end
 
   def test_activity_graph
     # Add entries for the last 5 days
     (0..4).each do |i|
-      entry = Worklog::LogEntry.new
+      entry = LogEntry.new
       entry.time = Time.now - i
       entry.message = "Work log entry #{i}"
       @project.entries << entry
@@ -76,5 +89,11 @@ class ProjectTest < Minitest::Test
     assert_includes graph, '#'
     assert_includes graph, '.'
     assert_includes graph, 'Today'
+  end
+
+  def test_contains_repository?
+    assert @project.contains_repository?(Github::Repository.new(owner: 'owner', name: 'repository'))
+    assert @project.contains_repository?(Github::Repository.new(owner: 'owner', name: 'repo2'))
+    refute @project.contains_repository?(Github::Repository.new(owner: 'owner', name: 'unknown_repo'))
   end
 end

@@ -52,7 +52,7 @@ Additionally, this will create:
 To add an entry with todays date and the current time, run the following command:
 
 ```shell
-wl add "This is an example" --tags tag1,tag2,tag3 --epic --url "http://example.com" --ticket WL-123
+wl add "This is an example" --tags tag1,tag2,tag3 --epic --url "http://example.com" --ticket WL-123 --project renovation
 ```
 
 Then verify that it is saved by printing all logs from the current day:

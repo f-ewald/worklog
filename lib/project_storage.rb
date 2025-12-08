@@ -32,6 +32,9 @@ module Worklog
       #   start_date: <start_date>
       #   end_date: <end_date>
       #   status: <status>
+      #   repositories:
+      #     - <repository_url_1>
+      #     - <repository_url_2>
       #   --- Define your projects below this line ---
     YAML
 
