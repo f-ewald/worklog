@@ -200,4 +200,5 @@ class WorklogCLI < Thor
   map 'statistics' => :stats
   map 'serve' => :server
   map 'project' => :projects
+  map 'rm' => :remove
 end
