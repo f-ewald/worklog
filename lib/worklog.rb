@@ -304,14 +304,10 @@ module Worklog
         # Sort entries by descending time
         project.entries.sort_by!(&:time).reverse!
 
-        puts "#{Rainbow(project.name).gold} (#{project.key})"
-        puts "  Description: #{project.description}" if project.description
-        puts "  Start date: #{project.start_date.strftime('%b %d, %Y')}" if project.start_date
-        puts "  End date: #{project.end_date.strftime('%b %d, %Y')}" if project.end_date
-        puts "  Status: #{project.status}" if project.status
-        puts "  Last activity: #{project.last_activity.strftime('%b %d, %Y')}" if project.last_activity
-        puts "  #{project.activity_graph}"
+        # Print project details/metadata
+        puts project.project_metadata
 
+        # TODO: Refactor into project metadata
         next unless project.entries && !project.entries.empty?
 
         puts "  Last #{[project.entries&.size, 3].min} entries:"

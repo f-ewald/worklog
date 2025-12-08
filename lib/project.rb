@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'github/repository'
+
 module Worklog
   # Represents a project. A project is a longer running task or initiative.
   # Single log entries can be associated with a project.
@@ -17,6 +19,10 @@ module Worklog
   #   @return [String, nil] The status of the project, can be nil
   #   Possible values: 'active', 'completed', 'archived', etc.
   #   Indicates the current state of the project.
+  # @!attribute [rw] repositories
+  #   @return [Array<String>] An array of repository URLs associated with the project.
+  #   These repositories are used for linking the Github commits to the project.
+  #   At the moment, only Github repositories are supported.
   # @!attribute [rw] entries
   #   These entries are related to the work done on this project.
   #   Entries are populated dynamically when processing daily logs.
@@ -28,7 +34,7 @@ module Worklog
   #   It represents the most recent log entry time for this project.
   #   @return [Date, nil] The last activity date or nil if not set.
   class Project
-    attr_accessor :key, :name, :description, :start_date, :end_date, :status, :entries, :last_activity
+    attr_accessor :key, :name, :description, :start_date, :end_date, :status, :repositories, :entries, :last_activity
 
     # Creates a new Project instance from a hash of attributes.
     # @param hash [Hash] A hash containing project attributes
@@ -41,15 +47,23 @@ module Worklog
     # @return [Project] A new Project instance
     def self.from_hash(hash)
       project = new
+
+      # Protect against nil hash
+      raise ArgumentError, 'Project hash cannot be nil' if hash.nil?
+
       # Ensure that at least the key is present
       raise ArgumentError, 'Project key is required' unless hash[:key] || hash['key']
 
-      project.key = hash[:key] || hash['key']
-      project.name = hash[:name] || hash['name']
-      project.description = hash[:description] || hash['description']
-      project.start_date = hash[:start_date] || hash['start_date']
-      project.end_date = hash[:end_date] || hash['end_date']
-      project.status = hash[:status] || hash['status']
+      hash.each do |key, value|
+        instance_var = "@#{key}"
+        project.instance_variable_set(instance_var, value) if project.respond_to?("#{key}=")
+      end
+      # Set default values for repositories if not provided
+      project.repositories ||= []
+      project.repositories.map! do |repo|
+        Github::Repository.from_url(repo)
+      end
+
       project
     end
 
@@ -66,6 +80,28 @@ module Worklog
     # @return [Boolean] true if the project has ended, false otherwise
     def ended?
       !end_date.nil? && end_date < Date.today
+    end
+
+    # Returns true if the project contains the given repository URL.
+    # @param repository [Worklog::Github::Repository] The repository to check
+    # @return [Boolean] true if the project contains the repository URL, false otherwise
+    def contains_repository?(repository)
+      repositories.include? repository
+    end
+
+    # Returns a string with project metadata.
+    # @return [String] A string containing project metadata.
+    def project_metadata
+      m = String.new
+      m << "#{Rainbow(name).gold} (#{key})\n"
+      m << "  Description: #{description}\n" if description
+      m << "  Start date: #{start_date.strftime('%b %d, %Y')}\n" if start_date
+      m << "  End date: #{end_date.strftime('%b %d, %Y')}\n" if end_date
+      m << "  Status: #{status}\n" if status
+      m << "  Repositories: #{repositories.map(&:to_s).join(', ')}\n" unless repositories.empty?
+      m << "  Last activity: #{last_activity.strftime('%b %d, %Y')}\n" if last_activity
+      m << "  #{activity_graph}"
+      m
     end
 
     # Generate an ASCII activity graph for the project.
