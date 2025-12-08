@@ -311,7 +311,7 @@ module Worklog
         next unless project.entries && !project.entries.empty?
 
         puts "  Last #{[project.entries&.size, 3].min} entries:"
-        puts "    #{project.entries.last(3).map do |e|
+        puts "    #{project.entries.first(3).map do |e|
           "#{e.time.strftime('%b %d, %Y')} #{e.message_string(@people)}"
         end.join("\n    ")}"
       end

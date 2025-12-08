@@ -116,6 +116,12 @@ Create an AI summary (experimental). Requires [Ollama](https://www.ollama.com) w
 wl summary
 ```
 
+Remove the latest entry (**use with caution**):
+
+```shell
+wl remove|rm
+```
+
 
 ```shell
 wl help [subcommand]
