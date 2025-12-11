@@ -48,6 +48,11 @@ module Worklog
 
     attr_reader :config, :storage
 
+    # The earliest allowed start date for log entries.
+    # By default, filters that do not specify a start date will use this date.
+    # @return [Date] The earliest allowed start date.
+    EARLIEST_START_DATE = Date.new(1980, 1, 1).freeze
+
     def initialize(config = nil)
       # Load or use provided configuration
       @config = config || Configuration.load
@@ -329,7 +334,7 @@ module Worklog
     #   worklog.tags(nil) # Show all tags for all time
     def tags(tag = nil, options = {})
       if tag.nil? || tag.empty?
-        tag_overview
+        tag_overview(options)
       else
         tag_detail(tag, options)
       end
@@ -352,9 +357,16 @@ module Worklog
     end
 
     # Show overview of all tags used in the work log including their count.
-    def tag_overview
-      all_logs = @storage.all_days
-      puts Rainbow('Tags used in the work log:').gold
+    def tag_overview(options)
+      start_date, end_date = start_end_date(options)
+
+      all_logs = @storage.days_between(start_date, end_date)
+      date_string = if start_date == end_date
+                      "on #{start_date}"
+                    else
+                      "from #{start_date} to #{end_date}"
+                    end
+      puts Rainbow("Tags used in the work log #{date_string}:").gold
 
       # Count all tags used in the work log
       tags = all_logs.map(&:entries).flatten.map(&:tags).flatten.compact.tally
@@ -482,9 +494,18 @@ module Worklog
 
         start_date = Date.today - options[:days]
         end_date = Date.today
-      elsif options[:from]
+      elsif options[:from] && options[:to]
+        # If both from and to are provided
         start_date = DateParser.parse_date_string!(options[:from], true)
-        end_date = DateParser.parse_date_string!(options[:to], false) if options[:to]
+        end_date = DateParser.parse_date_string!(options[:to], false)
+      elsif options[:from]
+        # If only from is provided
+        start_date = DateParser.parse_date_string!(options[:from], true)
+        end_date = Date.today
+      elsif options[:to]
+        # If only to is provided
+        start_date = EARLIEST_START_DATE
+        end_date = DateParser.parse_date_string!(options[:to], false)
       elsif options[:date]
         start_date = Date.strptime(options[:date], '%Y-%m-%d')
         end_date = start_date
