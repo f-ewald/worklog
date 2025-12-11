@@ -97,7 +97,7 @@ class WorklogTest < Minitest::Test
     })
   end
 
-  def test_tag_overtiew_to
+  def test_tag_overview_to
     @worklog.tag_overview({
       to: '2023-10-31'
     })
@@ -159,7 +159,7 @@ class WorklogTest < Minitest::Test
 
     # Test to only
     start_date, end_date = @worklog.start_end_date(to: '2020-01-10')
-    assert_equal Date.new(1980, 1, 1), start_date
+    assert_equal Worklog::Worklog::EARLIEST_START_DATE, start_date
     assert_equal Date.new(2020, 1, 10), end_date
 
     # Test date
