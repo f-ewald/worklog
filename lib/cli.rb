@@ -65,7 +65,7 @@ class WorklogCLI < Thor
   end
 
   desc 'edit', 'Edit a day in the work log. By default, the current date is used.'
-  option :date, type: :string, default: Time.now.strftime('%Y-%m-%d')
+  option :date, type: :string, default: Date.today.to_s
   def edit
     worklog = Worklog::Worklog.new
     worklog.edit(options)
@@ -84,7 +84,7 @@ class WorklogCLI < Thor
   end
 
   desc 'remove', 'Remove last entry from the log'
-  option :date, type: :string, default: Time.now.strftime('%Y-%m-%d')
+  option :date, type: :string, default: Date.today.to_s
   def remove
     worklog = Worklog::Worklog.new
     worklog.remove(options)
@@ -94,7 +94,7 @@ class WorklogCLI < Thor
   long_desc <<~LONGDESC
     Show the work log for a specific date or a range of dates. As a default, all items from the current day will be shown.
   LONGDESC
-  option :date, type: :string, default: Time.now.strftime('%Y-%m-%d'),
+  option :date, type: :string, default: Date.today.to_s,
                 desc: <<~DESC
                   Show the work log for a specific date. If this option is provided, --from and --to and --days should not be used.
                 DESC
@@ -105,7 +105,7 @@ class WorklogCLI < Thor
     Inclusive end date of the range. Takes precedence over --date, if defined.
   EOF
   option :days, type: :numeric, desc: <<~EOF
-    Number of days to show starting from --date. Takes precedence over --from and --to if defined.
+    Number of days to show starting from --date. Takes precedence over --from and --to, if defined.
   EOF
   option :epics_only, type: :boolean, default: false, desc: 'Show only entries that are marked as epic'
   option :tags, type: :array, default: [], desc: 'Filter entries by tags. Tags are treated as an OR condition.'
@@ -135,7 +135,7 @@ class WorklogCLI < Thor
   end
 
   desc 'tags', 'Show all tags used in the work log'
-  option :date, type: :string, default: Time.now.strftime('%Y-%m-%d'),
+  option :date, type: :string, default: Date.today.to_s,
                 desc: <<~DESC
                   Show the work log for a specific date. If this option is provided, --from and --to and --days should not be used.
                 DESC

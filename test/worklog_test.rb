@@ -84,11 +84,23 @@ class WorklogTest < Minitest::Test
   end
 
   def test_tags
-    @worklog.tags
+    @worklog.tags(nil, date: '2023-10-01')
   end
 
   def test_tag_overview
-    @worklog.tag_overview
+    @worklog.tag_overview(date: '2023-10-01')
+  end
+
+  def test_tag_overview_from
+    @worklog.tag_overview({
+      from: '2023-10-01'
+    })
+  end
+
+  def test_tag_overtiew_to
+    @worklog.tag_overview({
+      to: '2023-10-31'
+    })
   end
 
   def test_tag_detail
@@ -138,6 +150,16 @@ class WorklogTest < Minitest::Test
     # Test from and to
     start_date, end_date = @worklog.start_end_date(from: '2020-01-01', to: '2020-01-10')
     assert_equal Date.new(2020, 1, 1), start_date
+    assert_equal Date.new(2020, 1, 10), end_date
+
+    # Test from only
+    start_date, end_date = @worklog.start_end_date(from: '2020-01-01')
+    assert_equal Date.new(2020, 1, 1), start_date
+    assert_equal Date.today, end_date
+
+    # Test to only
+    start_date, end_date = @worklog.start_end_date(to: '2020-01-10')
+    assert_equal Date.new(1980, 1, 1), start_date
     assert_equal Date.new(2020, 1, 10), end_date
 
     # Test date
