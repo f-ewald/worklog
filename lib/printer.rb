@@ -29,7 +29,15 @@ class Printer
     daily_log.date = Date.strptime(daily_log.date, '%Y-%m-%d') unless daily_log.date.respond_to?(:strftime)
 
     date_string = daily_log.date.strftime('%a, %B %-d, %Y')
-    puts "Work log for #{Rainbow(date_string).gold}" unless date_inline
+    preamble = "Work log for #{Rainbow(date_string).gold}"
+    puts preamble unless date_inline
+
+    # Print only if there are entries to show, especially when epics_only is true
+    entries_count = daily_log.entries.count do |entry|
+      !epics_only || entry.epic?
+    end
+
+    puts Rainbow('-' * preamble.gsub(/[\x00-\x1F\x7F]/, '').length).gold if entries_count.positive?
 
     daily_log.entries.each do |entry|
       next if epics_only && !entry.epic?
