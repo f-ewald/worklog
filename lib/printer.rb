@@ -34,10 +34,10 @@ class Printer
 
     # Print only if there are entries to show, especially when epics_only is true
     entries_count = daily_log.entries.count do |entry|
-      !epics_only || entry.epic?
+      (!epics_only || entry.epic?) && filter.compact.all? { |k, v| entry.send(k) == v }
     end
 
-    puts Rainbow('-' * preamble.gsub(/[\x00-\x1F\x7F]/, '').length).gold if entries_count.positive?
+    puts Rainbow('-' * preamble.gsub(/\e\[[0-9;]*m/, '').length).gold if entries_count.positive?
 
     daily_log.entries.each do |entry|
       next if epics_only && !entry.epic?
