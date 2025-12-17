@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module Hashify
+  # Convert the object's instance variables to a hash.
+  # @return [Hash] the hash representation of the object
   def to_hash
-    hash = {}
-    instance_variables.each do |var|
-      value = instance_variable_get(var)
-      hash[var.to_s.delete('@')] = value
+    instance_variables.each_with_object({}) do |var, hash|
+      key = var.to_s.delete('@').to_sym
+      hash[key] = instance_variable_get(var)
     end
-    hash
   end
 end
 
