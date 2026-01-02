@@ -163,7 +163,7 @@ module Worklog
 
           # Check if entry already exists
           if daily_log.key?(log_entry.key)
-            WorkLogger.debug('Entry already exists, skipping') if daily_log.key?(log_entry.key)
+            WorkLogger.debug('Entry already exists, skipping')
           else
             daily_log << log_entry
             # Mark log as dirty to trigger write later
