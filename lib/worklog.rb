@@ -172,8 +172,6 @@ module Worklog
           WorkLogger.debug "Added entry: #{log_entry.message_string}"
           end
         end
-        entries_after = daily_log.entries.size
-        WorkLogger.info Rainbow("Added #{entries_after - entries_before} new entries for #{date}").green
 
         # Write log back to storage
         if dirty
