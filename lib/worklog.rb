@@ -156,7 +156,6 @@ module Worklog
         puts "Processing #{events.size} events for '#{date}'"
         @storage.create_file_skeleton(date)
         daily_log = @storage.load_log!(@storage.filepath(date))
-        entries_before = daily_log.entries.size
         dirty = false
         events.each do |event|
           # Convert event to log entry
@@ -164,18 +163,18 @@ module Worklog
 
           # Check if entry already exists
           if daily_log.key?(log_entry.key)
-          WorkLogger.debug('Entry already exists, skipping') if daily_log.key?(log_entry.key)
+            WorkLogger.debug('Entry already exists, skipping') if daily_log.key?(log_entry.key)
           else
             daily_log << log_entry
             # Mark log as dirty to trigger write later
             dirty = true
-          WorkLogger.debug "Added entry: #{log_entry.message_string}"
+            WorkLogger.debug "Added entry: #{log_entry.message_string}"
           end
         end
 
         # Write log back to storage
         if dirty
-        @storage.write_log(@storage.filepath(date), daily_log)
+          @storage.write_log(@storage.filepath(date), daily_log)
         else
           WorkLogger.info Rainbow("No new entries to add for #{date}, skipping write.").yellow
         end
