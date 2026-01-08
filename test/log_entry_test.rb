@@ -51,7 +51,7 @@ class LogEntryTest < Minitest::Test
     msg_string = @log_entry.message_string
 
     assert_includes msg_string, 'This is a message'
-    assert_includes msg_string, '[EPIC]'
+    assert_includes msg_string, '⭐️'
     assert_includes msg_string, 'tag1'
     assert_includes msg_string, 'tag2'
     assert_includes msg_string, 'ticket-123'
