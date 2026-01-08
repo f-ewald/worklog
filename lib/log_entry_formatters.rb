@@ -4,9 +4,9 @@ require 'rainbow'
 
 module Worklog
   module LogEntryFormatters
-    # The base formatter provides common functionality and prints the message only
-    # with all shortcuts replaced. Any metadata, like type, tickets, tags, projects,
-    # urls etc. are omitted.
+    # The base formatter provides common functionality and prints the message including
+    # the metadata (ticket, tags, url, project) in a formatted way. It also replaces
+    # people handles with their names if known.
     class BaseFormatter
       # Constructor
       # @param known_people [Hash<String, Person>] A hash of people with their handles as keys.
@@ -83,7 +83,7 @@ module Worklog
       # @param log_entry [LogEntry] the log entry to format.
       # @return [String] the formatted message.
       def format(log_entry)
-        replace_people_handles(log_entry, log_entry.message)
+        replace_people_handles(log_entry, log_entry.message.dup)
       end
     end
   end
