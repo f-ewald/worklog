@@ -4,6 +4,7 @@ require 'yaml'
 require 'rainbow'
 require 'daily_log'
 require 'hash'
+require 'log_entry_formatters'
 
 module Worklog
   # A single log entry in a DailyLog.
@@ -61,41 +62,19 @@ module Worklog
 
     # Returns the message string with formatting without the time.
     # @param known_people Hash[String, Person] A hash of people with their handles as keys.
-    def message_string(known_people = nil)
-      # replace all mentions of people with their names.
-      msg = @message.dup
-      people.each do |person|
-        next unless known_people && known_people[person]
-
-        msg.gsub!(/[~@]#{person}/) do |match|
-          s = String.new
-          s << ' ' if match[0] == ' '
-          s << "#{Rainbow(known_people[person].name).underline} (~#{person})" if known_people && known_people[person]
-          s
-        end
-      end
-
-      s = String.new
-
-      # Prefix with [EPIC] if epic
-      s << epic_prefix if epic?
-
-      # Print the message
-      s << if source == 'github'
-             Rainbow(msg).fg(:green)
-           else
-             msg
-           end
-
-      s << format_metadata
-      s
+    # @param formatter [BaseFormatter] the formatter to use for formatting the message. If nil, a default
+    # ConsoleFormatter is used.
+    # @return [String] the formatted message string
+    def message_string(known_people = nil, formatter = nil)
+      formatter ||= LogEntryFormatters::ConsoleFormatter.new(known_people)
+      formatter.format(self)
     end
 
+    # Return people that are mentioned in the entry. People are defined as character sequences
+    # starting with @ or ~. Whitespaces are used to separate people. Punctuation is ignored.
+    # Empty set if no people are mentioned.
+    # @return [Set<String>]
     def people
-      # Return people that are mentioned in the entry. People are defined as character sequences
-      # starting with @ or ~. Whitespaces are used to separate people. Punctuation is ignored.
-      # Empty set if no people are mentioned.
-      # @return [Set<String>]
       @message.scan(PERSON_REGEX).flatten.uniq.sort.to_set
     end
 
@@ -116,6 +95,7 @@ module Worklog
     end
 
     # Convert the log entry to YAML format.
+    # @return [String] the YAML representation of the log entry.
     def to_yaml
       to_hash.to_yaml
     end
