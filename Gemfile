@@ -17,24 +17,32 @@ gem 'tzinfo', '~> 2.0'
 
 # Gems required for development
 group :development do
+  gem 'puma', '~> 6.6'
+  gem 'rake', '~> 13.2'
+  gem 'rdoc', '~> 6.12'
+  gem 'reline', '~> 0.6.0'
+  gem 'rubocop-rake', '~> 0.6.0'
+  gem 'webmock', '~> 3.24'
+  gem 'yard', '~> 0.9.37'
+end
+
+# Gems required for testing
+group :test do
   gem 'guard', '~> 2.19'
   gem 'guard-bundler', '~> 3.0'
   gem 'guard-minitest', '~> 2.4'
   gem 'guard-rubocop', '~> 1.5'
   gem 'minitest', '~> 5.25'
-  gem 'puma', '~> 6.6'
-  gem 'rake', '~> 13.2'
-  gem 'rdoc', '~> 6.12'
-  gem 'reline', '~> 0.6.0'
   gem 'rubocop', '~> 1.81'
   gem 'rubocop-minitest', '~> 0.36.0'
-  gem 'rubocop-rake', '~> 0.6.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'simplecov-cobertura', '~> 3.1'
   gem 'terminal-notifier-guard', '~> 1.7'
-  gem 'webmock', '~> 3.24'
-  gem 'yard', '~> 0.9.37'
 end
 
 # Load version of Ruby from .tool-versions file (ASDF)
 ruby file: '.tool-versions'
+
+gem 'dotenv-vault', '~> 0.10.1'
+
+gem 'ruby-openai', '~> 8.3'

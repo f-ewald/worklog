@@ -115,6 +115,25 @@ class WorklogCLI < Thor
     worklog.show(options)
   end
 
+  desc 'standup', 'Generate a standup message based on the work log entries for today'
+  option :date, type: :string, default: Date.today.to_s,
+                desc: <<~DESC
+                  Generate a standup message for a specific date. If this option is provided, --from and --to and --days should not be used.
+                DESC
+  option :from, type: :string, desc: <<~EOF
+    Inclusive start date of the range. Takes precedence over --date, if defined.
+  EOF
+  option :to, type: :string, desc: <<~EOF
+    Inclusive end date of the range. Takes precedence over --date, if defined.
+  EOF
+  option :days, type: :numeric, desc: <<~EOF
+    Number of days to show starting from --date. Takes precedence over --from and --to, if defined.
+  EOF
+  def standup
+    worklog = Worklog::Worklog.new
+    worklog.standup(options)
+  end
+
   desc 'people', 'Show all people mentioned in the work log'
   option :inactive, type: :boolean, default: false, desc: 'Include inactive people in the list'
   def people(person = nil)

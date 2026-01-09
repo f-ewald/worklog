@@ -39,11 +39,18 @@ class WorkLogResponse
     epics_only = @params['epics_only'] == 'true'
     presentation = @params['presentation'] == 'true'
     logs = @storage.days_between(Date.today - days, Date.today, epics_only, tags).reverse
-    total_entries = logs.sum { |entry| entry.entries.length }
-    _ = total_entries
-    _ = presentation
 
-    [200, {}, [template.result(binding)]]
+    [200, {}, [template.result_with_hash(
+      {
+        days:,
+        tags: tags,
+        epics_only:,
+        presentation:,
+        logs:,
+        update_query: method(:update_query),
+        build_uri: method(:build_uri)
+      }
+    )]]
   end
 
   private

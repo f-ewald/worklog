@@ -82,4 +82,10 @@ class Printer
     print '  ' unless date_inline
     puts "#{Rainbow(time_string).gold} #{entry.message_string(@people)}"
   end
+
+  # Returns the width of the terminal.
+  # @return [Integer] The width of the terminal in number of characters.
+  def terminal_width
+    IO.console.winsize[1]
+  end
 end

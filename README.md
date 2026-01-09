@@ -114,7 +114,7 @@ Run a webserver on [localhost:9292](http://localhost:9292) via:
 wl serve
 ```
 
-Show all used tags or list all entries with a specific tags:
+Show all used tags or list all entries with a specific tags. By default, this shows tags used in the current day. To show tags over a different date range, use the `--date`, `--from`, `--to`, or `--days` options.
 
 ```shell
 wl tags
