@@ -85,6 +85,26 @@ module Worklog
       def format(log_entry)
         replace_people_handles(log_entry, log_entry.message.dup)
       end
+
+      protected
+
+      # Replace people handles in the message with their names.
+      # @param known_people Hash[String, Person] A hash of people with their handles as keys.
+      # @param msg [String] the message to replace handles in.
+      # @return [String] the message with replaced handles.
+      def replace_people_handles(log_entry, msg)
+        log_entry.people.each do |person|
+          next unless @known_people && @known_people[person]
+
+          msg.gsub!(/[~@]#{person}/) do |match|
+            s = String.new
+            s << ' ' if match[0] == ' '
+            s << @known_people[person].name if @known_people && @known_people[person]
+            s
+          end
+        end
+        msg
+      end
     end
   end
 end

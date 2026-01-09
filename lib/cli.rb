@@ -134,6 +134,25 @@ class WorklogCLI < Thor
     end
   end
 
+  desc 'standup', 'Show the standup report for the current day'
+  option :date, type: :string, default: Date.today.to_s,
+                desc: <<~DESC
+                  Show the standup report for a specific date. If this option is provided, --from and --to and --days should not be used.
+                DESC
+  option :from, type: :string, desc: <<~EOF
+    Inclusive start date of the range. Takes precedence over --date, if defined.
+  EOF
+  option :to, type: :string, desc: <<~EOF
+    Inclusive end date of the range. Takes precedence over --date, if defined.
+  EOF
+  option :days, type: :numeric, desc: <<~EOF
+    Number of days to show starting from --date. Takes precedence over --from and --to if defined.
+  EOF
+  def standup
+    worklog = Worklog::Worklog.new
+    worklog.standup(options)
+  end
+
   desc 'tags', 'Show all tags used in the work log'
   option :date, type: :string, default: Date.today.to_s,
                 desc: <<~DESC

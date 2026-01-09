@@ -91,6 +91,23 @@ To synchronize the Github account, run the following command:
 wl github
 ```
 
+### Standup
+
+Create a standup message for the current day. This will generate a message based on the entries of the current day and print it to the console. The message is generated ChatGPT and can be used as a template for your daily standup. You can also specify a date range to generate a message for a specific day or week.
+See `wl help standup` for more details.
+
+```shell
+wl standup
+```
+
+For example, to generate a standup message for the past week, run:
+
+```shell
+wl standup --days 7
+```
+
+### Webserver
+
 Run a webserver on [localhost:9292](http://localhost:9292) via:
 
 ```shell
