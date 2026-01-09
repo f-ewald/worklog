@@ -6,12 +6,14 @@ require 'faraday'
 require 'langchain'
 require 'openai'
 require 'worklogger'
+require 'log_entry_formatters'
 
 module Worklog
   # Generates standup prompts based on log entries.
   class Standup
-    def initialize(entries)
+    def initialize(entries, people)
       @entries = entries
+      @people = people
     end
 
     # Generate the standup message.
@@ -65,6 +67,13 @@ module Worklog
       user_prompt = ERB.new(user_prompt_template, trim_mode: '-<>').result(binding)
 
       [system_prompt, user_prompt]
+    end
+
+    def formatted_entries
+      formatter = LogEntryFormatters::SimpleFormatter.new(@people)
+      @entries.map do |entry|
+        entry.to_hash.slice(:epic, :ticket, :url).merge(message: formatter.format(entry))
+      end
     end
   end
 end

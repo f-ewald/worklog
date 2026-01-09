@@ -1,7 +1,5 @@
 Prepare standup updates from the following flat YAML:
 
 ```yaml
-<% @entries.each do |entry| -%>
-<%= entry.to_hash.slice(:epic, :ticket, :url, :message).to_yaml.chomp %>
-<% end -%>
+<%= formatted_entries.to_yaml %>
 ```

@@ -108,25 +108,5 @@ module Worklog
       time == other.time && tags == other.tags && ticket == other.ticket && url == other.url &&
         epic == other.epic && message == other.message
     end
-
-    private
-
-    # Prefix for epic entries with formatting.
-    # @return [String]
-    def epic_prefix
-      "#{Rainbow('[EPIC]').bg(:white).fg(:black)} "
-    end
-
-    # Format metadata for display.
-    # @return [String]
-    def format_metadata
-      metadata_parts = []
-      metadata_parts << Rainbow(@ticket).fg(:blue) if @ticket
-      metadata_parts << @tags.join(', ') if @tags&.any?
-      metadata_parts << @url if @url && @url != ''
-      metadata_parts << @project if @project && @project != ''
-
-      metadata_parts.empty? ? '' : "  [#{metadata_parts.join(']  [')}]"
-    end
   end
 end

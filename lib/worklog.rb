@@ -336,7 +336,7 @@ module Worklog
     def standup(options = {})
       start_date, end_date = start_end_date(options)
       entries = @storage.days_between(start_date, end_date).map(&:entries).flatten
-      Standup.new(entries).generate
+      Standup.new(entries, @people).generate
     end
 
     # Show all tags used in the work log or details for a specific tag

@@ -21,7 +21,7 @@ class StandupTest < Minitest::Test
         message: 'Planned for project Z'
       ),
     ]
-    standup = Standup.new(entries)
+    standup = Standup.new(entries, nil)
     output = standup.generate
     assert output.is_a?(String)
   end
@@ -37,7 +37,7 @@ class StandupTest < Minitest::Test
         message: 'Planned for project Z'
       ),
     ]
-    standup = Standup.new(entries)
+    standup = Standup.new(entries, nil)
     system_prompt, user_prompt = standup.create_prompt
     _ = system_prompt
 
@@ -50,5 +50,23 @@ class StandupTest < Minitest::Test
     expected_output.each do |line|
       assert_includes(user_prompt, line)
     end
+  end
+
+  def test_formatted_entries
+    entries = [
+      LogEntry.new(
+        message: 'Worked on feature X',
+        ticket: 'TICKET-123',
+        url: 'http://example.com/ticket/123'
+      ),
+      LogEntry.new(
+        message: 'Fixed bug Y',
+        ticket: 'TICKET-456',
+        url: 'http://example.com/ticket/456'
+      )
+    ]
+    standup = Standup.new(entries, {})
+    formatted = standup.formatted_entries
+    assert formatted.is_a?(Array)
   end
 end
