@@ -34,3 +34,5 @@ end
 
 # Load version of Ruby from .tool-versions file (ASDF)
 ruby file: '.tool-versions'
+
+gem "dotenv", "~> 3.2"
