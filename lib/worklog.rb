@@ -16,6 +16,7 @@ require 'string_helper'
 require 'people_storage'
 require 'printer'
 require 'project_storage'
+require 'standup'
 require 'statistics'
 require 'storage'
 require 'summary'
@@ -153,7 +154,6 @@ module Worklog
 
       events_by_date.each do |date, events|
         WorkLogger.info Rainbow("Found #{events.size} events for #{date}").green
-        puts "Processing #{events.size} events for '#{date}'"
         @storage.create_file_skeleton(date)
         daily_log = @storage.load_log!(@storage.filepath(date))
         dirty = false
@@ -163,7 +163,7 @@ module Worklog
 
           # Check if entry already exists
           if daily_log.key?(log_entry.key)
-            WorkLogger.debug('Entry already exists, skipping')
+            WorkLogger.debug("Entry with key #{log_entry.key} already exists in #{log_entry.time.to_date}, skipping")
           else
             daily_log << log_entry
             # Mark log as dirty to trigger write later
@@ -176,7 +176,7 @@ module Worklog
         if dirty
           @storage.write_log(@storage.filepath(date), daily_log)
         else
-          WorkLogger.info Rainbow("No new entries to add for #{date}, skipping write.").yellow
+          WorkLogger.info "No new entries to add for #{date}, skipping write."
         end
       end
     end
@@ -331,6 +331,12 @@ module Worklog
         end.join("\n    ")}"
       end
       puts 'No projects found.' if projects.empty?
+    end
+
+    def standup(options = {})
+      start_date, end_date = start_end_date(options)
+      entries = @storage.days_between(start_date, end_date).map(&:entries).flatten
+      Standup.new(entries).generate
     end
 
     # Show all tags used in the work log or details for a specific tag
