@@ -7,9 +7,6 @@ require 'langchain'
 require 'openai'
 require 'worklogger'
 
-# Load tools
-require 'llm/tool/username'
-
 module Worklog
   # Generates standup prompts based on log entries.
   class Standup
@@ -22,14 +19,6 @@ module Worklog
       Langchain.logger.level = Logger::WARN
 
       system_prompt, user_prompt = create_prompt
-
-      WorkLogger.debug("System Prompt:\n#{system_prompt}")
-      WorkLogger.debug('---------------------------')
-      WorkLogger.debug("User Prompt:\n#{user_prompt}")
-      WorkLogger.debug('---------------------------')
-
-      # llm = Langchain::LLM::Ollama.new(url: 'http://localhost:11434', api_key: nil,
-      #                                  default_options: { model: 'gpt-oss:120b-cloud' })
 
       llm = Langchain::LLM::OpenAI.new(api_key: ENV.fetch('OPENAI_API_KEY', nil),
                                        default_options: {
@@ -49,24 +38,26 @@ module Worklog
 
       assistant = Langchain::Assistant.new(
         llm: llm,
-        instructions: system_prompt,
-        tools: [LLM::Tool::Username.new]
+        instructions: system_prompt
       )
 
       assistant.add_message(role: 'user', content: user_prompt)
-      assistant.add_message_callback = lambda { |message|
-        WorkLogger.debug "New message: #{message.role} | #{message.content}"
-      }
-      assistant.tool_execution_callback = lambda { |tool_call_id, tool_name, method_name, tool_arguments|
-        WorkLogger.debug "Executing tool_call_id: #{tool_call_id}, tool_name: #{tool_name}, method_name: #{method_name}, tool_arguments: #{tool_arguments}"
-      }
+      # assistant.add_message_callback = lambda { |message|
+      #   WorkLogger.debug "New message: #{message.role} | #{message.content}"
+      # }
+      # assistant.tool_execution_callback = lambda { |tool_call_id, tool_name, method_name, tool_arguments|
+      #   WorkLogger.debug "Executing tool_call_id: #{tool_call_id}, tool_name: #{tool_name}, method_name: #{method_name}, tool_arguments: #{tool_arguments}"
+      # }
+
+      WorkLogger.debug('Starting standup generation')
       begin
         assistant.run(auto_tool_execution: true)
       rescue Faraday::ForbiddenError => e
         WorkLogger.error("LLM request failed: #{e.response}")
         raise
       end
-      WorkLogger.debug('Generated standup message')
+      WorkLogger.debug('Finished standup generation')
+      puts Rainbow('Standup generated successfully!').yellow
       puts assistant.messages.last.content
     end
 
