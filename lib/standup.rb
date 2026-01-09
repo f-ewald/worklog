@@ -42,12 +42,6 @@ module Worklog
       )
 
       assistant.add_message(role: 'user', content: user_prompt)
-      # assistant.add_message_callback = lambda { |message|
-      #   WorkLogger.debug "New message: #{message.role} | #{message.content}"
-      # }
-      # assistant.tool_execution_callback = lambda { |tool_call_id, tool_name, method_name, tool_arguments|
-      #   WorkLogger.debug "Executing tool_call_id: #{tool_call_id}, tool_name: #{tool_name}, method_name: #{method_name}, tool_arguments: #{tool_arguments}"
-      # }
 
       WorkLogger.debug('Starting standup generation')
       begin
