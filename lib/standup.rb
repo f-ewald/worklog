@@ -10,13 +10,34 @@ require 'log_entry_formatters'
 
 module Worklog
   # Generates standup prompts based on log entries.
+  # The Standup class takes log entries and people information to create a standup message that summarizes the work
+  # done, work planned, and blockers.
+  #
+  # @example
+  #   # Create log entries (or alternatively load from disk)
+  #   entries = [LogEntry.new(...), LogEntry.new(...)]
+  #
+  #   # Create people information (or alternatively load from disk)
+  #   people = { 'user1' => Person.new(...), 'user2' => Person.new(...) }
+  #
+  #   # Create a Standup instance and generate the standup message
+  #   standup = Standup.new(entries, people)
+  #   standup.generate
   class Standup
+    # Initialize the Standup generator with log entries and people information.
+    # If no people information is provided, identifiers will not be resolved to names.
+    # @param entries [Array<LogEntry>] the log entries to include in the standup.
+    # These entries can be either of a single day or span multiple days, depending on the desired output.
+    # They are handled by the LLM to generate a standup message that summarizes the work done, work planned,
+    # and blockers.
+    # @param people [Hash<String, Person>] the people information to include in the standup
     def initialize(entries, people)
       @entries = entries
       @people = people
     end
 
-    # Generate the standup message.
+    # Generate the standup message and print it to the console.
+    # @return [nil] prints the generated standup message to the console.
     def generate
       Langchain.logger.level = Logger::WARN
 
