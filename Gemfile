@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 # Globally required Gems
+gem 'dotenv', '~> 3.2'
 gem 'httparty', '~> 0.22.0'
 gem 'logger', '~> 1.6'
 gem 'rack', '~> 3.1'
@@ -34,5 +35,3 @@ end
 
 # Load version of Ruby from .tool-versions file (ASDF)
 ruby file: '.tool-versions'
-
-gem "dotenv", "~> 3.2"
