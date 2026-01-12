@@ -26,7 +26,8 @@ module Worklog
       end
 
       # Fetch events for a given user from Github API
-      # @return [Array<PullRequestEvent, PullRequestReviewEvent>] Array of event objects
+      # @return [Array<PullRequestEvent, PullRequestReviewEvent>] Array of
+      # PullRequestEvent and PullRequestReviewEvent objects
       def fetch_events
         verify_token!
 
