@@ -20,11 +20,19 @@ module Worklog
 
       def initialize(configuration)
         @configuration = configuration
+
+        # Cache for events to avoid redundant API calls
+        @event_cache = {}
       end
 
       # Fetch events for a given user from Github API
+      # @return [Array<PullRequestEvent, PullRequestReviewEvent>] Array of
+      # PullRequestEvent and PullRequestReviewEvent objects
       def fetch_events
         verify_token!
+
+        # Clear the cache before fetching new events
+        @event_cache.clear
 
         WorkLogger.debug 'Fetching most recent GitHub events...'
         responses = fetch_event_pages
@@ -60,8 +68,10 @@ module Worklog
         payload = event['payload']
         repo = event['repo']
 
-        # Retrieve details for the specific pull request
-        pr_details = pull_request_details(repo['name'], payload['number'])
+        # Lookup pr_details from cache or fetch from API if not present
+        @event_cache[cache_key(repo['name'],
+                               payload['number'])] ||= pull_request_details(repo['name'], payload['number'])
+        pr_details = @event_cache[cache_key(repo['name'], payload['number'])]
 
         PullRequestEvent.new(
           repository: repo['name'],
@@ -80,7 +90,9 @@ module Worklog
         url = review['html_url']
         created_at = to_local_time(review['submitted_at'])
 
-        pr_details = pull_request_details(repo_name, pr_number)
+        # Lookup pr_details from cache or fetch from API if not present
+        @event_cache[cache_key(repo_name, pr_number)] ||= pull_request_details(repo_name, pr_number)
+        pr_details = @event_cache[cache_key(repo_name, pr_number)]
 
         PullRequestReviewEvent.new(
           repository: repo_name,
@@ -167,6 +179,14 @@ module Worklog
 
         raise(GithubAPIError,
               'GitHub API key is not configured. Please set it in the configuration.')
+      end
+
+      # Generate a cache key for storing pull request details
+      # @param repo [String] Repository name in the format 'owner/repo'
+      # @param pr_number [Integer] Pull request number
+      # @return [Array] Cache key as an array of repo and pr_number
+      def cache_key(repo, pr_number)
+        [repo, pr_number]
       end
     end
   end
