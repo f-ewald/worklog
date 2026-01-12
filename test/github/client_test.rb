@@ -41,6 +41,20 @@ class GithubTest < Minitest::Test
     end
   end
 
+  def test_event_cache
+    assert_empty @github.instance_variable_get(:@event_cache)
+
+    fixture = load_fixture('pull_request_event.json')
+    @github.stub(:github_api_get, ->(_url) { fixture }) do
+      @github.stub(:pull_request_details, PullRequestDetails.new) do
+        # First call to fetch_events should populate the cache
+        @github.fetch_events
+      end
+    end
+
+    assert_equal 1, @github.instance_variable_get(:@event_cache).size
+  end
+
   # Test parsing of a PullRequestReviewEvent
   def test_pull_request_review_event
     fixture = load_fixture('pull_request_review_event.json')
