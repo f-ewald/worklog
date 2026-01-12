@@ -42,7 +42,3 @@ end
 
 # Load version of Ruby from .tool-versions file (ASDF)
 ruby file: '.tool-versions'
-
-gem 'dotenv-vault', '~> 0.10.1'
-
-gem 'ruby-openai', '~> 8.3'
