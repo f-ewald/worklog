@@ -77,6 +77,15 @@ module Worklog
       projects.key?(key)
     end
 
+    # Find project by given filters. Filters can be repository or
+    # @param filters [Hash] The filters to apply when searching for projects.
+    # @return [Array<Project>] An array of projects that match the given filters.
+    def find_by(filters = {})
+      projects.values.select do |project|
+        filters.all? { |k, v| project.respond_to?(k) && project.public_send(k) == v }
+      end
+    end
+
     # Alias for exist? method.
     # @param key [String] The key of the project to check.
     # @return [Boolean] Returns true if the project exists, false otherwise.

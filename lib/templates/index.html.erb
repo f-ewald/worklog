@@ -49,16 +49,16 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <div class="navbar-nav me-auto"></div>
                     <div class="d-flex">
-            <% if presentation %>
-                <a href="<%= update_query({'presentation' => nil}) %>" class="btn btn-primary">
-                    Screen
-                </a>
-            <% else %>
-                <a href="<%= update_query({'presentation' => true}) %>" class="btn btn-primary">
-                    Presentation
-                </a>
-            <% end %>
-            </div>
+                        <% if presentation %>
+                            <a href="<%= update_query.call({'presentation' => nil}) %>" class="btn btn-primary">
+                                Screen
+                            </a>
+                        <% else %>
+                            <a href="<%= update_query.call({'presentation' => true}) %>" class="btn btn-primary">
+                                Presentation
+                            </a>
+                        <% end %>
+                    </div>
                 </div>
             </div>
 
@@ -76,8 +76,8 @@
                     <% end %>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="<%= update_query({'epics_only' => false}) %>">all items</a></li>
-                    <li><a class="dropdown-item" href="<%= update_query({'epics_only' => true}) %>">only epics</a></li>
+                    <li><a class="dropdown-item" href="<%= update_query.call({'epics_only' => false}) %>">all items</a></li>
+                    <li><a class="dropdown-item" href="<%= update_query.call({'epics_only' => true}) %>">only epics</a></li>
                 </ul>
             </div>
              from the last
@@ -86,14 +86,14 @@
                     <%= days %> days
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="<%= update_query({'days' => 7}) %>">7 days</a></li>
-                    <li><a class="dropdown-item" href="<%= update_query({'days' => 14}) %>">2 weeks</a></li>
-                    <li><a class="dropdown-item" href="<%= update_query({'days' => 21}) %>">3 weeks</a></li>
-                    <li><a class="dropdown-item" href="<%= update_query({'days' => 28}) %>">4 weeks</a></li>
-                    <li><a class="dropdown-item" href="<%= update_query({'days' => 60}) %>">2 months</a></li>
-                    <li><a class="dropdown-item" href="<%= update_query({'days' => 90}) %>">3 months</a></li>
-                    <li><a class="dropdown-item" href="<%= update_query({'days' => 180}) %>">6 months</a></li>
-                    <li><a class="dropdown-item" href="<%= update_query({'days' => 365}) %>">1 year</a></li>
+                    <li><a class="dropdown-item" href="<%= update_query.call({'days' => 7}) %>">7 days</a></li>
+                    <li><a class="dropdown-item" href="<%= update_query.call({'days' => 14}) %>">2 weeks</a></li>
+                    <li><a class="dropdown-item" href="<%= update_query.call({'days' => 21}) %>">3 weeks</a></li>
+                    <li><a class="dropdown-item" href="<%= update_query.call({'days' => 28}) %>">4 weeks</a></li>
+                    <li><a class="dropdown-item" href="<%= update_query.call({'days' => 60}) %>">2 months</a></li>
+                    <li><a class="dropdown-item" href="<%= update_query.call({'days' => 90}) %>">3 months</a></li>
+                    <li><a class="dropdown-item" href="<%= update_query.call({'days' => 180}) %>">6 months</a></li>
+                    <li><a class="dropdown-item" href="<%= update_query.call({'days' => 365}) %>">1 year</a></li>
                 </ul>
             </div>
             of work with
@@ -106,9 +106,9 @@
                     <% end %>
                 </a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="<%= update_query({'tags' => nil}) %>">all tags</a></li>
+                    <li><a class="dropdown-item" href="<%= update_query.call({'tags' => nil}) %>">all tags</a></li>
                     <% @tags.to_a.each do |tag| %>
-                        <li><a class="dropdown-item" href="<%= update_query({'tags' => [tag]}) %>"><%= tag %> tags</a></li>
+                        <li><a class="dropdown-item" href="<%= update_query.call({'tags' => [tag]}) %>"><%= tag %> tags</a></li>
                     <% end %>
                 </ul>
             </div>
@@ -138,7 +138,7 @@
             <p class="entries"><%= log.entries.size %> entries</p>
             </section>
         <%- end %>
-        <p><%= total_entries %> entries total</p>
+        <p><%= logs.sum { |log| log.entries.size } %> entries total</p>
     </div>
     <hr/>
     <footer class="container pb-4 text-muted">

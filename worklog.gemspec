@@ -30,10 +30,12 @@ Gem::Specification.new do |spec|
     For more information, visit https://f-ewald.github.io/worklog or run wl help.
     ==============================================================================
   MESSAGE
-  spec.files = Dir.glob('lib/**/*.{erb,rb}') + ['.version']
+  spec.files = Dir.glob('lib/**/*.{erb,rb}') + Dir.glob('assets/**/*.{erb,rb}') + ['.version']
   spec.executables = ['wl']
 
+  spec.add_dependency 'faraday', '~> 2.14'
   spec.add_dependency 'httparty', '~> 0.22.0'
+  spec.add_dependency 'langchainrb', '~> 0.19.5'
   spec.add_dependency 'logger', '~> 1.6'
   spec.add_dependency 'puma', '~> 6.6'
   spec.add_dependency 'rack', '~> 3.1'
