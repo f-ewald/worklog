@@ -21,6 +21,7 @@ module Worklog
         # replace all mentions of people with their names.
         msg = log_entry.message.dup
         s = String.new
+        s << source_prefix(log_entry)
         s << epic_prefix if log_entry.epic
         s << replace_people_handles(log_entry, msg)
         # Add a space between the message and the metadata if there is any metadata to add.
@@ -30,6 +31,20 @@ module Worklog
       end
 
       protected
+
+      # Prefix emoji for the log entry based on its source.
+      # @param log_entry [LogEntry] The log entry to get the source prefix for.
+      # @return [String] The emoji prefix for the source (🐙 for github, ✍️ for manual, empty string otherwise).
+      def source_prefix(log_entry)
+        case log_entry.source
+        when 'github'
+          '🐙 '
+        when 'manual'
+          '✍️ '
+        else
+          ''
+        end
+      end
 
       # Prefix for epic entries.
       # @return [String]

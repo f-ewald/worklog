@@ -21,6 +21,14 @@ class LogEntryFormattersTest < Minitest::Test
     )
   end
 
+  def test_source_prefix
+    formatter = LogEntryFormatters::BaseFormatter.new(@known_people)
+
+    assert_equal '🐙 ', formatter.send(:source_prefix, LogEntry.new(source: 'github'))
+    assert_equal '✍️ ', formatter.send(:source_prefix, LogEntry.new(source: 'manual'))
+    assert_equal '', formatter.send(:source_prefix, LogEntry.new(source: 'other'))
+  end
+
   def test_console_formatter
     formatter = LogEntryFormatters::ConsoleFormatter.new(@known_people)
     formatted_message = formatter.format(@log_entry)
