@@ -33,8 +33,8 @@ module Worklog
       protected
 
       # Prefix emoji for the log entry based on its source.
-      # @param log_entry [LogEntry] the log entry to get the source prefix for.
-      # @return [String] the emoji prefix for the source (🐙 for github, ✍️ for manual, empty string otherwise).
+      # @param log_entry [LogEntry] The log entry to get the source prefix for.
+      # @return [String] The emoji prefix for the source (🐙 for github, ✍️ for manual, empty string otherwise).
       def source_prefix(log_entry)
         case log_entry.source
         when 'github'
