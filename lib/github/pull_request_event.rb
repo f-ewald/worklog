@@ -56,7 +56,7 @@ module Worklog
                   elsif closed?
                     'Closed PR '
                   else
-                    'Created PR '
+                    'Opened PR '
                   end
         message += title
 
