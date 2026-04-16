@@ -34,24 +34,28 @@ class ListTagsToolTest < Minitest::Test
   def test_tags_sorted_alphabetically
     result = JSON.parse(@tool.call)
     tag_names = result['tags'].map { |t| t['name'] }
+
     assert_equal tag_names.sort, tag_names
   end
 
   def test_tag_counts
     result = JSON.parse(@tool.call)
     auth_tag = result['tags'].find { |t| t['name'] == 'auth' }
+
     assert_equal 1, auth_tag['count']
   end
 
   def test_tags_with_date_range
     result = JSON.parse(@tool.call(from: '2024-03-16', to: '2024-03-16'))
     tag_names = result['tags'].map { |t| t['name'] }
+
     assert_includes tag_names, 'docs'
     refute_includes tag_names, 'bugfix'
   end
 
   def test_date_range_in_response
     result = JSON.parse(@tool.call(from: '2024-03', to: '2024-03'))
+
     refute_nil result['date_range']
   end
 end

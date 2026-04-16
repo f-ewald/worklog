@@ -53,27 +53,27 @@ module McpTestHelper
   def write_sample_logs
     # Day 1: 2024-03-15 - two entries, one epic
     log1 = Worklog::DailyLog.new(date: Date.new(2024, 3, 15), entries: [
-      Worklog::LogEntry.new(
-        key: 'abc1234', source: 'manual', time: Time.new(2024, 3, 15, 9, 0, 0),
-        message: 'Reviewed PR for auth refactor with ~jdoe', tags: %w[code-review auth],
-        epic: true, project: 'auth'
-      ),
-      Worklog::LogEntry.new(
-        key: 'abc1235', source: 'github', time: Time.new(2024, 3, 15, 14, 0, 0),
-        message: 'Fixed login bug', tags: ['bugfix'], ticket: 'AUTH-456',
-        url: 'https://github.com/example/pr/1', project: 'auth'
-      )
-    ])
+                                   Worklog::LogEntry.new(
+                                     key: 'abc1234', source: 'manual', time: Time.new(2024, 3, 15, 9, 0, 0),
+                                     message: 'Reviewed PR for auth refactor with ~jdoe', tags: %w[code-review auth],
+                                     epic: true, project: 'auth'
+                                   ),
+                                   Worklog::LogEntry.new(
+                                     key: 'abc1235', source: 'github', time: Time.new(2024, 3, 15, 14, 0, 0),
+                                     message: 'Fixed login bug', tags: ['bugfix'], ticket: 'AUTH-456',
+                                     url: 'https://github.com/example/pr/1', project: 'auth'
+                                   )
+                                 ])
     @storage.write_log(@storage.filepath(Date.new(2024, 3, 15)), log1)
 
     # Day 2: 2024-03-16 - one entry with different project
     log2 = Worklog::DailyLog.new(date: Date.new(2024, 3, 16), entries: [
-      Worklog::LogEntry.new(
-        key: 'def5678', source: 'manual', time: Time.new(2024, 3, 16, 10, 0, 0),
-        message: 'Updated API documentation with ~bob', tags: ['docs'],
-        project: 'docs'
-      )
-    ])
+                                   Worklog::LogEntry.new(
+                                     key: 'def5678', source: 'manual', time: Time.new(2024, 3, 16, 10, 0, 0),
+                                     message: 'Updated API documentation with ~bob', tags: ['docs'],
+                                     project: 'docs'
+                                   )
+                                 ])
     @storage.write_log(@storage.filepath(Date.new(2024, 3, 16)), log2)
   end
 end

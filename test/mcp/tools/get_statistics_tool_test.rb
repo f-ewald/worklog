@@ -21,16 +21,18 @@ class GetStatisticsToolTest < Minitest::Test
 
   def test_statistics
     result = JSON.parse(@tool.call)
+
     assert_equal 2, result['total_days']
     assert_equal 3, result['total_entries']
     assert_equal 1, result['total_epics']
-    assert_equal 1.5, result['avg_entries_per_day']
+    assert_in_delta(1.5, result['avg_entries_per_day'])
     assert_equal '2024-03-15', result['first_entry']
     assert_equal '2024-03-16', result['last_entry']
   end
 
   def test_all_fields_present
     result = JSON.parse(@tool.call)
+
     %w[total_days total_entries total_epics avg_entries_per_day first_entry last_entry].each do |field|
       assert result.key?(field), "Missing field: #{field}"
     end

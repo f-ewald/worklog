@@ -21,6 +21,7 @@ class PeopleResourceTest < Minitest::Test
 
   def test_content_returns_valid_json
     people = JSON.parse(@resource.content)
+
     assert_instance_of Array, people
     assert_equal 2, people.size
   end
@@ -28,6 +29,7 @@ class PeopleResourceTest < Minitest::Test
   def test_people_fields
     people = JSON.parse(@resource.content)
     jdoe = people.find { |p| p['handle'] == 'jdoe' }
+
     refute_nil jdoe
     assert_equal 'Jane Doe', jdoe['name']
     assert_equal 'Platform', jdoe['team']
@@ -38,6 +40,7 @@ class PeopleResourceTest < Minitest::Test
   def test_inactive_person_included
     people = JSON.parse(@resource.content)
     bob = people.find { |p| p['handle'] == 'bob' }
+
     refute_nil bob
     assert_equal false, bob['active']
   end

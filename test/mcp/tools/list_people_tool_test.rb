@@ -39,6 +39,7 @@ class ListPeopleToolTest < Minitest::Test
   def test_people_enrichment
     result = JSON.parse(@tool.call)
     jdoe = result['people'].find { |p| p['handle'] == 'jdoe' }
+
     refute_nil jdoe
     assert_equal 'Jane Doe', jdoe['name']
     assert_equal 'Platform', jdoe['team']
@@ -48,6 +49,7 @@ class ListPeopleToolTest < Minitest::Test
   def test_mention_counts
     result = JSON.parse(@tool.call)
     jdoe = result['people'].find { |p| p['handle'] == 'jdoe' }
+
     assert_equal 1, jdoe['mention_count']
   end
 
@@ -61,6 +63,7 @@ class ListPeopleToolTest < Minitest::Test
   def test_sorted_by_mention_count
     result = JSON.parse(@tool.call(include_inactive: true))
     counts = result['people'].map { |p| p['mention_count'] }
+
     assert_equal counts.sort.reverse, counts
   end
 end
