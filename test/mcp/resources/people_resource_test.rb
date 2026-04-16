@@ -42,6 +42,6 @@ class PeopleResourceTest < Minitest::Test
     bob = people.find { |p| p['handle'] == 'bob' }
 
     refute_nil bob
-    assert_equal false, bob['active']
+    refute bob['active']
   end
 end

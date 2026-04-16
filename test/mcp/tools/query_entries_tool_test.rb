@@ -99,6 +99,6 @@ class QueryEntriesToolTest < Minitest::Test
     assert_equal 'https://github.com/example/pr/1', entry['url']
     assert_equal 'auth', entry['project']
     assert_equal 'github', entry['source']
-    assert_equal false, entry['epic']
+    refute entry['epic']
   end
 end

@@ -47,7 +47,7 @@ class ListEpicsToolTest < Minitest::Test
     result = JSON.parse(@tool.call)
     epic = result['epics'].first
 
-    assert_equal true, epic['epic']
+    assert epic['epic']
     refute_nil epic['date']
     refute_nil epic['message']
   end
