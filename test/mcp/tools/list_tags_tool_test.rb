@@ -21,13 +21,14 @@ class ListTagsToolTest < Minitest::Test
 
   def test_list_all_tags
     result = JSON.parse(@tool.call)
-    tags = result['tags']
-    tag_names = tags.map { |t| t['name'] }
+    tag_names = result['tags'].map { |t| t['name'] }
 
-    assert_includes tag_names, 'code-review'
-    assert_includes tag_names, 'auth'
-    assert_includes tag_names, 'bugfix'
-    assert_includes tag_names, 'docs'
+    assert_equal %w[auth bugfix code-review docs], tag_names.sort
+  end
+
+  def test_total_unique_tags_count
+    result = JSON.parse(@tool.call)
+
     assert_equal 4, result['total_unique_tags']
   end
 

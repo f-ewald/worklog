@@ -67,11 +67,16 @@ class QueryEntriesToolTest < Minitest::Test
     assert_equal 0, result['total_count']
   end
 
-  def test_pagination_limit
+  def test_pagination_limit_results
     result = JSON.parse(@tool.call(from: '2024-03-15', to: '2024-03-16', limit: 1))
 
     assert_equal 3, result['total_count']
     assert_equal 1, result['entries'].size
+  end
+
+  def test_pagination_limit_metadata
+    result = JSON.parse(@tool.call(from: '2024-03-15', to: '2024-03-16', limit: 1))
+
     assert_equal 0, result['offset']
     assert_equal 1, result['limit']
   end
@@ -90,13 +95,19 @@ class QueryEntriesToolTest < Minitest::Test
     assert_equal '2024-03-16', result['date_range']['to']
   end
 
-  def test_entry_fields
+  def test_entry_found_and_basic_fields
     result = JSON.parse(@tool.call(from: '2024-03-15', to: '2024-03-15'))
     entry = result['entries'].find { |e| e['ticket'] == 'AUTH-456' }
 
     refute_nil entry
     assert_equal 'bugfix', entry['tags'].first
     assert_equal 'https://github.com/example/pr/1', entry['url']
+  end
+
+  def test_entry_metadata_fields
+    result = JSON.parse(@tool.call(from: '2024-03-15', to: '2024-03-15'))
+    entry = result['entries'].find { |e| e['ticket'] == 'AUTH-456' }
+
     assert_equal 'auth', entry['project']
     assert_equal 'github', entry['source']
     refute entry['epic']

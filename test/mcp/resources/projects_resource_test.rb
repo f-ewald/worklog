@@ -26,13 +26,25 @@ class ProjectsResourceTest < Minitest::Test
     assert_equal 2, projects.size
   end
 
-  def test_project_fields
+  def test_find_project_by_key
     projects = JSON.parse(@resource.content)
     auth = projects.find { |p| p['key'] == 'auth' }
 
     refute_nil auth
+  end
+
+  def test_project_identity_fields
+    projects = JSON.parse(@resource.content)
+    auth = projects.find { |p| p['key'] == 'auth' }
+
     assert_equal 'Auth Refactor', auth['name']
     assert_equal 'Refactoring auth', auth['description']
+  end
+
+  def test_project_status_fields
+    projects = JSON.parse(@resource.content)
+    auth = projects.find { |p| p['key'] == 'auth' }
+
     assert_equal 'active', auth['status']
     assert_equal '2024-01-01', auth['start_date']
   end

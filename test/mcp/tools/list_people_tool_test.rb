@@ -36,14 +36,20 @@ class ListPeopleToolTest < Minitest::Test
     assert_includes handles, 'bob'
   end
 
-  def test_people_enrichment
+  def test_people_enrichment_found
     result = JSON.parse(@tool.call)
     jdoe = result['people'].find { |p| p['handle'] == 'jdoe' }
 
     refute_nil jdoe
+    assert jdoe['active']
+  end
+
+  def test_people_enrichment_fields
+    result = JSON.parse(@tool.call)
+    jdoe = result['people'].find { |p| p['handle'] == 'jdoe' }
+
     assert_equal 'Jane Doe', jdoe['name']
     assert_equal 'Platform', jdoe['team']
-    assert jdoe['active']
   end
 
   def test_mention_counts

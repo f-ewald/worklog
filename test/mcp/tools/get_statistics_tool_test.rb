@@ -19,12 +19,17 @@ class GetStatisticsToolTest < Minitest::Test
     teardown_mcp_context
   end
 
-  def test_statistics
+  def test_statistics_totals
     result = JSON.parse(@tool.call)
 
     assert_equal 2, result['total_days']
     assert_equal 3, result['total_entries']
     assert_equal 1, result['total_epics']
+  end
+
+  def test_statistics_averages_and_dates
+    result = JSON.parse(@tool.call)
+
     assert_in_delta(1.5, result['avg_entries_per_day'])
     assert_equal '2024-03-15', result['first_entry']
     assert_equal '2024-03-16', result['last_entry']

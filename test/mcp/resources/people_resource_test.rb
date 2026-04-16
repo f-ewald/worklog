@@ -26,13 +26,25 @@ class PeopleResourceTest < Minitest::Test
     assert_equal 2, people.size
   end
 
-  def test_people_fields
+  def test_find_person_by_handle
     people = JSON.parse(@resource.content)
     jdoe = people.find { |p| p['handle'] == 'jdoe' }
 
     refute_nil jdoe
+  end
+
+  def test_person_identity_fields
+    people = JSON.parse(@resource.content)
+    jdoe = people.find { |p| p['handle'] == 'jdoe' }
+
     assert_equal 'Jane Doe', jdoe['name']
     assert_equal 'Platform', jdoe['team']
+  end
+
+  def test_person_contact_and_status_fields
+    people = JSON.parse(@resource.content)
+    jdoe = people.find { |p| p['handle'] == 'jdoe' }
+
     assert_equal 'jane@example.com', jdoe['email']
     assert jdoe['active']
   end
