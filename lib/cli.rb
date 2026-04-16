@@ -187,6 +187,12 @@ class WorklogCLI < Thor
     worklog.server
   end
 
+  desc 'mcp', 'Start the MCP (Model Context Protocol) server for LLM integration'
+  def mcp
+    require 'mcp_server'
+    Worklog::McpServer.new.start
+  end
+
   desc 'stats', 'Show statistics for the work log'
   def stats
     worklog = Worklog::Worklog.new

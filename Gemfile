@@ -13,6 +13,8 @@ gem 'rackup', '~> 2.2'
 gem 'rainbow', '~> 3.1'
 gem 'ruby-openai', '~> 8.3'
 gem 'thor', '~> 1.3'
+gem 'tty-prompt', '~> 0.23'
+gem 'fast-mcp', '~> 1.6'
 gem 'tzinfo', '~> 2.0'
 
 # Gems required for development
