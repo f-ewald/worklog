@@ -2,6 +2,7 @@
 
 require_relative '../test_helper'
 require 'minitest/autorun'
+require 'minitest/mock'
 require 'github/client'
 
 class GithubTest < Minitest::Test
@@ -158,6 +159,18 @@ class GithubTest < Minitest::Test
     comments.each do |comment|
       assert comment.key?('id')
       assert comment.key?('body')
+    end
+  end
+
+  def test_fetch_events_skips_on_api_error
+    fixture = load_fixture('pull_request_event.json')
+    @github.stub(:github_api_get, ->(_url) { fixture }) do
+      @github.stub(:pull_request_details, ->(*) { raise Client::GithubAPIError, 'HTTPCode 504' }) do
+        events = @github.fetch_events
+
+        assert_kind_of Array, events
+        assert_empty events
+      end
     end
   end
 

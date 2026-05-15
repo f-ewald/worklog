@@ -62,6 +62,9 @@ module Worklog
         when 'PullRequestReviewEvent'
           create_pull_request_review_event(event)
         end
+      rescue GithubAPIError => e
+        WorkLogger.warn "Skipping event: #{e.message}"
+        nil
       end
 
       def create_pull_request_event(event)
