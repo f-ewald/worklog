@@ -98,8 +98,9 @@ class WorklogCLI < Thor
                 desc: <<~DESC
                   Show the work log for a specific date. If this option is provided, --from and --to and --days should not be used.
                 DESC
-  option :from, type: :string, desc: <<~EOF
+  option :from, type: :string, aliases: '--since', desc: <<~EOF
     Inclusive start date of the range. Takes precedence over --date, if defined.
+    Can also be specified as --since.
   EOF
   option :to, type: :string, desc: <<~EOF
     Inclusive end date of the range. Takes precedence over --date, if defined.
