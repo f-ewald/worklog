@@ -10,6 +10,7 @@ require 'date_parser'
 require 'github/client'
 require 'hash'
 require 'hasher'
+require 'interactive_editor'
 require 'log_entry'
 require 'worklogger'
 require 'string_helper'
@@ -122,7 +123,7 @@ module Worklog
       WorkLogger.info Rainbow("Added entry on #{options[:date]}: #{message}").green
     end
 
-    # Edit an existing work log entry for a specific date.
+    # Edit an existing work log entry for a specific date using an interactive menu.
     def edit(options = {})
       date = Date.strptime(options[:date], '%Y-%m-%d')
 
@@ -133,12 +134,40 @@ module Worklog
         exit 1
       end
 
-      txt = Editor::EDITOR_PREAMBLE.result_with_hash(content: YAML.dump(log))
-      return_val = Editor.open_editor(txt)
+      # Check if there are any entries
+      if log.entries.empty?
+        WorkLogger.error "No entries found for #{options[:date]}. Use 'wl add' to create an entry."
+        exit 1
+      end
 
-      @storage.write_log(@storage.filepath(date),
-                         YAML.load(return_val, permitted_classes: [Date, Time, DailyLog, LogEntry]))
-      WorkLogger.info Rainbow("Updated work log for #{options[:date]}").green
+      # Show interactive menu to select an entry
+      selected_entry = InteractiveEditor.select_entry(log, @people)
+
+      # Return if user cancelled
+      unless selected_entry
+        WorkLogger.info 'Edit cancelled.'
+        return
+      end
+
+      # Edit the selected entry
+      updated_entry = InteractiveEditor.edit_entry(selected_entry)
+
+      # Return if edit was cancelled or failed
+      unless updated_entry
+        WorkLogger.info 'Edit cancelled or failed.'
+        return
+      end
+
+      # Find and replace the entry in the daily log
+      entry_index = log.entries.find_index { |e| e == selected_entry }
+      if entry_index
+        log.entries[entry_index] = updated_entry
+        @storage.write_log(@storage.filepath(date), log)
+        WorkLogger.info Rainbow("Updated work log for #{options[:date]}").green
+      else
+        WorkLogger.error 'Failed to find entry to update.'
+        exit 1
+      end
     end
 
     # Fetch latest events from GitHub for a specified user and add them to the work log.
