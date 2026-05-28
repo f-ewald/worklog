@@ -30,6 +30,10 @@ module Worklog
   class LogEntry
     PERSON_REGEX = /(?:\s|^)[~@](\w+)/
 
+    # Matches a Jira-style ticket identifier (e.g. PROJ-1234) at the end of a URL path,
+    # optionally followed by a query string, fragment, or trailing slash.
+    TICKET_URL_REGEX = %r{([A-Z]+-\d+)(?:[?#/].*)?$}
+
     include Hashify
 
     attr_accessor :key, :source, :time, :tags, :ticket, :url, :epic, :message, :project
@@ -92,6 +96,18 @@ module Worklog
     # @return [LogEntry] the created LogEntry object
     def self.from_hash(hash)
       new(**hash)
+    end
+
+    # Extract a Jira-style ticket identifier from a URL.
+    # Returns nil if the URL is blank or no ticket pattern is found.
+    #
+    # @param url [String, nil] the URL to scan
+    # @return [String, nil] the ticket identifier (e.g. "PROJ-1234"), or nil
+    def self.extract_ticket_from_url(url)
+      return nil if url.nil? || url.strip.empty?
+
+      match = url.match(TICKET_URL_REGEX)
+      match ? match[1] : nil
     end
 
     # Convert the log entry to YAML format.
