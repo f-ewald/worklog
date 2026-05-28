@@ -105,6 +105,12 @@ module Worklog
       # Validate that the project exists if provided
       validate_projects!(options[:project]) if options[:project] && !options[:project].empty?
 
+      # Auto-extract ticket from URL when no ticket was explicitly provided
+      if (options[:ticket].nil? || options[:ticket].empty?) && options[:url]
+        extracted = LogEntry.extract_ticket_from_url(options[:url])
+        options = options.merge(ticket: extracted) if extracted
+      end
+
       # Use the first 7 characters of the SHA256 hash of message as the key
       key = Hasher.sha256(message)
 

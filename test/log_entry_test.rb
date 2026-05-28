@@ -157,4 +157,28 @@ class LogEntryTest < Minitest::Test
     assert_equal 'This is a message', log_entry.message
     assert_equal 'project-1', log_entry.project
   end
+
+  def test_extract_ticket_from_url
+    assert_equal 'PROJ-1234', LogEntry.extract_ticket_from_url('https://company.atlassian.net/browse/PROJ-1234')
+    assert_equal 'PROJ-1', LogEntry.extract_ticket_from_url('https://jira.example.com/browse/PROJ-1')
+  end
+
+  def test_extract_ticket_from_url_with_query_string
+    assert_equal 'PROJ-1234', LogEntry.extract_ticket_from_url('https://company.atlassian.net/browse/PROJ-1234?focusedCommentId=123')
+  end
+
+  def test_extract_ticket_from_url_with_fragment
+    assert_equal 'PROJ-1234', LogEntry.extract_ticket_from_url('https://company.atlassian.net/browse/PROJ-1234#comment-1')
+  end
+
+  def test_extract_ticket_from_url_no_match
+    assert_nil LogEntry.extract_ticket_from_url('https://github.com/owner/repo/pull/123')
+    assert_nil LogEntry.extract_ticket_from_url('https://example.com/')
+  end
+
+  def test_extract_ticket_from_url_nil_or_blank
+    assert_nil LogEntry.extract_ticket_from_url(nil)
+    assert_nil LogEntry.extract_ticket_from_url('')
+    assert_nil LogEntry.extract_ticket_from_url('   ')
+  end
 end

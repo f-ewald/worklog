@@ -250,4 +250,36 @@ class WorklogTest < Minitest::Test
       @worklog.parse_time_string!('invalid-time')
     end
   end
+
+  def test_add_extracts_ticket_from_url
+    message = 'Reviewed LPS ticket'
+    options = {
+      date: '2024-01-15',
+      time: '09:00:00',
+      tags: [],
+      ticket: nil,
+      url: 'https://company.atlassian.net/browse/PROJ-1234',
+      epic: false,
+      project: nil
+    }
+    @worklog.add(message, options)
+    daily_log = @worklog.storage.load_log!(@worklog.storage.filepath(Date.parse(options[:date])))
+    assert_equal 'PROJ-1234', daily_log.entries.last.ticket
+  end
+
+  def test_add_explicit_ticket_not_overridden_by_url
+    message = 'Reviewed PROJ ticket with explicit ticket'
+    options = {
+      date: '2024-01-16',
+      time: '10:00:00',
+      tags: [],
+      ticket: 'MANUAL-999',
+      url: 'https://company.atlassian.net/browse/PROJ-1234',
+      epic: false,
+      project: nil
+    }
+    @worklog.add(message, options)
+    daily_log = @worklog.storage.load_log!(@worklog.storage.filepath(Date.parse(options[:date])))
+    assert_equal 'MANUAL-999', daily_log.entries.last.ticket
+  end
 end
