@@ -18,6 +18,7 @@ require 'printer'
 require 'project_storage'
 require 'standup'
 require 'statistics'
+require 'activity_graph'
 require 'storage'
 require 'summary'
 require 'takeout'
@@ -441,6 +442,8 @@ module Worklog
       puts "#{format_left('Entries per day')}: #{format('%.2f', stats.avg_entries)}"
       puts "#{format_left('First entry')}: #{stats.first_entry}"
       puts "#{format_left('Last entry')}: #{stats.last_entry}"
+      puts ''
+      puts ActivityGraph.new(@storage.all_days).render
     end
 
     def summary(options = {})
