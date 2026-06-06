@@ -133,6 +133,37 @@ Create an AI summary (experimental). Requires [Ollama](https://www.ollama.com) w
 wl summary
 ```
 
+### MCP Server (LLM Integration)
+
+Worklog includes an MCP (Model Context Protocol) server that lets LLMs like Claude query your worklog data using natural language. The server exposes read-only tools for querying entries, searching text, listing tags/epics/people/projects, and getting statistics.
+
+**Claude Code CLI:**
+
+```shell
+claude mcp add worklog -- wl mcp
+```
+
+**Claude Desktop** (add to `~/Library/Application Support/Claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "worklog": {
+      "command": "wl",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+Once configured, you can ask Claude questions like:
+- "What were my epics in Q1?"
+- "What did I work on between January and February?"
+- "Which tags do I use most?"
+- "Show me all entries mentioning authentication"
+
+Available tools: `query_entries`, `search_entries`, `list_tags`, `list_epics`, `list_people`, `list_projects`, `get_statistics`.
+
 Remove the latest entry (**use with caution**):
 
 ```shell

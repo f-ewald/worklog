@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
   spec.executables = ['wl']
 
   spec.add_dependency 'faraday', '~> 2.14'
+  spec.add_dependency 'fast-mcp', '~> 1.6'
   spec.add_dependency 'httparty', '~> 0.22.0'
   spec.add_dependency 'langchainrb', '~> 0.19.5'
   spec.add_dependency 'logger', '~> 1.6'

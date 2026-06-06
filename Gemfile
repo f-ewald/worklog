@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 # Globally required Gems
 gem 'dotenv-vault', '~> 0.10.1'
 gem 'faraday', '~> 2.14'
+gem 'fast-mcp', '~> 1.6'
 gem 'httparty', '~> 0.22.0'
 gem 'langchainrb', '~> 0.19.5'
 gem 'logger', '~> 1.6'
@@ -13,6 +14,7 @@ gem 'rackup', '~> 2.2'
 gem 'rainbow', '~> 3.1'
 gem 'ruby-openai', '~> 8.3'
 gem 'thor', '~> 1.3'
+gem 'tty-prompt', '~> 0.23'
 gem 'tzinfo', '~> 2.0'
 
 # Gems required for development
