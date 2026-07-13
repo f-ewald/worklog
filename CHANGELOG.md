@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.4.0] — Best-Practices Improvements
+
 ### Added
 - `StorageFactory` helper centralises backend selection for all three storage modules
 - Minimum 80% code-coverage threshold enforced via SimpleCov
 - Unique temporary directories per test to prevent test interference
+- `CHANGELOG.md` following Keep a Changelog format
+- CLI command reference table in README
+- Complete developer onboarding section in README
 
 ### Fixed
 - `days_between` no longer mutates loaded `DailyLog` entries in place
@@ -19,8 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - `puma` is now an optional runtime dependency; `wl serve` prints a helpful install hint if it is missing
-- CI workflows now use minimum required GitHub token permissions (`contents: read`, `pull-requests: write`, etc.) instead of `write-all`
+- CI workflows now use minimum required GitHub token permissions instead of `write-all`
 - CI now runs tests and linting before publishing the gem
+- CI tests against Ruby 3.4 and 3.5 (matrix)
+- `.rubocop_todo.yml` reduced from 149 to 95 lines
 
 ### Security
 - Upgraded `actions/checkout` from v2 to v4 in all CI workflows
@@ -62,7 +71,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rack/Puma web server (`wl serve`)
 - LLM-powered summary (`wl summary`)
 
-[Unreleased]: https://github.com/f-ewald/worklog/compare/v0.3.28...HEAD
+[Unreleased]: https://github.com/f-ewald/worklog/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/f-ewald/worklog/compare/v0.3.28...v0.4.0
 [0.3.27]: https://github.com/f-ewald/worklog/compare/v0.3.26...v0.3.27
 [0.3.26]: https://github.com/f-ewald/worklog/compare/v0.3.25...v0.3.26
 [0.3.25]: https://github.com/f-ewald/worklog/compare/v0.3.0...v0.3.25
