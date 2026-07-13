@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "wl",
+      "args": ["mcp"],
+      "type": "stdio"
+    }
+  }
+}

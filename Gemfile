@@ -12,8 +12,13 @@ gem 'rack', '~> 3.1'
 gem 'rackup', '~> 2.2'
 gem 'rainbow', '~> 3.1'
 gem 'ruby-openai', '~> 8.3'
+gem 'sequel', '~> 5.84'
 gem 'thor', '~> 1.3'
 gem 'tzinfo', '~> 2.0'
+
+# Postgres adapter for Sequel. Required only when the storage engine is set
+# to 'postgres' in the configuration; loaded lazily by Worklog::DB.
+gem 'pg', '~> 1.5'
 
 # Gems required for development
 group :development do
@@ -37,6 +42,7 @@ group :test do
   gem 'rubocop-minitest', '~> 0.36.0'
   gem 'simplecov', '~> 0.22.0'
   gem 'simplecov-cobertura', '~> 3.1'
+  gem 'sqlite3', '~> 2.1'
   gem 'terminal-notifier-guard', '~> 1.7'
 end
 

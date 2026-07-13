@@ -9,17 +9,17 @@ class ProjectStorageTest < Minitest::Test
 
   def setup
     @configuration = configuration_helper
-    @project_storage = ProjectStorage.new(@configuration)
+    @project_storage = ProjectStorage::Yaml.new(@configuration)
   end
 
   def teardown
-    temp_file = File.join(@configuration.storage_path, ProjectStorage::FILE_NAME)
+    temp_file = File.join(@configuration.storage_path, ProjectStorage::Yaml::FILE_NAME)
     File.delete(temp_file) if File.exist?(temp_file)
   end
 
   def test_load_projects
     # Create a temporary file to simulate the projects.yaml file
-    temp_file = File.join(@configuration.storage_path, ProjectStorage::FILE_NAME)
+    temp_file = File.join(@configuration.storage_path, ProjectStorage::Yaml::FILE_NAME)
     yaml_content = <<~YAML
       - key: P001
         name: Test Project
@@ -53,8 +53,8 @@ class ProjectStorageTest < Minitest::Test
   end
 
   def test_projects
-    project_storage = ProjectStorage.new(@configuration)
-    assert_instance_of ProjectStorage, project_storage
+    project_storage = ProjectStorage::Yaml.new(@configuration)
+    assert_instance_of ProjectStorage::Yaml, project_storage
 
     project_storage.projects = {
       'P001' => Project.from_hash(
@@ -79,8 +79,8 @@ class ProjectStorageTest < Minitest::Test
   end
 
   def test_load_folder_does_not_exist
-    project_storage = ProjectStorage.new(@configuration)
-    assert_instance_of ProjectStorage, project_storage
+    project_storage = ProjectStorage::Yaml.new(@configuration)
+    assert_instance_of ProjectStorage::Yaml, project_storage
 
     # Temporarily change the storage path to a non-existent folder
     original_path = @configuration.storage_path
@@ -96,7 +96,7 @@ class ProjectStorageTest < Minitest::Test
   end
 
   def test_exist_key
-    temp_file = File.join(@configuration.storage_path, ProjectStorage::FILE_NAME)
+    temp_file = File.join(@configuration.storage_path, ProjectStorage::Yaml::FILE_NAME)
     yaml_content = <<~YAML
       - key: P001
         name: Test Project
@@ -106,7 +106,7 @@ class ProjectStorageTest < Minitest::Test
         status: active
     YAML
     File.write(temp_file, yaml_content)
-    project_storage = ProjectStorage.new(@configuration)
+    project_storage = ProjectStorage::Yaml.new(@configuration)
 
     assert project_storage.exist?('P001')
     refute project_storage.exist?('P002')

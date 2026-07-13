@@ -10,7 +10,7 @@ class PeopleStorageTest < Minitest::Test
 
   def setup
     @configuration = configuration_helper
-    @people_storage = PeopleStorage.new(@configuration)
+    @people_storage = PeopleStorage::Yaml.new(@configuration)
   end
 
   def teardown
@@ -58,7 +58,7 @@ class PeopleStorageTest < Minitest::Test
   end
 
   def test_people_filepath
-    expected_path = File.join(@configuration.storage_path, PeopleStorage::PEOPLE_FILE)
+    expected_path = File.join(@configuration.storage_path, PeopleStorage::Yaml::PEOPLE_FILE)
     assert_equal expected_path, @people_storage.people_filepath
   end
 

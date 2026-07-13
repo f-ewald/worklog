@@ -91,6 +91,8 @@ To synchronize the Github account, run the following command:
 wl github
 ```
 
+On macOS you can run this automatically every hour — see [Running the GitHub sync hourly on macOS](#running-the-github-sync-hourly-on-macos).
+
 ### Standup
 
 Create a standup message for the current day. This will generate a message based on the entries of the current day and print it to the console. The message is generated ChatGPT and can be used as a template for your daily standup. You can also specify a date range to generate a message for a specific day or week.
@@ -149,6 +151,34 @@ Fuzzy searching is not directly implemented in worklog. It is recommended to use
 ```shell
 wl show --days 180 2>/dev/null | sk
 ```
+
+### Storage Engines
+
+By default, worklog stores everything in human-readable YAML files under `~/.worklog/`. A PostgreSQL backend is also available and can be selected in `~/.worklog.yaml`:
+
+```yaml
+storage:
+  engine: postgres
+  postgres:
+    url: postgres://user:pass@localhost:5432/worklog
+```
+
+Use `wl storage export --path=DIR` and `wl storage import --path=DIR` to move data between engines (via YAML files). See [STORAGE.md](STORAGE.md) for the full reference, schema, troubleshooting, and migration walkthroughs.
+
+### Running the GitHub sync hourly on macOS
+
+On macOS, the `worklogd` companion agent keeps your worklog in sync automatically by running the GitHub sync once an hour via [launchd](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPSystemStartup/Chapters/CreatingLaunchdJobs.html). launchd — not a long-running process — owns the schedule, so syncing survives reboots, catches up after the Mac sleeps, and restarts on failure.
+
+```shell
+worklogd install      # write + load the hourly LaunchAgent (runs a first sync now)
+worklogd status       # is it loaded? prints recent log lines
+worklogd uninstall    # unload and remove it
+worklogd sync         # run one sync in the foreground (what launchd invokes)
+```
+
+Pass `worklogd install --interval 1800` to sync more often than the default hour. Logs are written to `~/Library/Logs/worklogd.log` (rotated daily). The sync is idempotent and reuses the `github:` configuration from `~/.worklog.yaml`, so it is safe to run alongside manual `wl github` runs.
+
+Re-run `worklogd install` after upgrading the gem so the LaunchAgent points at the current Ruby. See [DAEMON.md](DAEMON.md) for the full reference, plist details, and troubleshooting.
 
 ## Development
 

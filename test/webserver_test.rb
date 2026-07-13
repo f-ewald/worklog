@@ -50,7 +50,7 @@ end
 class WorkLogResponseTest < Minitest::Test
   def setup
     config = configuration_helper
-    @storage = Worklog::Storage.new(config)
+    @storage = Worklog::Storage.build(config)
     @response = WorkLogResponse.new @storage, {}
   end
 

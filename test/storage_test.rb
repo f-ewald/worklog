@@ -23,14 +23,18 @@ class StorageTest < Minitest::Test
     assert_instance_of LogEntry, @daily_log.entries.first
 
     @configuration = configuration_helper
-    @storage = Storage.new(@configuration)
-    @storage.write_log(@storage.filepath(@date), @daily_log)
+    @storage = Storage::Yaml.new(@configuration)
+    @storage.save_log(@daily_log)
     @person_alex = Person.new(handle: 'alex', name: 'Alex Test', email: 'alext@example.com', team: 'Team A', notes: ['Note 1'])
     @person_laura = Person.new(handle: 'laura', name: 'Laura Test', email: 'laurat@example.com', team: 'Team B', notes: ['Note 2'])
   end
 
   def teardown
     teardown_configuration
+  end
+
+  def test_build_returns_yaml_by_default
+    assert_instance_of Storage::Yaml, Storage.build(@configuration)
   end
 
   def test_all_days
@@ -53,55 +57,60 @@ class StorageTest < Minitest::Test
   def test_filepath
     filepath = @storage.filepath(@date)
     assert_instance_of String, filepath
-    assert filepath.end_with?("/2020-01-01#{Storage::FILE_SUFFIX}")
+    assert filepath.end_with?("/2020-01-01#{Storage::Yaml::FILE_SUFFIX}")
   end
 
-  def test_create_file_skeleton
-    @storage.create_file_skeleton(@date)
+  def test_ensure_log_for_date
+    @storage.ensure_log_for_date(Date.new(2020, 1, 2))
 
-    assert_path_exists @storage.filepath(@date)
+    assert_path_exists @storage.filepath(Date.new(2020, 1, 2))
   end
 
-  def test_load_log
-    @storage.write_log(@storage.filepath(@date), @daily_log)
-    loaded_log = @storage.load_log(@storage.filepath(@date))
+  def test_load_log_for_date
+    @storage.save_log(@daily_log)
+    loaded_log = @storage.load_log_for_date(@date)
 
     assert_equal loaded_log, @daily_log
   end
 
-  def test_load_log!
-    @storage.write_log(@storage.filepath(@date), @daily_log)
-    loaded_log = @storage.load_log!(@storage.filepath(@date))
+  def test_load_log_for_date_bang
+    @storage.save_log(@daily_log)
+    loaded_log = @storage.load_log_for_date!(@date)
 
     assert_equal loaded_log, @daily_log
   end
 
   def test_load_log_not_found
-    not_found_date = Date.new(2020, 1, 2)
-    assert_nil @storage.load_log(@storage.filepath(not_found_date))
+    not_found_date = Date.new(2030, 1, 2)
+    assert_nil @storage.load_log_for_date(not_found_date)
   end
 
   def test_load_log_not_found_with_exception
-    not_found_date = Date.new(2020, 1, 2)
+    not_found_date = Date.new(2030, 1, 2)
     assert_raises(Storage::LogNotFoundError) do
-      @storage.load_log!(@storage.filepath(not_found_date))
+      @storage.load_log_for_date!(not_found_date)
     end
   end
 
-  def test_write_log
-    @storage.write_log(@storage.filepath(@date), @daily_log)
+  def test_log_exists?
+    assert @storage.log_exists?(@date)
+    refute @storage.log_exists?(Date.new(2030, 1, 1))
+  end
 
-    assert_equal @daily_log, @storage.load_log(@storage.filepath(@date))
+  def test_save_log
+    @storage.save_log(@daily_log)
+
+    assert_equal @daily_log, @storage.load_log_for_date(@date)
   end
 
   def test_log_pattern
-    assert_match Storage::LOG_PATTERN, '2020-01-01.yaml'
-    refute_match Storage::LOG_PATTERN, '2020-01-01.yml'
-    refute_match Storage::LOG_PATTERN, '2020-01-01.txt'
-    refute_match Storage::LOG_PATTERN, '2020-01-01'
-    refute_match Storage::LOG_PATTERN, 'people.yaml'
-    refute_match Storage::LOG_PATTERN, '2020-01-01-01.yaml'
-    refute_match Storage::LOG_PATTERN, 'projects.yaml'
+    assert_match Storage::Yaml::LOG_PATTERN, '2020-01-01.yaml'
+    refute_match Storage::Yaml::LOG_PATTERN, '2020-01-01.yml'
+    refute_match Storage::Yaml::LOG_PATTERN, '2020-01-01.txt'
+    refute_match Storage::Yaml::LOG_PATTERN, '2020-01-01'
+    refute_match Storage::Yaml::LOG_PATTERN, 'people.yaml'
+    refute_match Storage::Yaml::LOG_PATTERN, '2020-01-01-01.yaml'
+    refute_match Storage::Yaml::LOG_PATTERN, 'projects.yaml'
   end
 
   def test_store_sort_by_time
@@ -111,8 +120,8 @@ class StorageTest < Minitest::Test
       LogEntry.new(time: Time.new(2020, 1, 1, 12, 0, 0), message: 'Noon work')
     ])
 
-    @storage.write_log(@storage.filepath(@date), unsorted_log)
-    loaded_log = @storage.load_log(@storage.filepath(@date))
+    @storage.save_log(unsorted_log)
+    loaded_log = @storage.load_log_for_date(@date)
 
     sorted_times = loaded_log.entries.map(&:time)
     assert_equal [Time.new(2020, 1, 1, 9, 0, 0), Time.new(2020, 1, 1, 12, 0, 0), Time.new(2020, 1, 1, 15, 0, 0)], sorted_times
@@ -126,8 +135,8 @@ class StorageTest < Minitest::Test
       LogEntry.new(time: tz.local_time(2020, 1, 1, 12, 0, 0), message: 'Noon work')
     ])
 
-    @storage.write_log(@storage.filepath(@date), unsorted_log)
-    loaded_log = @storage.load_log(@storage.filepath(@date))
+    @storage.save_log(unsorted_log)
+    loaded_log = @storage.load_log_for_date(@date)
 
     sorted_times = loaded_log.entries.map(&:time)
     assert_equal [tz.local_time(2020, 1, 1, 9, 0, 0), tz.local_time(2020, 1, 1, 12, 0, 0), tz.local_time(2020, 1, 1, 15, 0, 0)], sorted_times
@@ -142,8 +151,8 @@ class StorageTest < Minitest::Test
       LogEntry.new(time: tz_ny.local_time(2020, 1, 1, 12, 0, 0), message: 'Noon work NY')
     ])
 
-    @storage.write_log(@storage.filepath(@date), unsorted_log)
-    loaded_log = @storage.load_log(@storage.filepath(@date))
+    @storage.save_log(unsorted_log)
+    loaded_log = @storage.load_log_for_date(@date)
 
     sorted_times = loaded_log.entries.map(&:time)
     assert_equal [tz_la.local_time(2020, 1, 1, 9, 0, 0), tz_ny.local_time(2020, 1, 1, 12, 0, 0), tz_ny.local_time(2020, 1, 1, 15, 0, 0)], sorted_times
@@ -157,8 +166,8 @@ class StorageTest < Minitest::Test
       LogEntry.new(time: Time.new(2020, 1, 1, 12, 0, 0, "UTC"), message: 'Noon work UTC')
     ])
 
-    @storage.write_log(@storage.filepath(@date), unsorted_log)
-    loaded_log = @storage.load_log(@storage.filepath(@date))
+    @storage.save_log(unsorted_log)
+    loaded_log = @storage.load_log_for_date(@date)
 
     sorted_times = loaded_log.entries.map(&:time)
     assert_equal [
@@ -175,17 +184,8 @@ class StorageTest < Minitest::Test
 
         config_file = File.join(dir, '.worklog.yaml')
         assert_path_exists config_file
-        assert_includes File.read(config_file), 'storage_path:'
+        assert_includes File.read(config_file), 'storage:'
       end
     end
-  end
-
-  def test_create_default_projects
-    skip "WIP: Implement ProjectStorage tests"
-    @storage.create_default_files
-
-    projects_file = File.join(@storage.config.storage_path, 'projects.yaml')
-    assert_path_exists projects_file
-    assert_equal [].to_yaml, File.read(projects_file)
   end
 end

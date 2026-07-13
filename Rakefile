@@ -10,6 +10,7 @@ Minitest::TestTask.create # named test, sensible defaults
 
 task default: :test
 
+desc 'Package the application for distribution'
 task :package do
   puts 'Packaging the application for distribution'
 end

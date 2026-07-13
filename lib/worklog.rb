@@ -509,7 +509,8 @@ module Worklog
       begin
         require 'puma'
       rescue LoadError
-        raise LoadError, "Puma is required to run the web server but is not installed.\nInstall it with: gem install puma"
+        raise LoadError,
+              "Puma is required to run the web server but is not installed.\nInstall it with: gem install puma"
       end
       app = WorkLogApp.new(@storage)
       WorkLogServer.new(app).start

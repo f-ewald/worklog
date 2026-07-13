@@ -10,7 +10,7 @@ class Statistics
   # Initialize the Statistics class.
   def initialize(config)
     @config = config
-    @storage = Worklog::Storage.new(config)
+    @storage = Worklog::Storage.build(config)
   end
 
   # Calculate statistics for the work log for all days.

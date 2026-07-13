@@ -1,0 +1,4 @@
+ruleDirs:
+- /Users/fewald/Development/worklog/rules
+testConfigs:
+- testDir: /Users/fewald/Development/worklog/rule-tests

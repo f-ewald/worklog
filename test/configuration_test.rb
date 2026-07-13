@@ -112,6 +112,71 @@ class ConfigurationTest < Minitest::Test
     end
   end
 
+  def test_load_with_new_storage_block_yaml_engine
+    Dir.mktmpdir do |dir|
+      file_path = File.join(dir, '.worklog.yaml')
+      File.write(file_path, <<~YAML)
+        storage:
+          engine: yaml
+          yaml:
+            path: #{File.join(dir, '.worklog_yaml')}
+        log_level: info
+      YAML
+
+      Dir.stub :home, dir do
+        config = Configuration.load
+        assert_equal :yaml, config.storage_engine
+        assert_equal File.join(dir, '.worklog_yaml'), config.storage_path
+      end
+    end
+  end
+
+  def test_load_with_new_storage_block_postgres_engine
+    Dir.mktmpdir do |dir|
+      file_path = File.join(dir, '.worklog.yaml')
+      File.write(file_path, <<~YAML)
+        storage:
+          engine: postgres
+          postgres:
+            url: postgres://localhost/wl_test
+            pool: 7
+      YAML
+
+      Dir.stub :home, dir do
+        config = Configuration.load
+        assert_equal :postgres, config.storage_engine
+        assert_equal 'postgres://localhost/wl_test', config.postgres_url
+        assert_equal 7, config.postgres_pool
+      end
+    end
+  end
+
+  def test_load_resolves_env_var_in_postgres_url
+    ENV['WORKLOG_TEST_DB_URL'] = 'postgres://envuser@host/db'
+    Dir.mktmpdir do |dir|
+      file_path = File.join(dir, '.worklog.yaml')
+      File.write(file_path, <<~YAML)
+        storage:
+          engine: postgres
+          postgres:
+            url: "${WORKLOG_TEST_DB_URL}"
+      YAML
+
+      Dir.stub :home, dir do
+        config = Configuration.load
+        assert_equal 'postgres://envuser@host/db', config.postgres_url
+      end
+    end
+  ensure
+    ENV.delete('WORKLOG_TEST_DB_URL')
+  end
+
+  def test_storage_config_rejects_unknown_engine
+    assert_raises(ArgumentError) do
+      Configuration::StorageConfig.from_hash({ 'storage' => { 'engine' => 'mongo' } })
+    end
+  end
+
   def test_storage_path_exist
     Dir.mktmpdir do |dir|
       config = Configuration.new

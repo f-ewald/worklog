@@ -18,6 +18,7 @@ require 'storage'
 require 'string_helper'
 require 'version'
 require 'webserver'
+require 'commands/storage_command'
 
 # CLI for the work log application
 class WorklogCLI < Thor
@@ -32,7 +33,7 @@ class WorklogCLI < Thor
   # Initialize the CLI with the given arguments, options, and configuration
   def initialize(args = [], options = {}, config = {})
     @config = Worklog::Configuration.load
-    @storage = Worklog::Storage.new(@config)
+    @storage = Worklog::Storage.build(@config)
     super
   end
 
@@ -214,6 +215,9 @@ class WorklogCLI < Thor
   def version
     puts "Worklog #{current_version} running on Ruby #{RUBY_VERSION}"
   end
+
+  desc 'storage SUBCOMMAND ...ARGS', 'Move data between storage engines (export/import)'
+  subcommand 'storage', Worklog::Commands::StorageCommand
 
   # Define shortcuts and aliases
   map 'a' => :add

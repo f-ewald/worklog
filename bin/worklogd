@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Entry point for the worklogd background agent (hourly GitHub sync via launchd).
+
+if ENV['WL_PATH']
+  # Import worklogd from the path in WL_PATH during development to avoid relying
+  # on the order of $PATH. This should only be used during development.
+  warn "Loading worklog from #{ENV['WL_PATH']}. This should only be used during development."
+  warn 'To use the installed worklog, unset the WL_PATH environment variable.'
+  $LOAD_PATH.unshift File.join(ENV['WL_PATH'], 'lib')
+  require 'commands/daemon_command'
+else
+  require_relative '../lib/commands/daemon_command'
+end
+
+# Start the worklogd CLI application (Thor application).
+Worklog::Commands::DaemonCommand.start
