@@ -23,12 +23,14 @@ end
 
 
 # Provide a sample YAML-backed configuration for testing purposes.
+# Each call creates a new unique temporary directory to prevent test
+# interference. Pair every call with {teardown_configuration}.
 def configuration_helper
-  tmp_dir = File.join(Dir.tmpdir, 'worklog_test')
-  Dir.mkdir(tmp_dir) unless Dir.exist?(tmp_dir)
+  tmp_dir = Dir.mktmpdir('worklog_test_')
+  Thread.current[:worklog_test_tmpdir] = tmp_dir
 
   Worklog::Configuration.new do |config|
-    config.storage_path = File.join(Dir.tmpdir, 'worklog_test')
+    config.storage_path = tmp_dir
     config.log_level = :debug
 
     config.github = Worklog::Configuration::GithubConfig.new
@@ -36,9 +38,12 @@ def configuration_helper
   end
 end
 
+# Remove the temporary directory created by the most recent
+# {configuration_helper} call on this thread.
 def teardown_configuration
-  tmp_dir = File.join(Dir.tmpdir, 'worklog_test')
-  FileUtils.rm_rf(tmp_dir) if Dir.exist?(tmp_dir)
+  tmp_dir = Thread.current[:worklog_test_tmpdir]
+  FileUtils.rm_rf(tmp_dir) if tmp_dir && Dir.exist?(tmp_dir)
+  Thread.current[:worklog_test_tmpdir] = nil
 end
 
 def storage_helper
