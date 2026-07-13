@@ -194,3 +194,49 @@ Install the application by running the following command from the root directory
 bundle install
 ```
 
+### Ruby version
+
+This project uses [asdf](https://asdf-vm.com) to manage the Ruby version.
+The required version is pinned in `.tool-versions`. To install it:
+
+```shell
+# Install the asdf Ruby plugin (once)
+asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+
+# Install the exact Ruby version declared in .tool-versions
+asdf install
+```
+
+### Running tests
+
+```shell
+# Run the full test suite
+bundle exec rake test
+
+# Run a single test file
+bundle exec ruby -Ilib -Itest test/log_entry_test.rb
+
+# Run linter
+bundle exec rake rubocop
+```
+
+### Watch mode
+
+Guard automatically runs tests and RuboCop when files change:
+
+```shell
+bundle exec guard
+```
+
+### Local development
+
+Set the `WL_PATH` environment variable to point to your checkout so that
+`wl` loads from local source instead of the installed gem:
+
+```shell
+export WL_PATH=$(pwd)
+wl add "Testing a local change"
+```
+
+Unset `WL_PATH` to switch back to the installed gem.
+
