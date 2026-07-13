@@ -4,12 +4,18 @@
 # This is the main entry point for the worklog CLI.
 
 if ENV['WL_PATH']
-  # Import the worklog CLI from the path specified in the WL_PATH environment variable
-  # This is used during development to avoid having to rely on the order of the $PATH.
-  warn "Loading worklog from #{ENV['WL_PATH']}. This should only be used during development."
-  warn 'To use the installed worklog, unset the WL_PATH environment variable.'
-  $LOAD_PATH.unshift File.join(ENV['WL_PATH'], 'lib')
-  require 'cli'
+  # WL_PATH is a development-only override that loads worklog from a local
+  # checkout instead of the installed gem. Never set this in production.
+  wl_lib = File.expand_path(File.join(ENV['WL_PATH'], 'lib'))
+  unless Dir.exist?(wl_lib)
+    warn "WL_PATH is set but '#{wl_lib}' does not exist. Ignoring WL_PATH."
+    require_relative '../lib/cli'
+  else
+    warn "Loading worklog from #{ENV['WL_PATH']}. This should only be used during development."
+    warn 'To use the installed worklog, unset the WL_PATH environment variable.'
+    $LOAD_PATH.unshift wl_lib
+    require 'cli'
+  end
 else
   require_relative '../lib/cli'
 end
