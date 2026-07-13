@@ -26,14 +26,15 @@ jobs:
   pages:
     needs: test
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     env:
       CI: true
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -49,7 +50,8 @@ jobs:
   "Increment-Version":
     needs: test
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: write
     env:
       CI: true
     steps:
