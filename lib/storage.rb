@@ -3,6 +3,7 @@
 require 'storage/base'
 require 'storage/yaml'
 require 'storage/postgres'
+require 'storage_factory'
 
 module Worklog
   # Daily-log storage. The {Storage} namespace contains:
@@ -18,10 +19,7 @@ module Worklog
     # @param config [Worklog::Configuration]
     # @return [Storage::Base]
     def self.build(config)
-      case config.storage_engine
-      when :postgres then Postgres.new(config)
-      else Yaml.new(config)
-      end
+      StorageFactory.build(config, yaml_class: Yaml, postgres_class: Postgres)
     end
   end
 end

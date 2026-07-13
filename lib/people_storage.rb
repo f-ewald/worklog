@@ -3,6 +3,7 @@
 require 'people_storage/base'
 require 'people_storage/yaml'
 require 'people_storage/postgres'
+require 'storage_factory'
 
 module Worklog
   # People storage. See {Storage} for the analogous pattern with the
@@ -13,10 +14,7 @@ module Worklog
     # @param config [Worklog::Configuration]
     # @return [PeopleStorage::Base]
     def self.build(config)
-      case config.storage_engine
-      when :postgres then Postgres.new(config)
-      else Yaml.new(config)
-      end
+      StorageFactory.build(config, yaml_class: Yaml, postgres_class: Postgres)
     end
   end
 end

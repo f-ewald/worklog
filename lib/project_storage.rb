@@ -3,6 +3,7 @@
 require 'project_storage/base'
 require 'project_storage/yaml'
 require 'project_storage/postgres'
+require 'storage_factory'
 
 module Worklog
   # Project storage. See {Storage} and {PeopleStorage} for the
@@ -13,10 +14,7 @@ module Worklog
     # @param config [Worklog::Configuration]
     # @return [ProjectStorage::Base]
     def self.build(config)
-      case config.storage_engine
-      when :postgres then Postgres.new(config)
-      else Yaml.new(config)
-      end
+      StorageFactory.build(config, yaml_class: Yaml, postgres_class: Postgres)
     end
   end
 end
