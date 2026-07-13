@@ -41,13 +41,13 @@ module Worklog
 
       def pull_request_data(repo, pr_number)
         response = HTTParty.get("https://api.github.com/repos/#{repo}/pulls/#{pr_number}",
-                                headers: { 'Authorization' => "token #{TOKEN}" })
+                                headers: { 'Authorization' => "token #{@configuration.github.api_key}" })
         response.parsed_response
       end
 
       def pull_request_comments(repo, pr_number)
         response = HTTParty.get("https://api.github.com/repos/#{repo}/pulls/#{pr_number}/comments",
-                                headers: { 'Authorization' => "token #{TOKEN}" })
+                                headers: { 'Authorization' => "token #{@configuration.github.api_key}" })
         response.parsed_response
       end
 

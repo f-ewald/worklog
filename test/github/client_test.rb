@@ -3,6 +3,7 @@
 require_relative '../test_helper'
 require 'minitest/autorun'
 require 'minitest/mock'
+require 'webmock/minitest'
 require 'github/client'
 
 class GithubTest < Minitest::Test
@@ -143,23 +144,39 @@ class GithubTest < Minitest::Test
   end
 
   def test_pull_request_data
-    skip 'WIP: Implement persistent stubs for pull_request_data'
+    stub_request(:get, "https://api.github.com/repos/#{@repo}/pulls/#{@pr_number}")
+      .with(headers: { 'Authorization' => 'token test-api-key' })
+      .to_return(
+        status: 200,
+        body: JSON.generate({ 'number' => @pr_number, 'title' => 'My PR', 'body' => 'PR description' }),
+        headers: { 'Content-Type' => 'application/json' }
+      )
+
     pr_data = @github.pull_request_data(@repo, @pr_number)
 
     assert_equal @pr_number, pr_data['number']
-    assert pr_data.key?('title')
-    assert pr_data.key?('body')
+    assert_equal 'My PR', pr_data['title']
+    assert_equal 'PR description', pr_data['body']
   end
 
   def test_pull_request_comments
-    skip 'Fix this test later'
+    stub_request(:get, "https://api.github.com/repos/#{@repo}/pulls/#{@pr_number}/comments")
+      .with(headers: { 'Authorization' => 'token test-api-key' })
+      .to_return(
+        status: 200,
+        body: JSON.generate([
+                              { 'id' => 1, 'body' => 'First comment' },
+                              { 'id' => 2, 'body' => 'Second comment' }
+                            ]),
+        headers: { 'Content-Type' => 'application/json' }
+      )
+
     comments = @github.pull_request_comments(@repo, @pr_number)
 
     assert_kind_of Array, comments
-    comments.each do |comment|
-      assert comment.key?('id')
-      assert comment.key?('body')
-    end
+    assert_equal 2, comments.size
+    assert_equal 1, comments.first['id']
+    assert_equal 'First comment', comments.first['body']
   end
 
   def test_fetch_events_skips_on_api_error
