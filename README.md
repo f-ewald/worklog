@@ -61,7 +61,28 @@ Then verify that it is saved by printing all logs from the current day:
 wl show
 ```
 
-This commands prints by default the current day, depending on the system time. It is also possible to show a date range, show only epics or filter by tag or project. To view all possible options and filters, run `wl help show`.
+### Command reference
+
+| Command | Aliases | Description |
+|---------|---------|-------------|
+| `wl add MESSAGE` | `wl a` | Add a new entry (flags: `--date`, `--time`, `--tags`, `--ticket`, `--url`, `--epic`, `--project`) |
+| `wl show` | | Show entries for a date/range (flags: `--date`, `--from/--since`, `--to`, `--days`, `--epics_only`, `--tags`, `--project`) |
+| `wl edit` | | Open today's log in `$EDITOR` |
+| `wl remove` | `wl rm` | Remove the last log entry |
+| `wl people [handle]` | | Show all mentioned people, or details for a specific handle (`--inactive`) |
+| `wl projects` | `wl project` | List projects (`--oneline`) |
+| `wl tags [tag]` | | Show all tags or detail for one (`--from`, `--to`, `--days`) |
+| `wl stats` | `wl statistics` | Show aggregate statistics and activity graph |
+| `wl standup` | | Generate a standup report (`--from`, `--to`, `--days`) |
+| `wl summary` | | LLM-powered summary of entries (`--from`, `--to`, `--days`) |
+| `wl github` | | Sync GitHub events (PRs, reviews, pushes) as log entries |
+| `wl server` | `wl serve` | Start the web server for browser-based viewing |
+| `wl storage` | | Import/export between storage backends |
+| `wl takeout` | | Export all entries as a `.tar.gz` archive |
+| `wl init` | | Initialise storage and config in `~/.worklog/` |
+| `wl version` | | Print the installed version |
+
+Run `wl help <command>` for full flag documentation on any command.
 
 To show all the people you interacted with, type the following command. In addition, you can show details about a specific person by providing their handle (e.g. `jdoe`):
 
