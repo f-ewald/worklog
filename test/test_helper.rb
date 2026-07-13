@@ -18,10 +18,11 @@ end
 
 SimpleCov.start do
   add_filter '/test/'
+  minimum_coverage 80
 end
 
 
-# Provide a sample configuration for testing purposes.
+# Provide a sample YAML-backed configuration for testing purposes.
 def configuration_helper
   tmp_dir = File.join(Dir.tmpdir, 'worklog_test')
   Dir.mkdir(tmp_dir) unless Dir.exist?(tmp_dir)
@@ -41,5 +42,26 @@ def teardown_configuration
 end
 
 def storage_helper
-  Worklog::Storage.new(configuration_helper)
+  Worklog::Storage.build(configuration_helper)
+end
+
+# Build a Postgres-engine configuration backed by an in-memory SQLite
+# DB. The migrations are SQLite-compatible (see `db/migrations/*.rb`)
+# so tests get a fresh, fully-migrated schema per call.
+def postgres_configuration_helper
+  require 'db'
+  ENV['WORKLOG_DATABASE_URL'] = 'sqlite::memory:'
+  ::Worklog::DB.reset!
+  ::Worklog::Configuration.new do |config|
+    config.storage = ::Worklog::Configuration::StorageConfig.new
+    config.storage.engine = :postgres
+    config.storage.postgres_url = 'sqlite::memory:'
+    config.log_level = :debug
+  end
+end
+
+def teardown_postgres_configuration
+  require 'db'
+  ::Worklog::DB.reset!
+  ENV.delete('WORKLOG_DATABASE_URL')
 end
