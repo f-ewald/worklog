@@ -34,7 +34,7 @@ class WorklogTest < Minitest::Test
     @worklog.stub :validate_projects!, nil do
       @worklog.add(message, options)
     end
-    daily_log = @worklog.storage.load_log!(@worklog.storage.filepath(Date.parse(options[:date])))
+    daily_log = @worklog.storage.load_log_for_date!(Date.parse(options[:date]))
     assert_instance_of Worklog::LogEntry, daily_log.entries.last
     assert_equal message, daily_log.entries.last.message
     assert_equal options[:tags], daily_log.entries.last.tags
@@ -60,7 +60,7 @@ class WorklogTest < Minitest::Test
     @worklog.stub :validate_projects!, nil do
       @worklog.add(message, options)
     end
-    daily_log = @worklog.storage.load_log!(@worklog.storage.filepath(Date.parse(options[:date])))
+    daily_log = @worklog.storage.load_log_for_date!(Date.parse(options[:date]))
     assert_instance_of Worklog::LogEntry, daily_log.entries.last
     assert_equal message, daily_log.entries.last.message
     assert_equal options[:tags], daily_log.entries.last.tags
@@ -72,15 +72,18 @@ class WorklogTest < Minitest::Test
   end
 
   def test_show
-    @worklog.show(date: '2023-10-01')
+    out, _err = capture_io { @worklog.show(date: '2023-10-01') }
+    assert_kind_of String, out
   end
 
   def test_people
-    @worklog.people
+    out, _err = capture_io { @worklog.people }
+    assert_match 'People', out
   end
 
   def test_people_interaction
-    @worklog.people('person1')
+    # Unknown person: logs error and returns early without raising
+    assert_silent { @worklog.people('person1') }
   end
 
   def test_tags
@@ -119,11 +122,14 @@ class WorklogTest < Minitest::Test
   end
 
   def test_stats
-    @worklog.stats
+    out, _err = capture_io { @worklog.stats }
+    assert_match 'Total entries', out
+    assert_match 'Total days', out
   end
 
   def test_summary
-    @worklog.summary(date: '2023-10-01')
+    out, _err = capture_io { @worklog.summary(date: '2023-10-01') }
+    assert_kind_of String, out
   end
 
   def test_remove
@@ -183,7 +189,7 @@ class WorklogTest < Minitest::Test
 
   def test_validate_projects
     # Test with no projects
-    File.delete(File.join(@worklog.config.storage_path, Worklog::ProjectStorage::FILE_NAME)) if File.exist?(File.join(@worklog.config.storage_path, Worklog::ProjectStorage::FILE_NAME))
+    File.delete(File.join(@worklog.config.storage_path, Worklog::ProjectStorage::Yaml::FILE_NAME)) if File.exist?(File.join(@worklog.config.storage_path, Worklog::ProjectStorage::Yaml::FILE_NAME))
 
     assert_raises Worklog::ProjectNotFoundError do
       @worklog.validate_projects!('P001')
@@ -198,7 +204,7 @@ class WorklogTest < Minitest::Test
         end_date: 2023-12-31
         status: active
     YAML
-    File.write(File.join(@worklog.config.storage_path, Worklog::ProjectStorage::FILE_NAME), yaml_content)
+    File.write(File.join(@worklog.config.storage_path, Worklog::ProjectStorage::Yaml::FILE_NAME), yaml_content)
 
     assert_silent do
       @worklog.validate_projects!('P001')
@@ -222,7 +228,7 @@ class WorklogTest < Minitest::Test
         end_date: 2023-11-30
         status: active
     YAML
-    File.write(File.join(@worklog.config.storage_path, Worklog::ProjectStorage::FILE_NAME), yaml_content)
+    File.write(File.join(@worklog.config.storage_path, Worklog::ProjectStorage::Yaml::FILE_NAME), yaml_content)
 
     @worklog.projects_oneline()
   end
@@ -263,7 +269,7 @@ class WorklogTest < Minitest::Test
       project: nil
     }
     @worklog.add(message, options)
-    daily_log = @worklog.storage.load_log!(@worklog.storage.filepath(Date.parse(options[:date])))
+    daily_log = @worklog.storage.load_log_for_date!(Date.parse(options[:date]))
     assert_equal 'PROJ-1234', daily_log.entries.last.ticket
   end
 
@@ -279,7 +285,7 @@ class WorklogTest < Minitest::Test
       project: nil
     }
     @worklog.add(message, options)
-    daily_log = @worklog.storage.load_log!(@worklog.storage.filepath(Date.parse(options[:date])))
+    daily_log = @worklog.storage.load_log_for_date!(Date.parse(options[:date]))
     assert_equal 'MANUAL-999', daily_log.entries.last.ticket
   end
 end

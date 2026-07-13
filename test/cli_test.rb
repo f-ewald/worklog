@@ -39,7 +39,8 @@ class CliTest < Minitest::Test
   end
 
   def test_show
-    @cli.invoke(:show, [], verbose: true)
+    out, _err = capture_io { @cli.invoke(:show, [], verbose: true) }
+    assert_kind_of String, out
   end
 
   def test_show_days
@@ -51,14 +52,17 @@ class CliTest < Minitest::Test
   end
 
   def test_stats
-    @cli.invoke(:stats, [], verbose: true)
+    out, _err = capture_io { @cli.invoke(:stats, [], verbose: true) }
+    assert_match 'Total entries', out
   end
 
   def test_tags
-    @cli.invoke(:tags, [], verbose: true)
+    out, _err = capture_io { @cli.invoke(:tags, [], verbose: true) }
+    assert_kind_of String, out
   end
 
   def test_people
-    @cli.invoke(:people, [], verbose: true)
+    out, _err = capture_io { @cli.invoke(:people, [], verbose: true) }
+    assert_match 'People', out
   end
 end
