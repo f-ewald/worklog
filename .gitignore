@@ -5,3 +5,9 @@ doc/
 *.gem
 .DS_Store
 .env
+
+# Ruby artifacts
+.bundle/
+vendor/bundle/
+tmp/
+.ruby-version
