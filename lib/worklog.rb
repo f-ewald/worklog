@@ -62,10 +62,10 @@ module Worklog
       # Set log level based on configuration
       WorkLogger.level = @config.log_level == :debug ? Logger::Severity::DEBUG : Logger::Severity::INFO
 
-      # Initialize (project) storage
-      @storage = Storage.new(@config)
-      @people_storage = PeopleStorage.new(@config)
-      @project_storage = ProjectStorage.new(@config)
+      # Initialize storage backends based on the configured engine.
+      @storage = Storage.build(@config)
+      @people_storage = PeopleStorage.build(@config)
+      @project_storage = ProjectStorage.build(@config)
 
       bootstrap
     end
@@ -101,7 +101,7 @@ module Worklog
 
       # Append seconds to time if not provided
       time = parse_time_string!(options[:time])
-      @storage.create_file_skeleton(date)
+      @storage.ensure_log_for_date(date)
 
       # Validate that the project exists if provided
       validate_projects!(options[:project]) if options[:project] && !options[:project].empty?
@@ -115,12 +115,12 @@ module Worklog
       # Use the first 7 characters of the SHA256 hash of message as the key
       key = Hasher.sha256(message)
 
-      daily_log = @storage.load_log!(@storage.filepath(date))
+      daily_log = @storage.load_log_for_date(date) || DailyLog.new(date:, entries: [])
       new_entry = LogEntry.new(key:, source: 'manual', time:, tags: options[:tags], ticket: options[:ticket],
                                url: options[:url], epic: options[:epic], message:, project: options[:project])
       daily_log << new_entry
 
-      @storage.write_log(@storage.filepath(options[:date]), daily_log)
+      @storage.save_log(daily_log)
 
       (new_entry.people - @people.keys).each do |handle|
         WorkLogger.warn "Person with handle #{handle} not found. Consider adding them to people.yaml"
@@ -134,7 +134,7 @@ module Worklog
       date = Date.strptime(options[:date], '%Y-%m-%d')
 
       # Load existing log
-      log = @storage.load_log(@storage.filepath(date))
+      log = @storage.load_log_for_date(date)
       unless log
         WorkLogger.error "No work log found for #{options[:date]}. Aborting."
         exit 1
@@ -143,8 +143,9 @@ module Worklog
       txt = Editor::EDITOR_PREAMBLE.result_with_hash(content: YAML.dump(log))
       return_val = Editor.open_editor(txt)
 
-      @storage.write_log(@storage.filepath(date),
-                         YAML.load(return_val, permitted_classes: [Date, Time, DailyLog, LogEntry]))
+      edited = YAML.load(return_val, permitted_classes: [Date, Time, DailyLog, LogEntry])
+      edited.date ||= date
+      @storage.save_log(edited)
       WorkLogger.info Rainbow("Updated work log for #{options[:date]}").green
     end
 
@@ -161,8 +162,8 @@ module Worklog
 
       events_by_date.each do |date, events|
         WorkLogger.info Rainbow("Found #{events.size} events for #{date}").green
-        @storage.create_file_skeleton(date)
-        daily_log = @storage.load_log!(@storage.filepath(date))
+        @storage.ensure_log_for_date(date)
+        daily_log = @storage.load_log_for_date(date) || DailyLog.new(date:, entries: [])
         dirty = false
         events.each do |event|
           # Convert event to log entry
@@ -181,7 +182,7 @@ module Worklog
 
         # Write log back to storage
         if dirty
-          @storage.write_log(@storage.filepath(date), daily_log)
+          @storage.save_log(daily_log)
         else
           WorkLogger.info "No new entries to add for #{date}, skipping write."
         end
@@ -285,7 +286,7 @@ module Worklog
     # Show all projects, one line per project.
     # This is a compact view showing only project names and keys.
     def projects_oneline(_options = {})
-      project_storage = ProjectStorage.new(@config)
+      project_storage = ProjectStorage.build(@config)
       projects = project_storage.load_projects
 
       # Find longest project name for formatting
@@ -300,7 +301,7 @@ module Worklog
     # This method loads all projects and their associated log entries.
     # It also calculates the last activity date for each project based on log entries.
     def projects(_options = {})
-      project_storage = ProjectStorage.new(@config)
+      project_storage = ProjectStorage.build(@config)
       projects = project_storage.load_projects
 
       # Load all entries to find latest activity for each project
@@ -486,24 +487,30 @@ module Worklog
 
     def remove(options = {})
       date = Date.strptime(options[:date], '%Y-%m-%d')
-      unless File.exist?(@storage.filepath(date))
+      unless @storage.log_exists?(date)
         WorkLogger.error Rainbow("No work log found for #{options[:date]}. Aborting.").red
         exit 1
       end
 
-      daily_log = @storage.load_log!(@storage.filepath(options[:date]))
+      daily_log = @storage.load_log_for_date!(date)
       if daily_log.entries.empty?
         WorkLogger.error Rainbow("No entries found for #{options[:date]}. Aborting.").red
         exit 1
       end
 
       removed_entry = daily_log.entries.pop
-      @storage.write_log(@storage.filepath(date), daily_log)
+      @storage.save_log(daily_log)
       WorkLogger.info Rainbow("Removed entry: #{removed_entry.message}").green
     end
 
     # Start webserver
+    # @raise [LoadError] if puma is not installed
     def server
+      begin
+        require 'puma'
+      rescue LoadError
+        raise LoadError, "Puma is required to run the web server but is not installed.\nInstall it with: gem install puma"
+      end
       app = WorkLogApp.new(@storage)
       WorkLogServer.new(app).start
     end
@@ -550,7 +557,7 @@ module Worklog
     # @example
     #   validate_projects!('P001')
     def validate_projects!(project_key)
-      project_storage = ProjectStorage.new(@config)
+      project_storage = ProjectStorage.build(@config)
       begin
         projects = project_storage.load_projects
       rescue Errno::ENOENT

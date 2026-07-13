@@ -28,19 +28,23 @@ Gem::Specification.new do |spec|
     ==============================================================================
     Thanks for installing #{spec.name}! Now you can use it by running wl from your terminal.
     For more information, visit https://f-ewald.github.io/worklog or run wl help.
+
+    macOS users: enable hourly GitHub sync with: worklogd install
     ==============================================================================
   MESSAGE
-  spec.files = Dir.glob('lib/**/*.{erb,rb}') + Dir.glob('assets/**/*.{erb,rb}') + ['.version']
-  spec.executables = ['wl']
+  spec.files = Dir.glob('lib/**/*.{erb,rb}') + Dir.glob('assets/**/*.{erb,rb}') +
+               Dir.glob('db/migrations/**/*.rb') + ['.version']
+  spec.executables = %w[wl worklogd]
 
   spec.add_dependency 'faraday', '~> 2.14'
   spec.add_dependency 'httparty', '~> 0.22.0'
   spec.add_dependency 'langchainrb', '~> 0.19.5'
   spec.add_dependency 'logger', '~> 1.6'
-  spec.add_dependency 'puma', '~> 6.6'
+  spec.add_dependency 'pg', '~> 1.5'
   spec.add_dependency 'rack', '~> 3.1'
   spec.add_dependency 'rackup', '~> 2.2'
   spec.add_dependency 'rainbow', '~> 3.1'
+  spec.add_dependency 'sequel', '~> 5.84'
   spec.add_dependency 'thor', '~> 1.3'
   spec.add_dependency 'tzinfo', '~> 2.0'
 end
