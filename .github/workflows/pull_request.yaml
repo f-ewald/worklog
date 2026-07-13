@@ -8,6 +8,10 @@ on:
 jobs:
   Test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version: ['3.4', '3.5']
     permissions:
       contents: read
       pull-requests: write
@@ -17,10 +21,10 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    - name: Set up Ruby
+    - name: Set up Ruby ${{ matrix.ruby-version }}
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.4.7'
+        ruby-version: ${{ matrix.ruby-version }}
     - name: Install dependencies
       run: bundle install
     - name: Run Rubocop linter
@@ -32,6 +36,7 @@ jobs:
     - name: "Build Gem"
       run: gem build
     - name: Code Coverage Summary Report
+      if: matrix.ruby-version == '3.4'
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:
         badge: true
@@ -40,7 +45,7 @@ jobs:
         output: both
     - name: Add Coverage PR Comment
       uses: marocchino/sticky-pull-request-comment@v2
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' && matrix.ruby-version == '3.4'
       with:
         recreate: true
         path: code-coverage-results.md
